@@ -11,21 +11,33 @@ const nextConfig = {
 
   trailingSlash: true,
   // SVGR
-  webpack(config, { dev, isServer }) {
-    config.module.rules.push({
-      test: /\.svg$/i,
-      issuer: /\.[jt]sx?$/,
-      use: [
-        {
-          loader: '@svgr/webpack',
-          options: {
-            typescript: true,
-            icon: true,
-          },
-        },
-      ],
-    });
+  webpack(config, { isServer, dev }) {
+    // Configures webpack to handle SVG files with SVGR. SVGR optimizes and transforms SVG files
+    // into React components. See https://react-svgr.com/docs/next/
 
+    // Grab the existing rule that handles SVG imports
+    const fileLoaderRule = config.module.rules.find((rule) => rule.test?.test?.('.svg'));
+
+    config.module.rules.push(
+      // Reapply the existing rule, but only for svg imports ending in ?url
+      {
+        ...fileLoaderRule,
+        test: /\.svg$/i,
+        resourceQuery: /url/, // *.svg?url
+      },
+      // Convert all other *.svg imports to React components
+      {
+        test: /\.svg$/i,
+        issuer: fileLoaderRule.issuer,
+        resourceQuery: { not: [...fileLoaderRule.resourceQuery.not, /url/] }, // exclude if *.svg?url
+        use: ['@svgr/webpack'],
+      }
+    );
+
+    // Modify the file loader rule to ignore *.svg, since we have it handled now.
+    fileLoaderRule.exclude = /\.svg$/i;
+
+    //  todo test this rule
     if (dev && !isServer) {
       const originalEntry = config.entry;
       config.entry = async () => {
