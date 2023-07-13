@@ -1,0 +1,11 @@
+version: '3.8'
+
+services:
+  txi_local_database:
+    image: postgres:15.1
+    container_name: txi-local
+    restart: always
+    ports:
+      - 5455:5432
+    env_file:
+      - .env.example
