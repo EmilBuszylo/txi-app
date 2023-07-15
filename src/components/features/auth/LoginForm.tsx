@@ -39,13 +39,13 @@ export function LoginForm() {
   const { status } = useSession();
 
   if (status === 'authenticated') {
-    router.push('/');
+    router.push('/dashboard/orders');
   }
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     try {
       await signIn('credentials', {
         ...values,
-        callbackUrl: '/',
+        callbackUrl: '/dashboard/orders',
       });
     } catch (error) {
       logger.error(error);
