@@ -1,8 +1,12 @@
 'use client';
 
 import { zodResolver } from '@hookform/resolvers/zod';
+import { useRouter } from 'next/navigation';
+import { signIn, useSession } from 'next-auth/react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
+
+import { logger } from '@/lib/logger';
 
 import { Button } from '@/components/ui/button';
 import {
@@ -31,14 +35,22 @@ export function LoginForm() {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
   });
+  const router = useRouter();
+  const { status } = useSession();
 
-  // 2. Define a submit handler.
-  function onSubmit(values: z.infer<typeof formSchema>) {
-    // Do something with the form values.
-    // ✅ This will be type-safe and validated.
-    // eslint-disable-next-line no-console
-    console.log(values);
+  if (status === 'authenticated') {
+    router.push('/');
   }
+  const onSubmit = async (values: z.infer<typeof formSchema>) => {
+    try {
+      await signIn('credentials', {
+        ...values,
+        callbackUrl: '/',
+      });
+    } catch (error) {
+      logger.error(error);
+    }
+  };
 
   return (
     <Form {...form}>
@@ -63,7 +75,7 @@ export function LoginForm() {
             <FormItem className='h-[100px]'>
               <FormLabel>Password</FormLabel>
               <FormControl>
-                <Input placeholder='Your Password' {...field} />
+                <Input placeholder='Your Password' {...field} type='password' />
               </FormControl>
               <FormMessage />
             </FormItem>

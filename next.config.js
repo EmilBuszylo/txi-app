@@ -7,6 +7,10 @@ const nextConfig = {
     dirs: ['src'],
   },
 
+  experimental: {
+    serverComponentsExternalPackages: ['@prisma/client', 'bcryptjs'],
+  },
+
   reactStrictMode: true,
 
   trailingSlash: true,

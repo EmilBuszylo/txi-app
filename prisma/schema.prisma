@@ -16,18 +16,18 @@ model User {
 
   firstName String?
   lastName  String?
-  phone     String?
+  phone     String? @unique
 
-  role Role
-
-  refreshToken String?
+  role UserRole
 
   deletedAt DateTime?
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
+
+  @@map("users")
 }
 
-enum Role {
+enum UserRole {
   ADMIN
   CLIENT
   DISPATCHER
