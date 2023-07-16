@@ -11,21 +11,21 @@ export const authOptions: NextAuthOptions = {
       id: 'credentials',
       name: 'credentials',
       credentials: {
-        email: { label: 'email', type: 'text' },
+        login: { label: 'login', type: 'text' },
         password: { label: 'Password', type: 'password' },
       },
       authorize: async (credentials) => {
-        if (!credentials?.email || !credentials.password) {
+        if (!credentials?.login || !credentials.password) {
           return null;
         }
 
         const user = await prisma.user.findUnique({
           where: {
-            email: credentials.email,
+            login: credentials.login,
           },
           select: {
             id: true,
-            email: true,
+            login: true,
             firstName: true,
             lastName: true,
             password: true,
@@ -39,7 +39,7 @@ export const authOptions: NextAuthOptions = {
         if (user) {
           return {
             id: user.id,
-            email: user.email,
+            login: user.login,
             firstName: user.firstName,
             lastName: user.lastName,
           };

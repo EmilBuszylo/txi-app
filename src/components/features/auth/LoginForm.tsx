@@ -20,12 +20,12 @@ import {
 import { Input } from '@/components/ui/input';
 
 const formSchema = z.object({
-  email: z
+  login: z
     .string()
     .min(1, {
-      message: 'Email must be filled',
+      message: 'Login must be filled',
     })
-    .email({ message: 'Email format is required' }),
+    .email({ message: 'Login format is required' }),
   password: z.string().min(1, {
     message: 'Password must be filled',
   }),
@@ -57,12 +57,12 @@ export function LoginForm() {
       <form onSubmit={form.handleSubmit(onSubmit)} className='space-y-4'>
         <FormField
           control={form.control}
-          name='email'
+          name='login'
           render={({ field }) => (
             <FormItem className='h-[100px]'>
-              <FormLabel>Email</FormLabel>
+              <FormLabel>Login</FormLabel>
               <FormControl>
-                <Input placeholder='Your Email' {...field} />
+                <Input placeholder='Your Login' {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>

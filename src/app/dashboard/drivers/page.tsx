@@ -1,9 +1,9 @@
 'use client';
 
-import { useOrders } from '@/lib/hooks/data/useOrders';
+import { useDrivers } from '@/lib/hooks/data/useDrivers';
 
 export default function Orders() {
-  const { data, isLoading, isFetching, error } = useOrders({ page: 1, limit: 20 });
+  const { data, isLoading, isFetching, error } = useDrivers({ page: 1, limit: 20 });
 
   return (
     <div>
@@ -14,8 +14,8 @@ export default function Orders() {
       ) : data ? (
         <ul>
           {data.results.map((res) => (
-            <li key={res.id}>
-              {res.id},{res.internalId},{res.externalId}
+            <li key={res.id} className='flex items-center gap-2'>
+              {res.id},{res.firstName} ,{res.lastName}, {res.login}, {res.phone}
             </li>
           ))}
         </ul>

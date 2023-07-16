@@ -9,10 +9,10 @@ type User = Prisma.UserGetPayload<Record<string, unknown>>;
 
 export async function POST(req: Request) {
   try {
-    const { firstName, lastName, phone, email, password, role } = (await req.json()) as {
+    const { firstName, lastName, phone, login, password, role } = (await req.json()) as {
       firstName: string;
       lastName: string;
-      email: string;
+      login: string;
       password: string;
       phone?: string;
       role: User['role'];
@@ -23,14 +23,14 @@ export async function POST(req: Request) {
       data: {
         firstName,
         lastName,
-        email,
+        login,
         phone,
         role,
         password: hashed_password,
       },
       select: {
         id: true,
-        email: true,
+        login: true,
         firstName: true,
         lastName: true,
       },

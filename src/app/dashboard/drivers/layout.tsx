@@ -13,14 +13,14 @@ import UnstyledLink from '@/components/ui/UstyledLink';
 
 import { Routes } from '@/constant/routes';
 
-const ORDER_PAGES = [
+const DRIVER_PAGES = [
   {
     label: 'Lista',
-    href: Routes.ORDERS,
+    href: Routes.DRIVERS,
   },
   {
     label: 'Dodaj',
-    href: `${Routes.ORDERS}/new`,
+    href: `${Routes.DRIVERS}/new`,
   },
 ];
 
@@ -32,20 +32,20 @@ export default function Layout({ children }: { children: React.ReactNode }) {
       <DashboardContent
         sidebar={
           <ul className='space-y-0.5 py-1'>
-            {ORDER_PAGES.map((order) => (
-              <li key={order.label}>
+            {DRIVER_PAGES.map((driver) => (
+              <li key={driver.label}>
                 <UnstyledLink
-                  href={order.href}
+                  href={driver.href}
                   className={cn(
                     'group flex w-full cursor-pointer items-center justify-between px-1 focus:outline-none focus-visible:ring-0',
                     {
-                      'text-blue-500': pathname === order.href,
+                      'text-blue-500': pathname === driver.href,
                     }
                   )}
                 >
                   <span className='flex w-full items-center gap-x-2 rounded px-2 py-3 group-hover:bg-gray-900/5 group-focus-visible:bg-gray-900/10 group-active:bg-gray-900/10'>
                     {/*<DesktopIcon className='h-5 w-5' />*/}
-                    <p>{order.label}</p>
+                    <p>{driver.label}</p>
                   </span>
                 </UnstyledLink>
               </li>

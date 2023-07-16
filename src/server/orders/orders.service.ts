@@ -1,19 +1,13 @@
 import { format } from 'date-fns';
-import { z } from 'zod';
 
 import { logger } from '@/lib/logger';
 import { getPaginationMeta, PaginationMeta } from '@/lib/pagination';
 import { prisma } from '@/lib/prisma';
+import { CreateOrderParams, GetOrdersParams } from '@/lib/server/api/endpoints';
 
 import { Order } from '@/server/orders/order';
 
-export const createOrderSchema = z.object({
-  externalId: z.string().optional(),
-});
-
-export type CreateOrder = z.infer<typeof createOrderSchema>;
-
-export const createOrder = async (input: CreateOrder) => {
+export const createOrder = async (input: CreateOrderParams): Promise<Order> => {
   try {
     const count = await prisma.order.count();
 
@@ -25,22 +19,18 @@ export const createOrder = async (input: CreateOrder) => {
     });
   } catch (error) {
     logger.error(error);
+    throw error;
   }
 };
 
 const PAGINATION_LIMIT = 20;
-
-export interface GetOrders {
-  page: number;
-  limit: number;
-}
 
 export interface GetOrdersResponse {
   meta: PaginationMeta;
   results: Omit<Order, 'createdAt'>[];
 }
 
-export const getOrders = async (input: GetOrders): Promise<GetOrdersResponse> => {
+export const getOrders = async (input: GetOrdersParams): Promise<GetOrdersResponse> => {
   const { limit, page: requestPage } = input;
 
   const page = requestPage ? requestPage - 1 : 0;
@@ -68,5 +58,5 @@ export const getOrders = async (input: GetOrders): Promise<GetOrdersResponse> =>
 };
 
 const createInternalId = (count: number) => {
-  return `txi/${format(new Date(), 'YYYY/M/d')}${count}`;
+  return `txi/${format(new Date(), 'yyyy/LL/d')}${count}`;
 };
