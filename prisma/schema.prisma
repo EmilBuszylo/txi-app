@@ -9,6 +9,20 @@ datasource db {
   extensions = [pgcrypto]
 }
 
+model CollectionPoint {
+  id         String  @id @default(uuid())
+  name      String @unique
+  city      String
+  lat       String
+  lng       String
+  fullAddress String
+
+  deletedAt DateTime?
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+@@map("collection_points")
+}
+
 model Order {
   id         String  @id @default(uuid())
   internalId String  @unique

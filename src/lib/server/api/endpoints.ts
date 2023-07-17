@@ -5,6 +5,9 @@ import fetchJson from '@/lib/helpers/fetch-json';
 import { SITE_URL } from '@/constant/env';
 import { ApiRoutes } from '@/constant/routes';
 import { ValidationPattern } from '@/constant/validation';
+import { GetCollectionPointsResponse } from '@/server/collection-points.ts/collection-points.service';
+import { CollectionPoint } from '@/server/collection-points.ts/collectionPoint';
+import { Driver } from '@/server/drivers/driver';
 import { GetDriversResponse } from '@/server/drivers/drivers.service';
 import { Order } from '@/server/orders/order';
 import { GetOrdersResponse } from '@/server/orders/orders.service';
@@ -79,7 +82,39 @@ export const createDriverSchema = z.object({
 export type CreateDriverParams = z.infer<typeof createDriverSchema>;
 
 export function createDriver(params: CreateDriverParams) {
-  return fetchJson<Order>(getNextApiPath(ApiRoutes.DRIVERS), {
+  return fetchJson<Driver>(getNextApiPath(ApiRoutes.DRIVERS), {
+    method: 'POST',
+    body: JSON.stringify(params),
+  });
+}
+
+export interface GetCollectionPointsParams {
+  page: number;
+  limit: number;
+}
+
+export function getCollectionPoints({ page, limit }: GetCollectionPointsParams) {
+  const queryParams = new URLSearchParams({
+    page: page.toString(),
+    limit: limit.toString(),
+  });
+  return fetchJson<GetCollectionPointsResponse>(
+    getNextApiPath(ApiRoutes.COLLECTION_POINTS + '?' + queryParams.toString()),
+    {
+      method: 'GET',
+    }
+  );
+}
+
+export const createCollectionPointSchema = z.object({
+  name: z.string(),
+  address: z.string(),
+});
+
+export type CreateCollectionPointParams = z.infer<typeof createCollectionPointSchema>;
+
+export function createCollectionPoint(params: CreateCollectionPointParams) {
+  return fetchJson<CollectionPoint>(getNextApiPath(ApiRoutes.COLLECTION_POINTS), {
     method: 'POST',
     body: JSON.stringify(params),
   });

@@ -1,9 +1,9 @@
 'use client';
 
-import { useDrivers } from '@/lib/hooks/data/useDrivers';
+import { useCollectionPoints } from '@/lib/hooks/data/useCollectionPoints';
 
-export default function Drivers() {
-  const { data, isLoading, isFetching, error } = useDrivers({ page: 1, limit: 20 });
+export default function CollectionPoints() {
+  const { data, isLoading, isFetching, error } = useCollectionPoints({ page: 1, limit: 20 });
 
   return (
     <div>
@@ -15,7 +15,7 @@ export default function Drivers() {
         <ul>
           {data.results.map((res) => (
             <li key={res.id} className='flex items-center gap-2'>
-              {res.id},{res.firstName} ,{res.lastName}, {res.login}, {res.phone}
+              {res.id},{res.name} ,{res.fullAddress}
             </li>
           ))}
         </ul>
