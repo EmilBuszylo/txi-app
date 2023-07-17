@@ -27,13 +27,13 @@ const PAGINATION_LIMIT = 20;
 
 export interface GetOrdersResponse {
   meta: PaginationMeta;
-  results: Omit<Order, 'createdAt'>[];
+  results: Order[];
 }
 
 export const getOrders = async (input: GetOrdersParams): Promise<GetOrdersResponse> => {
-  const { limit, page: requestPage } = input;
+  const { limit, page: currentPage } = input;
 
-  const page = requestPage ? requestPage - 1 : 0;
+  const page = currentPage - 1;
   const take = limit || PAGINATION_LIMIT;
   const skip = page * take;
 
@@ -47,12 +47,16 @@ export const getOrders = async (input: GetOrdersParams): Promise<GetOrdersRespon
         internalId: true,
         externalId: true,
         updatedAt: true,
+        createdAt: true,
+      },
+      orderBy: {
+        createdAt: 'asc',
       },
     }),
   ]);
 
   return {
-    meta: getPaginationMeta({ currentPage: requestPage, itemCount: data[0], take }),
+    meta: getPaginationMeta({ currentPage, itemCount: data[0], take }),
     results: data[1],
   };
 };

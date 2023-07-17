@@ -53,7 +53,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
           </ul>
         }
       >
-        <Card className='p6'>{children}</Card>
+        <Card className='p-6'>{children}</Card>
       </DashboardContent>
     </>
   );
