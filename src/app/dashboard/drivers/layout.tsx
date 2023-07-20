@@ -9,7 +9,7 @@ import { PageGroupsTitle } from '@/components/layout/DashboardLayout/PageGroupsT
 import { PageTitle } from '@/components/layout/DashboardLayout/PageTitle';
 import TopBar from '@/components/layout/DashboardLayout/TopBar';
 import { Card } from '@/components/ui/card';
-import UnstyledLink from '@/components/ui/UstyledLink';
+import UnstyledLink from '@/components/ui/link/UstyledLink';
 
 import { Routes } from '@/constant/routes';
 

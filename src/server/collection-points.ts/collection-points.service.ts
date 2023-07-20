@@ -1,12 +1,12 @@
 import { logger } from '@/lib/logger';
 import { getPaginationMeta, PaginationMeta } from '@/lib/pagination';
 import { prisma } from '@/lib/prisma';
-import { GetCollectionPointsParams } from '@/lib/server/api/endpoints';
+import { CreateCollectionPointParams, GetCollectionPointsParams } from '@/lib/server/api/endpoints';
 
 import { CollectionPoint } from '@/server/collection-points.ts/collectionPoint';
 
 export const createCollectionPoint = async (
-  input: Record<string, unknown>
+  input: CreateCollectionPointParams
 ): Promise<CollectionPoint> => {
   try {
     return prisma.collectionPoint.create({
@@ -27,7 +27,7 @@ export interface GetCollectionPointsResponse {
   results: CollectionPoint[];
 }
 
-export const getOrders = async (
+export const getCollectionPoints = async (
   input: GetCollectionPointsParams
 ): Promise<GetCollectionPointsResponse> => {
   const { limit, page: requestPage } = input;
@@ -37,12 +37,12 @@ export const getOrders = async (
   const skip = page * take;
 
   const data = await prisma.$transaction([
-    prisma.collectionPoints.count({
+    prisma.collectionPoint.count({
       where: {
         deletedAt: null,
       },
     }),
-    prisma.order.collectionPoints({
+    prisma.collectionPoint.findMany({
       where: {
         deletedAt: null,
       },

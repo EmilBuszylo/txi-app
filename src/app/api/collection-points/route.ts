@@ -1,9 +1,11 @@
 import { NextResponse } from 'next/server';
 
 import { logger } from '@/lib/logger';
-import { getCollectionPoints } from '@/lib/server/api/endpoints';
 
-import { createCollectionPoint } from '@/server/collection-points.ts/collection-points.service';
+import {
+  createCollectionPoint,
+  getCollectionPoints,
+} from '@/server/collection-points.ts/collection-points.service';
 
 export async function POST(req: Request) {
   try {
@@ -24,15 +26,15 @@ export async function POST(req: Request) {
 }
 
 export async function GET(req: Request) {
-  const urlParams = new URLSearchParams(req.url);
+  const urlParams = new URL(req.url);
 
   try {
-    const orders = await getCollectionPoints({
-      page: Number(urlParams.get('page')) || 1,
-      limit: Number(urlParams.get('limit')) || 1,
+    const collectionPoints = await getCollectionPoints({
+      page: Number(urlParams.searchParams.get('page')) || 1,
+      limit: Number(urlParams.searchParams.get('limit')) || 1,
     });
 
-    return NextResponse.json(orders);
+    return NextResponse.json(collectionPoints);
   } catch (error) {
     logger.error(error);
     return new NextResponse(

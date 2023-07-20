@@ -98,6 +98,7 @@ export function getCollectionPoints({ page, limit }: GetCollectionPointsParams) 
     page: page.toString(),
     limit: limit.toString(),
   });
+
   return fetchJson<GetCollectionPointsResponse>(
     getNextApiPath(ApiRoutes.COLLECTION_POINTS + '?' + queryParams.toString()),
     {
@@ -108,7 +109,11 @@ export function getCollectionPoints({ page, limit }: GetCollectionPointsParams) 
 
 export const createCollectionPointSchema = z.object({
   name: z.string(),
-  address: z.string(),
+  fullAddress: z.string(),
+  city: z.string(),
+  lat: z.string(),
+  lng: z.string(),
+  url: z.string(),
 });
 
 export type CreateCollectionPointParams = z.infer<typeof createCollectionPointSchema>;

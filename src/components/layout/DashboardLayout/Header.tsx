@@ -5,7 +5,7 @@ import * as React from 'react';
 
 import { LogoutButton } from '@/components/features/auth/LogoutButton';
 import SidebarIconLink from '@/components/layout/DashboardLayout/SidebarIconLink';
-import UnstyledLink from '@/components/ui/UstyledLink';
+import UnstyledLink from '@/components/ui/link/UstyledLink';
 
 import { Routes } from '@/constant/routes';
 

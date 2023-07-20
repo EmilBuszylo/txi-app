@@ -23,12 +23,12 @@ export async function POST(req: Request) {
 }
 
 export async function GET(req: Request) {
-  const urlParams = new URLSearchParams(req.url);
+  const urlParams = new URL(req.url);
 
   try {
     const orders = await getDrivers({
-      page: Number(urlParams.get('page')) || 1,
-      limit: Number(urlParams.get('limit')) || 1,
+      page: Number(urlParams.searchParams.get('page')) || 1,
+      limit: Number(urlParams.searchParams.get('limit')) || 1,
     });
 
     return NextResponse.json(orders);

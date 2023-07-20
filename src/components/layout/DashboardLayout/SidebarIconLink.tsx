@@ -3,7 +3,7 @@ import { forwardRef } from 'react';
 
 import { cn } from '@/lib/utils';
 
-import { UnstyledLinkProps } from '@/components/ui/UstyledLink';
+import { UnstyledLinkProps } from '@/components/ui/link/UstyledLink';
 
 interface SidebarIconLinkProps extends UnstyledLinkProps {
   active?: boolean;
