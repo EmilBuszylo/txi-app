@@ -38,11 +38,11 @@ export function Pagination({
         <div className='flex items-center gap-2 text-xs font-bold leading-normal'>
           <div>
             <label htmlFor='pagination' className='sr-only'>
-              Current page
+              Aktualna strona
             </label>
             <select
               id='pagination'
-              className='h-6 rounded border-gray-100 bg-white py-0 pl-2 pr-7 text-xs'
+              className='h-10 rounded border-gray-100 bg-white py-0 pl-2 pr-7 text-xs'
               value={currentPage}
               onChange={(event) => changePage(+event.target.value)}
             >
@@ -53,7 +53,7 @@ export function Pagination({
               ))}
             </select>
           </div>
-          of {pagesCount}
+          z <span>{pagesCount}</span>
         </div>
 
         <Tooltip>

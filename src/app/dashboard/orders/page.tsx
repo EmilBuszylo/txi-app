@@ -5,7 +5,7 @@ import { useState } from 'react';
 import { useOrders } from '@/lib/hooks/data/useOrders';
 
 import { columns } from '@/components/features/order/table/columns';
-import { DataTable } from '@/components/features/order/table/data-table';
+import { DataTable } from '@/components/ui/data-table/data-table';
 import Pagination from '@/components/ui/pgination';
 
 const initialPaginationMeta = {
@@ -27,9 +27,14 @@ export default function Orders() {
       {error ? (
         <p>Oh no, there was an error</p>
       ) : (
-        <>
-          <div className='flex w-full justify-center justify-between pb-4 pt-2'>
-            <div></div>
+        <DataTable
+          data={data?.results || []}
+          isLoading={isLoading}
+          isFetching={isFetching}
+          columns={columns}
+          isSuccess={isSuccess}
+          meta={data?.meta || initialPaginationMeta}
+          pagination={
             <Pagination
               currentPage={page}
               pagesCount={data?.meta.pageCount || initialPaginationMeta.pageCount}
@@ -37,16 +42,8 @@ export default function Orders() {
               nextPage={() => setPage((prev) => data?.meta.nextPage || prev)}
               previousPage={() => setPage((prev) => data?.meta.prevPage || prev)}
             />
-          </div>
-          <DataTable
-            data={data?.results || []}
-            isLoading={isLoading}
-            isFetching={isFetching}
-            columns={columns}
-            isSuccess={isSuccess}
-            meta={data?.meta || initialPaginationMeta}
-          />
-        </>
+          }
+        />
       )}
     </div>
   );
