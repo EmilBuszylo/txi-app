@@ -125,8 +125,32 @@ export function createCollectionPoint(params: CreateCollectionPointParams) {
   });
 }
 
+export const updateCollectionPointSchema = z.object({
+  name: z.string().optional(),
+  fullAddress: z.string().optional(),
+  city: z.string().optional(),
+  lat: z.string().optional(),
+  lng: z.string().optional(),
+  url: z.string().optional(),
+});
+
+export type UpdateCollectionPointParams = z.infer<typeof updateCollectionPointSchema>;
+
+export function updateCollectionPoint(id: string, params: CreateCollectionPointParams) {
+  return fetchJson<CollectionPoint>(getNextApiPath(`${ApiRoutes.COLLECTION_POINTS}/${id}`), {
+    method: 'POST',
+    body: JSON.stringify(params),
+  });
+}
+
 export function removeCollectionPoint(id: string) {
   return fetchJson<CollectionPoint>(getNextApiPath(`${ApiRoutes.COLLECTION_POINTS}/${id}`), {
     method: 'DELETE',
+  });
+}
+
+export function getCollectionPoint(id: string) {
+  return fetchJson<CollectionPoint>(getNextApiPath(`${ApiRoutes.COLLECTION_POINTS}/${id}`), {
+    method: 'GET',
   });
 }

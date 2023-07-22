@@ -1,5 +1,5 @@
 import { NewCollectionPoint } from '@/components/features/collection-points/NewCollectionPoint/NewCollectionPoint';
 
-export default function CreateNewOrder() {
+export default function CreateNewCollectionPoint() {
   return <NewCollectionPoint />;
 }

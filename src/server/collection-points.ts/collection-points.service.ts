@@ -21,6 +21,26 @@ export const createCollectionPoint = async (
   }
 };
 
+export const updateCollectionPoint = async (
+  id: string,
+  input: CreateCollectionPointParams
+): Promise<CollectionPoint> => {
+  try {
+    return prisma.collectionPoint.update({
+      where: {
+        id,
+      },
+      data: {
+        ...input,
+      },
+      select: collectionPointSelectedFields,
+    });
+  } catch (error) {
+    logger.error({ error, stack: 'createCollectionPoint' });
+    throw error;
+  }
+};
+
 const PAGINATION_LIMIT = 20;
 
 export interface GetCollectionPointsResponse {
@@ -62,6 +82,20 @@ export const getCollectionPoints = async (
   };
 };
 
+export const getCollectionPoint = async (id: string): Promise<CollectionPoint> => {
+  const collectionPoint = await prisma.collectionPoint.findUnique({
+    where: { id },
+    select: collectionPointSelectedFields,
+  });
+
+  if (!collectionPoint) {
+    logger.error({ error: 'not found', stack: 'getCollectionPoint' });
+    throw new Error('not found');
+  }
+
+  return collectionPoint;
+};
+
 //  soft delete
 export const removeCollectionPoint = async (id: string): Promise<CollectionPoint> => {
   try {
@@ -84,6 +118,7 @@ const collectionPointSelectedFields = {
   city: true,
   lat: true,
   lng: true,
+  url: true,
   fullAddress: true,
   updatedAt: true,
   createdAt: true,

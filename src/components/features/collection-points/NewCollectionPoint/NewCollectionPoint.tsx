@@ -2,9 +2,11 @@
 
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useRouter } from 'next/navigation';
+import { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 
 import { useCreateCollectionPoint } from '@/lib/hooks/data/useCreateCollectionPoint';
+import { useUpdateCollectionPoint } from '@/lib/hooks/data/useUpdateCollectionPoint';
 import {
   CreateCollectionPointParams,
   createCollectionPointSchema,
@@ -25,20 +27,29 @@ import { Input } from '@/components/ui/input';
 
 import { Routes } from '@/constant/routes';
 
-export function NewCollectionPoint() {
+interface NewCollectionPointProps {
+  defaultValues?: CreateCollectionPointParams;
+  id?: string;
+}
+
+export function NewCollectionPoint({ defaultValues, id }: NewCollectionPointProps) {
   const form = useForm<CreateCollectionPointParams>({
     resolver: zodResolver(createCollectionPointSchema),
-    defaultValues: {
+    defaultValues: defaultValues || {
       name: '',
       fullAddress: '',
     },
   });
   const router = useRouter();
   const { mutateAsync: createCollectionPoint } = useCreateCollectionPoint();
+  const { mutateAsync: updateCollectionPoint } = useUpdateCollectionPoint(id || '');
 
   const onSubmit = async (values: CreateCollectionPointParams) => {
-    // eslint-disable-next-line no-console
-    await createCollectionPoint(values);
+    if (id) {
+      await updateCollectionPoint(values);
+    } else {
+      await createCollectionPoint(values);
+    }
 
     router.push(Routes.COLLECTION_POINTS);
   };
@@ -53,6 +64,12 @@ export function NewCollectionPoint() {
     form.setValue('lat', details.geometry.location.lat().toString());
     form.setValue('lng', details.geometry.location.lng().toString());
   };
+
+  useEffect(() => {
+    if (defaultValues) {
+      form.reset();
+    }
+  }, [defaultValues, form]);
 
   return (
     <div className='lg:max-w-2xl'>

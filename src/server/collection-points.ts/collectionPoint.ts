@@ -5,6 +5,7 @@ export interface CollectionPoint {
   lat: string;
   lng: string;
   fullAddress: string;
+  url: string;
   updatedAt: Date;
   createdAt: Date;
 }
