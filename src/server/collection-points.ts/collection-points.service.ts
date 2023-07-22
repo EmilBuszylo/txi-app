@@ -13,9 +13,10 @@ export const createCollectionPoint = async (
       data: {
         ...input,
       },
+      select: collectionPointSelectedFields,
     });
   } catch (error) {
-    logger.error(error);
+    logger.error({ error, stack: 'createCollectionPoint' });
     throw error;
   }
 };
@@ -48,15 +49,9 @@ export const getCollectionPoints = async (
       },
       skip,
       take,
-      select: {
-        id: true,
-        name: true,
-        city: true,
-        lat: true,
-        lng: true,
-        fullAddress: true,
-        updatedAt: true,
-        createdAt: true,
+      select: collectionPointSelectedFields,
+      orderBy: {
+        updatedAt: 'asc',
       },
     }),
   ]);
@@ -65,4 +60,31 @@ export const getCollectionPoints = async (
     meta: getPaginationMeta({ currentPage: requestPage, itemCount: data[0], take }),
     results: data[1],
   };
+};
+
+//  soft delete
+export const removeCollectionPoint = async (id: string): Promise<CollectionPoint> => {
+  try {
+    return await prisma.collectionPoint.update({
+      where: { id },
+      data: {
+        deletedAt: new Date(),
+      },
+      select: collectionPointSelectedFields,
+    });
+  } catch (error) {
+    logger.error({ error, stack: 'removeCollectionPoint' });
+    throw error;
+  }
+};
+
+const collectionPointSelectedFields = {
+  id: true,
+  name: true,
+  city: true,
+  lat: true,
+  lng: true,
+  fullAddress: true,
+  updatedAt: true,
+  createdAt: true,
 };

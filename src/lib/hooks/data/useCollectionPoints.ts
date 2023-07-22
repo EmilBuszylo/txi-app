@@ -6,7 +6,7 @@ import { ApiRoutes } from '@/constant/routes';
 
 export function useCollectionPoints(params: GetCollectionPointsParams) {
   return useQuery({
-    queryKey: [ApiRoutes.COLLECTION_POINTS],
+    queryKey: [ApiRoutes.COLLECTION_POINTS, params.page, params.limit],
     queryFn: () => getCollectionPoints(params),
   });
 }

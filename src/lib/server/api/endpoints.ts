@@ -124,3 +124,9 @@ export function createCollectionPoint(params: CreateCollectionPointParams) {
     body: JSON.stringify(params),
   });
 }
+
+export function removeCollectionPoint(id: string) {
+  return fetchJson<CollectionPoint>(getNextApiPath(`${ApiRoutes.COLLECTION_POINTS}/${id}`), {
+    method: 'DELETE',
+  });
+}

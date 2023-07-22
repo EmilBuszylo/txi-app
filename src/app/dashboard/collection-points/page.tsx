@@ -1,10 +1,10 @@
 'use client';
 
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 
 import { useCollectionPoints } from '@/lib/hooks/data/useCollectionPoints';
 
-import { columns } from '@/components/features/collection-points/table/columns';
+import { getColumns } from '@/components/features/collection-points/table/columns';
 import { DataTable } from '@/components/ui/data-table/data-table';
 import Pagination from '@/components/ui/pgination';
 
@@ -15,13 +15,19 @@ const initialPaginationMeta = {
   nextPage: null,
 };
 
+const DEFAULT_LIMIT = 20;
+
 export default function CollectionPoints() {
   const [page, setPage] = useState(1);
 
   const { data, isLoading, isFetching, error, isSuccess } = useCollectionPoints({
     page: 1,
-    limit: 20,
+    limit: DEFAULT_LIMIT,
   });
+
+  const columns = useMemo(() => {
+    return getColumns({ page, limit: DEFAULT_LIMIT });
+  }, [page]);
 
   return (
     <div>
