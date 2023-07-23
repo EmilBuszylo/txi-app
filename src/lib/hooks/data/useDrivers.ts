@@ -6,7 +6,7 @@ import { ApiRoutes } from '@/constant/routes';
 
 export function useDrivers(params: GetDriversParams) {
   return useQuery({
-    queryKey: [ApiRoutes.DRIVERS],
+    queryKey: [ApiRoutes.DRIVERS, params.page, params.limit],
     queryFn: () => getDrivers(params),
   });
 }

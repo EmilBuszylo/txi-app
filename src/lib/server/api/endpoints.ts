@@ -1,3 +1,4 @@
+import { parsePhoneNumber } from 'awesome-phonenumber';
 import { z } from 'zod';
 
 import fetchJson from '@/lib/helpers/fetch-json';
@@ -65,18 +66,34 @@ export function getDrivers({ page, limit }: GetDriversParams) {
   );
 }
 
+export function getDriver(id: string) {
+  return fetchJson<Driver>(getNextApiPath(`${ApiRoutes.DRIVERS}/${id}`), {
+    method: 'GET',
+  });
+}
+
 export const createDriverSchema = z.object({
   firstName: z.string(),
   lastName: z.string(),
-  phone: z.string(),
+  phone: z.string().refine(
+    (phone) => {
+      const pn = parsePhoneNumber(phone);
+
+      return pn.valid;
+    },
+    {
+      message: 'Numer telefonu ma nieprawidłowy format',
+    }
+  ),
   password: z.string().regex(ValidationPattern.PASSWORD_VALIDATION),
-  car: z.object({
-    model: z.string(),
-    brand: z.string(),
-    color: z.string().optional(),
-    registrationNumber: z.string(),
-  }),
-  withOwnCar: z.boolean().optional(),
+  car: z
+    .object({
+      carModel: z.string(),
+      carBrand: z.string(),
+      carColor: z.string().optional(),
+      carRegistrationNumber: z.string(),
+    })
+    .optional(),
 });
 
 export type CreateDriverParams = z.infer<typeof createDriverSchema>;
@@ -88,6 +105,47 @@ export function createDriver(params: CreateDriverParams) {
   });
 }
 
+export const updateDriverSchema = z.object({
+  login: z.string(),
+  firstName: z.string(),
+  lastName: z.string(),
+  phone: z.string().refine(
+    (phone) => {
+      const pn = parsePhoneNumber(phone);
+
+      return pn.valid;
+    },
+    {
+      message: 'Numer telefonu ma nieprawidłowy format',
+    }
+  ),
+  password: z.string().optional(),
+  car: z
+    .object({
+      carModel: z.string(),
+      carBrand: z.string(),
+      carColor: z.string().optional(),
+      carRegistrationNumber: z.string(),
+    })
+    .optional(),
+});
+
+export type UpdateDriverParams = Omit<z.infer<typeof updateDriverSchema>, 'password'>;
+
+export function updateDriver(id: string, params: UpdateDriverParams) {
+  return fetchJson<Driver>(getNextApiPath(`${ApiRoutes.DRIVERS}/${id}`), {
+    method: 'PATCH',
+    body: JSON.stringify(params),
+  });
+}
+
+export function removeDriver(id: string) {
+  return fetchJson<Driver>(getNextApiPath(`${ApiRoutes.DRIVERS}/${id}`), {
+    method: 'DELETE',
+  });
+}
+
+// Collection point endpoints
 export interface GetCollectionPointsParams {
   page: number;
   limit: number;
@@ -105,6 +163,12 @@ export function getCollectionPoints({ page, limit }: GetCollectionPointsParams) 
       method: 'GET',
     }
   );
+}
+
+export function getCollectionPoint(id: string) {
+  return fetchJson<CollectionPoint>(getNextApiPath(`${ApiRoutes.COLLECTION_POINTS}/${id}`), {
+    method: 'GET',
+  });
 }
 
 export const createCollectionPointSchema = z.object({
@@ -125,20 +189,9 @@ export function createCollectionPoint(params: CreateCollectionPointParams) {
   });
 }
 
-export const updateCollectionPointSchema = z.object({
-  name: z.string().optional(),
-  fullAddress: z.string().optional(),
-  city: z.string().optional(),
-  lat: z.string().optional(),
-  lng: z.string().optional(),
-  url: z.string().optional(),
-});
-
-export type UpdateCollectionPointParams = z.infer<typeof updateCollectionPointSchema>;
-
 export function updateCollectionPoint(id: string, params: CreateCollectionPointParams) {
   return fetchJson<CollectionPoint>(getNextApiPath(`${ApiRoutes.COLLECTION_POINTS}/${id}`), {
-    method: 'POST',
+    method: 'PATCH',
     body: JSON.stringify(params),
   });
 }
@@ -146,11 +199,5 @@ export function updateCollectionPoint(id: string, params: CreateCollectionPointP
 export function removeCollectionPoint(id: string) {
   return fetchJson<CollectionPoint>(getNextApiPath(`${ApiRoutes.COLLECTION_POINTS}/${id}`), {
     method: 'DELETE',
-  });
-}
-
-export function getCollectionPoint(id: string) {
-  return fetchJson<CollectionPoint>(getNextApiPath(`${ApiRoutes.COLLECTION_POINTS}/${id}`), {
-    method: 'GET',
   });
 }

@@ -1,5 +1,5 @@
-import { NewDriver } from '@/components/features/driver/NewDriver/NewDriver';
+import { NewDriverForm } from '@/components/features/driver/new-driver/NewDriverForm';
 
 export default function CreateNewOrder() {
-  return <NewDriver />;
+  return <NewDriverForm />;
 }

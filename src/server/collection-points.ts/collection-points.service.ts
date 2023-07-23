@@ -26,7 +26,7 @@ export const updateCollectionPoint = async (
   input: CreateCollectionPointParams
 ): Promise<CollectionPoint> => {
   try {
-    return prisma.collectionPoint.update({
+    return await prisma.collectionPoint.update({
       where: {
         id,
       },
@@ -36,7 +36,7 @@ export const updateCollectionPoint = async (
       select: collectionPointSelectedFields,
     });
   } catch (error) {
-    logger.error({ error, stack: 'createCollectionPoint' });
+    logger.error({ error, stack: 'updateCollectionPoint' });
     throw error;
   }
 };

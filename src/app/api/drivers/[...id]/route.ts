@@ -3,17 +3,13 @@ import { NextResponse } from 'next/server';
 import { logger } from '@/lib/logger';
 import { RouteContext } from '@/lib/server/api/types';
 
-import {
-  getCollectionPoint,
-  removeCollectionPoint,
-  updateCollectionPoint,
-} from '@/server/collection-points.ts/collection-points.service';
+import { getDriver, removeDriver, updateDriver } from '@/server/drivers/drivers.service';
 
 export async function GET(req: Request, context: RouteContext) {
   const id = context.params?.id?.[0] || '';
 
   try {
-    const res = await getCollectionPoint(id);
+    const res = await getDriver(id);
 
     return NextResponse.json(res);
   } catch (error) {
@@ -33,7 +29,7 @@ export async function PATCH(req: Request, context: RouteContext) {
 
   try {
     const body = await req.json();
-    const res = await updateCollectionPoint(id, body);
+    const res = await updateDriver(id, body);
 
     return NextResponse.json(res);
   } catch (error) {
@@ -52,7 +48,7 @@ export async function DELETE(req: Request, context: RouteContext) {
   const id = context.params?.id?.[0] || '';
 
   try {
-    const res = await removeCollectionPoint(id);
+    const res = await removeDriver(id);
 
     return NextResponse.json(res);
   } catch (error) {
