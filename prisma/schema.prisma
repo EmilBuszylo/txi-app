@@ -18,6 +18,8 @@ model CollectionPoint {
   fullAddress String
   url         String
 
+  orders Order[]
+
   deletedAt DateTime?
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
@@ -25,10 +27,52 @@ model CollectionPoint {
   @@map("collection_points")
 }
 
+model Client {
+  id   String @id @default(uuid())
+  name String @unique
+
+  orders Order[]
+
+  deletedAt DateTime?
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
+  @@unique([id, name])
+  @@map("clients")
+}
+
 model Order {
-  id         String  @id @default(uuid())
-  internalId String  @unique
-  externalId String? @unique
+  id            String      @id @default(uuid())
+  internalId    String      @unique
+  externalId    String?     @unique
+  status        OrderStatus
+  clientInvoice String?     @unique
+  driverInvoice String?     @unique
+  comment       String?
+  locationFrom  Json
+  locationVia   Json?
+  locationTo    Json
+
+  withPassenger Boolean?
+  estimatedKm   Int? // calculated distance between start point and end point with via points
+  actualKm      Int? // final distance
+  wayBackKm     Int? // calculated distance from end point to start point without via points
+  kmForDriver   Int? // modified by user
+  hasHighway   Boolean?
+
+  client     Client? @relation(fields: [clientId, clientName], references: [id, name])
+  clientId   String?
+  clientName String?
+
+  driver   User?   @relation("driverOrders", fields: [driverId], references: [id])
+  driverId String?
+
+  lastEditor   User?   @relation("lastEditorOrders", fields: [lastEditorId], references: [id])
+  lastEditorId String?
+
+  collectionPoint   CollectionPoint? @relation(fields: [collectionPointId], references: [id])
+  collectionPointId String?
+  //operator - todo waiting for list from Ewelina
 
   deletedAt DateTime?
   createdAt DateTime  @default(now())
@@ -47,6 +91,7 @@ model DriverDetails {
 
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   userId String @unique
+  //operator - todo waiting for list from Ewelina
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -66,6 +111,9 @@ model User {
   role          UserRole
   driverDetails DriverDetails?
 
+  driverOrders     Order[] @relation("driverOrders")
+  lastEditedOrders Order[] @relation("lastEditorOrders")
+
   deletedAt DateTime?
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
@@ -78,4 +126,12 @@ enum UserRole {
   CLIENT
   DISPATCHER
   DRIVER
+}
+
+enum OrderStatus {
+  NEW
+  STARTED
+  IN_PROGRESS
+  COMPLETED
+  CANCELLED
 }

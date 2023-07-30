@@ -6,11 +6,12 @@ import fetchJson from '@/lib/helpers/fetch-json';
 import { SITE_URL } from '@/constant/env';
 import { ApiRoutes } from '@/constant/routes';
 import { ValidationPattern } from '@/constant/validation';
+import { GetClientsResponse } from '@/server/clients/clients.service';
 import { GetCollectionPointsResponse } from '@/server/collection-points.ts/collection-points.service';
 import { CollectionPoint } from '@/server/collection-points.ts/collectionPoint';
 import { Driver } from '@/server/drivers/driver';
 import { GetDriversResponse } from '@/server/drivers/drivers.service';
-import { Order } from '@/server/orders/order';
+import { locationFromSchema, locationToSchema, Order } from '@/server/orders/order';
 import { GetOrdersResponse } from '@/server/orders/orders.service';
 
 function getNextApiPath(path: string): string {
@@ -36,15 +37,31 @@ export function getOrders({ page, limit }: GetOrdersParams) {
 }
 
 export const createOrderSchema = z.object({
+  locationFrom: locationFromSchema,
+  locationTo: locationToSchema,
+  locationVia: z.array(locationFromSchema.optional()),
   externalId: z.string().optional(),
+  comment: z.string().optional(),
+  // withPassenger: z.boolean().optional(),
+  estimatedKm: z.number().optional(),
+  withHighway: z.boolean().optional(),
+  clientId: z.string().optional(),
+  driverId: z.string().optional(),
+  collectionPointId: z.string().optional(),
+  collectionPointsGeoCodes: z
+    .object({
+      lng: z.string(),
+      lat: z.string(),
+    })
+    .optional(),
 });
 
 export type CreateOrderParams = z.infer<typeof createOrderSchema>;
 
-export function createOrder({ externalId }: CreateOrderParams) {
+export function createOrder(params: CreateOrderParams) {
   return fetchJson<Order>(getNextApiPath(ApiRoutes.ORDERS), {
     method: 'POST',
-    body: JSON.stringify({ externalId }),
+    body: JSON.stringify(params),
   });
 }
 
@@ -200,4 +217,25 @@ export function removeCollectionPoint(id: string) {
   return fetchJson<CollectionPoint>(getNextApiPath(`${ApiRoutes.COLLECTION_POINTS}/${id}`), {
     method: 'DELETE',
   });
+}
+
+// Clients endpoints
+
+export interface GetClientsParams {
+  page: number;
+  limit: number;
+}
+
+export function getClients({ page, limit }: GetClientsParams) {
+  const queryParams = new URLSearchParams({
+    page: page.toString(),
+    limit: limit.toString(),
+  });
+
+  return fetchJson<GetClientsResponse>(
+    getNextApiPath(ApiRoutes.CLIENTS + '?' + queryParams.toString()),
+    {
+      method: 'GET',
+    }
+  );
 }

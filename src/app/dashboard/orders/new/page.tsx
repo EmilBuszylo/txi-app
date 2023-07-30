@@ -1,5 +1,5 @@
-import { NewOrder } from '@/components/features/order/NewOrder/NewOrder';
+import { NewOrderForm } from '@/components/features/order/new-order/NewOrderForm';
 
 export default function CreateNewOrder() {
-  return <NewOrder />;
+  return <NewOrderForm />;
 }

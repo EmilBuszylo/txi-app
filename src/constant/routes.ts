@@ -9,4 +9,5 @@ export enum ApiRoutes {
   ORDERS = '/orders',
   DRIVERS = '/drivers',
   COLLECTION_POINTS = '/collection-points',
+  CLIENTS = '/clients',
 }

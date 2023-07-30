@@ -1,0 +1,5 @@
+-- AlterTable
+ALTER TABLE "orders" ALTER COLUMN "withHighway" DROP NOT NULL,
+ALTER COLUMN "withHighway" DROP DEFAULT,
+ALTER COLUMN "withPassenger" DROP NOT NULL,
+ALTER COLUMN "withPassenger" DROP DEFAULT;

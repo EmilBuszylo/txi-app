@@ -73,7 +73,7 @@ export const updateDriver = async (id: string, input: UpdateDriverParams): Promi
         lastName: input.lastName,
         phone: phone?.number.e164,
         driverDetails: {
-          create: {
+          update: {
             ...input.car,
           },
         },
@@ -104,11 +104,13 @@ export const getDrivers = async (input: GetOrdersParams): Promise<GetDriversResp
     prisma.user.count({
       where: {
         role: 'DRIVER',
+        deletedAt: null,
       },
     }),
     prisma.user.findMany({
       where: {
         role: 'DRIVER',
+        deletedAt: null,
       },
       skip,
       take,

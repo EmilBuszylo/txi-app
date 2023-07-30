@@ -2,6 +2,7 @@ import { Prisma } from '@prisma/client';
 import { hash } from 'bcrypt';
 import { NextResponse } from 'next/server';
 
+import { calculateDistance } from '@/lib/helpers/distance';
 import { logger } from '@/lib/logger';
 import { prisma } from '@/lib/prisma';
 
@@ -49,4 +50,22 @@ export async function POST(req: Request) {
       { status: 500 }
     );
   }
+}
+
+//  TODO to test remove after
+export async function GET() {
+  const res = await calculateDistance(
+    [
+      { lng: '21.044144', lat: '52.3012019' },
+      { lat: '52.2985431', lng: '21.0489681' },
+      { lat: '52.39912289999999', lng: '16.9292881' },
+      { lat: '52.265005', lng: '21.0400045' },
+    ],
+    true
+  );
+
+  // eslint-disable-next-line no-console
+  console.log(res);
+
+  return 'ok';
 }

@@ -136,7 +136,6 @@ export function NewDriverForm() {
               );
             }}
           />
-
           <FormField
             control={form.control}
             name='car.carModel'
