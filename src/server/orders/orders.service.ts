@@ -9,7 +9,7 @@ import { CreateOrderParams, GetOrdersParams } from '@/lib/server/api/endpoints';
 
 import { locationFromSchema, locationToSchema, Order } from '@/server/orders/order';
 
-export const createOrder = async (input: CreateOrderParams): Promise<Order> => {
+export const createOrder = async (input: CreateOrderParams) => {
   const {
     clientId,
     driverId,
@@ -48,7 +48,7 @@ export const createOrder = async (input: CreateOrderParams): Promise<Order> => {
       },
     ]);
 
-    const estimatedKm = collectionPointsGeoCodes
+    const estimatedDistance = collectionPointsGeoCodes
       ? await calculateDistance(
           [
             collectionPointsGeoCodes,
@@ -87,10 +87,10 @@ export const createOrder = async (input: CreateOrderParams): Promise<Order> => {
         ...rest,
         locationFrom,
         locationTo,
-        estimatedKm: estimatedKm?.distance,
-        hasHighway: estimatedKm?.hasHighway,
+        estimatedDistance: estimatedDistance?.distance,
+        hasHighway: estimatedDistance?.hasHighway,
         locationVia: locationVia as unknown as string,
-        wayBackKm: wayBackDistance?.distance,
+        wayBackDistance: wayBackDistance?.distance,
         status: 'NEW',
         client: {
           connect: {
@@ -122,7 +122,7 @@ export interface GetOrdersResponse {
   results: Order[];
 }
 
-export const getOrders = async (input: GetOrdersParams): Promise<GetOrdersResponse> => {
+export const getOrders = async (input: GetOrdersParams) => {
   const { limit, page: currentPage } = input;
 
   const page = currentPage - 1;
@@ -130,17 +130,18 @@ export const getOrders = async (input: GetOrdersParams): Promise<GetOrdersRespon
   const skip = page * take;
 
   const data = await prisma.$transaction([
-    prisma.order.count(),
+    prisma.order.count({
+      where: {
+        deletedAt: null,
+      },
+    }),
     prisma.order.findMany({
+      where: {
+        deletedAt: null,
+      },
       skip,
       take,
-      select: {
-        id: true,
-        internalId: true,
-        externalId: true,
-        updatedAt: true,
-        createdAt: true,
-      },
+      select: orderSelectedFields,
       orderBy: {
         createdAt: 'asc',
       },
@@ -155,4 +156,34 @@ export const getOrders = async (input: GetOrdersParams): Promise<GetOrdersRespon
 
 const _createInternalId = (count: number) => {
   return `txi/${format(new Date(), 'yyyy/LL/d')}${count}`;
+};
+
+const orderSelectedFields = {
+  id: true,
+  internalId: true,
+  externalId: true,
+  locationFrom: true,
+  locationVia: true,
+  locationTo: true,
+  estimatedDistance: true,
+  wayBackDistance: true,
+  hasHighway: true,
+  status: true,
+  clientName: true,
+  comment: true,
+  driver: {
+    select: {
+      firstName: true,
+      lastName: true,
+      phone: true,
+    },
+  },
+  collectionPoint: {
+    select: {
+      name: true,
+      fullAddress: true,
+    },
+  },
+  updatedAt: true,
+  createdAt: true,
 };

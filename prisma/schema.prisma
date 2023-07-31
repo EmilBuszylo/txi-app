@@ -54,15 +54,16 @@ model Order {
   locationTo    Json
 
   withPassenger Boolean?
-  estimatedKm   Int? // calculated distance between start point and end point with via points
+  estimatedDistance   Int? // calculated distance between start point and end point with via points
+  wayBackDistance     Int? // calculated distance from end point to start point without via points
   actualKm      Int? // final distance
-  wayBackKm     Int? // calculated distance from end point to start point without via points
   kmForDriver   Int? // modified by user
+
   hasHighway   Boolean?
 
-  client     Client? @relation(fields: [clientId, clientName], references: [id, name])
-  clientId   String?
-  clientName String?
+  client     Client @relation(fields: [clientId, clientName], references: [id, name])
+  clientId   String
+  clientName String
 
   driver   User?   @relation("driverOrders", fields: [driverId], references: [id])
   driverId String?

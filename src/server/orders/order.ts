@@ -4,6 +4,24 @@ export interface Order {
   id: string;
   internalId: string;
   externalId: string | null;
+  locationFrom: z.infer<typeof locationFromSchema>;
+  locationVia?: z.infer<typeof locationFromSchema>[];
+  locationTo: z.infer<typeof locationToSchema>;
+  estimatedDistance?: number;
+  wayBackDistance?: number;
+  hasHighway?: boolean;
+  status: OrderStatus;
+  clientName: string;
+  driver?: {
+    firstName: string;
+    lastName: string;
+    phone?: string;
+  };
+  collectionPoint?: {
+    fullAddress: string;
+    name: string;
+  };
+  comment?: string;
   updatedAt: Date;
   createdAt: Date;
 }
