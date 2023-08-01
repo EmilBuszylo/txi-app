@@ -13,7 +13,9 @@ export function RelativeDate({ date, tooltipPrefix }: RelativeDateProps) {
   return (
     <TooltipProvider>
       <Tooltip>
-        <TooltipTrigger>{relativeDate(date)}</TooltipTrigger>
+        <TooltipTrigger>
+          <span className='text-ellipsis text-left line-clamp-1'>{relativeDate(date)}</span>
+        </TooltipTrigger>
         <TooltipContent>
           {tooltipPrefix}
           {formatDate(date, dateFormats.dateWithTimeFull)}

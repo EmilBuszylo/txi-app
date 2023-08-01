@@ -11,6 +11,8 @@ export interface Order {
   wayBackDistance?: number;
   hasHighway?: boolean;
   status: OrderStatus;
+  driverInvoice?: string;
+  clientInvoice?: string;
   clientName: string;
   driver?: {
     firstName: string;
