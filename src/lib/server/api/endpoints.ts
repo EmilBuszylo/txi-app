@@ -11,7 +11,13 @@ import { GetCollectionPointsResponse } from '@/server/collection-points.ts/colle
 import { CollectionPoint } from '@/server/collection-points.ts/collectionPoint';
 import { Driver } from '@/server/drivers/driver';
 import { GetDriversResponse } from '@/server/drivers/drivers.service';
-import { locationFromSchema, locationToSchema, Order } from '@/server/orders/order';
+import {
+  LocationFrom,
+  locationFromSchema,
+  LocationTo,
+  locationToSchema,
+  Order,
+} from '@/server/orders/order';
 import { GetOrdersResponse } from '@/server/orders/orders.service';
 
 function getNextApiPath(path: string): string {
@@ -64,6 +70,56 @@ export function createOrder(params: CreateOrderParams) {
     body: JSON.stringify(params),
   });
 }
+
+export interface UpdateOrderParams extends Pick<CreateOrderParams, 'collectionPointsGeoCodes'> {
+  driverId?: string;
+  collectionPointId?: string;
+  isPayed?: boolean;
+  comment?: string;
+  clientInvoice?: string;
+  driverInvoice?: string;
+  withPassenger?: boolean;
+  actualKm?: number;
+  kmForDriver?: number;
+  locationFrom: LocationFrom;
+  locationVia?: LocationFrom[];
+  locationTo: LocationTo;
+}
+
+export function updateOrder(id: string, params: UpdateOrderParams) {
+  return fetchJson<Driver>(getNextApiPath(`${ApiRoutes.ORDERS}/${id}`), {
+    method: 'PUT',
+    body: JSON.stringify(params),
+  });
+}
+
+export interface UpdateManyOrdersParams
+  extends Omit<
+    UpdateOrderParams,
+    'locationFrom' | 'locationTo' | 'locationVia' | 'collectionPointId' | 'collectionPointsGeoCodes'
+  > {
+  ids: string[];
+}
+export function updateManyOrders(params: UpdateManyOrdersParams) {
+  return fetchJson<Order[]>(getNextApiPath(`${ApiRoutes.ORDERS}`), {
+    method: 'PATCH',
+    body: JSON.stringify(params),
+  });
+}
+
+export function getOrder(id: string) {
+  return fetchJson<Order>(getNextApiPath(`${ApiRoutes.ORDERS}/${id}`), {
+    method: 'GET',
+  });
+}
+
+export function removeOrder(id: string) {
+  return fetchJson<Order>(getNextApiPath(`${ApiRoutes.ORDERS}/${id}`), {
+    method: 'DELETE',
+  });
+}
+
+// Driver endpoints start
 
 export interface GetDriversParams {
   page: number;

@@ -35,6 +35,7 @@ export default function CollectionPoints() {
         <p>Oh no, there was an error</p>
       ) : (
         <DataTable
+          params={{ limit: DEFAULT_LIMIT, page }}
           pagination={
             <Pagination
               currentPage={page}

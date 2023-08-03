@@ -10,6 +10,7 @@ import {
 import { ReactElement, useState } from 'react';
 
 import { PaginationMeta } from '@/lib/pagination';
+import { GetOrdersParams } from '@/lib/server/api/endpoints';
 
 import { ColumnVisibilityDropdown } from '@/components/ui/data-table/ColumnVisibilityDropdown';
 import {
@@ -21,6 +22,14 @@ import {
   TableRow,
 } from '@/components/ui/table';
 
+export interface ActionsBarProps<TData> {
+  clearSelection: () => void;
+  selectedAmount: number;
+  allItemsAmount: number;
+  params: GetOrdersParams;
+  selectedItems: TData;
+}
+
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
@@ -28,7 +37,9 @@ interface DataTableProps<TData, TValue> {
   isLoading?: boolean;
   isFetching?: boolean;
   isSuccess: boolean;
+  params: GetOrdersParams;
   pagination?: ReactElement;
+  ActionsBar?: React.FC<ActionsBarProps<TData[]>>;
 }
 
 export function DataTable<TData, TValue>({
@@ -39,6 +50,8 @@ export function DataTable<TData, TValue>({
   isLoading,
   isFetching,
   pagination,
+  params,
+  ActionsBar,
 }: DataTableProps<TData, TValue>) {
   const [rowSelection, setRowSelection] = useState({});
 
@@ -61,6 +74,15 @@ export function DataTable<TData, TValue>({
   return (
     <div>
       <div className='flex w-full justify-between pb-4 pt-2'>
+        {ActionsBar ? (
+          <ActionsBar
+            clearSelection={() => setRowSelection({})}
+            selectedItems={table.getFilteredSelectedRowModel().rows.map((row) => row.original)}
+            selectedAmount={table.getFilteredSelectedRowModel().rows.length}
+            params={params}
+            allItemsAmount={table.getFilteredRowModel().rows.length}
+          />
+        ) : null}
         <ColumnVisibilityDropdown table={table} />
       </div>
       <div className='rounded-md border'>

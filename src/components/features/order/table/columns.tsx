@@ -126,7 +126,7 @@ export const columns: ColumnDef<Order>[] = [
     ),
   },
   {
-    accessorKey: 'locationFrom',
+    accessorKey: 'locationFrom.date',
     header: 'Data realizacji',
     cell: ({ row }) => (
       <CellWithTooltip

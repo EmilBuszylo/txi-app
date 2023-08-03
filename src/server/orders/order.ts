@@ -4,9 +4,9 @@ export interface Order {
   id: string;
   internalId: string;
   externalId: string | null;
-  locationFrom: z.infer<typeof locationFromSchema>;
-  locationVia?: z.infer<typeof locationFromSchema>[];
-  locationTo: z.infer<typeof locationToSchema>;
+  locationFrom: LocationFrom;
+  locationVia?: LocationFrom;
+  locationTo: LocationTo;
   estimatedDistance?: number;
   wayBackDistance?: number;
   hasHighway?: boolean;
@@ -62,3 +62,6 @@ export const locationToSchema = z.object({
     url: z.string(),
   }),
 });
+
+export type LocationFrom = z.infer<typeof locationFromSchema>;
+export type LocationTo = z.infer<typeof locationToSchema>;

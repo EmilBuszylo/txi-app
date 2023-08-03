@@ -46,8 +46,9 @@ model Order {
   internalId    String      @unique
   externalId    String?     @unique
   status        OrderStatus
-  clientInvoice String?     @unique
-  driverInvoice String?     @unique
+  clientInvoice String?
+  driverInvoice String?
+  isPayed       Boolean @default(false)
   comment       String?
   locationFrom  Json
   locationVia   Json?

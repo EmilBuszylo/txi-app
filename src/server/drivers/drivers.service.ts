@@ -46,7 +46,7 @@ export const createDriver = async (input: CreateDriverParams): Promise<Driver> =
       select: driverSelectedFields,
     });
   } catch (error) {
-    logger.error(error);
+    logger.error({ error, stack: 'createDriver' });
     throw error;
   }
 };
@@ -125,17 +125,17 @@ export const getDrivers = async (input: GetOrdersParams): Promise<GetDriversResp
 };
 
 export const getDriver = async (id: string): Promise<Driver> => {
-  const collectionPoint = await prisma.user.findUnique({
+  const driver = await prisma.user.findUnique({
     where: { id, role: 'DRIVER' },
     select: driverSelectedFields,
   });
 
-  if (!collectionPoint) {
+  if (!driver) {
     logger.error({ error: 'not found', stack: 'getDriver' });
     throw new Error('not found');
   }
 
-  return collectionPoint;
+  return driver;
 };
 
 //  soft delete

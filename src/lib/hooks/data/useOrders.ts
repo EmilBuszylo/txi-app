@@ -6,7 +6,7 @@ import { ApiRoutes } from '@/constant/routes';
 
 export function useOrders(params: GetOrdersParams) {
   return useQuery({
-    queryKey: [ApiRoutes.ORDERS, params.page],
+    queryKey: [ApiRoutes.ORDERS, params.page, params.limit],
     queryFn: () => getOrders(params),
     keepPreviousData: true,
   });
