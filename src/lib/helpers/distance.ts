@@ -8,10 +8,12 @@ export const convertedWaypointSchema = z.object({
   lng: z.number(),
 });
 
-export type Waypoint = {
-  lat: string;
-  lng: string;
-};
+export type Waypoint =
+  | {
+      lat: string;
+      lng: string;
+    }
+  | undefined;
 
 export const calculateDistance = async (
   waypoints: Waypoint[],
@@ -22,14 +24,19 @@ export const calculateDistance = async (
 }> => {
   const client = new Client({});
 
-  const convertedWaypoints = waypoints.map((point) => ({
-    lat: Number(point.lat),
-    lng: Number(point.lng),
-  }));
+  const convertedWaypoints = waypoints.flatMap((point) =>
+    point?.lat && point?.lng
+      ? [
+          {
+            lat: Number(point?.lat),
+            lng: Number(point?.lng),
+          },
+        ]
+      : []
+  );
 
   try {
     await z.array(convertedWaypointSchema).parseAsync(convertedWaypoints);
-    // Wywołanie Directions API
     const response = await client.directions({
       params: {
         origin: convertedWaypoints[0], // Start point

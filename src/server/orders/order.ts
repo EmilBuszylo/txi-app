@@ -3,9 +3,9 @@ import { z } from 'zod';
 export interface Order {
   id: string;
   internalId: string;
-  externalId: string | null;
+  externalId: string;
   locationFrom: LocationFrom;
-  locationVia?: LocationFrom;
+  locationVia?: LocationFrom[];
   locationTo: LocationTo;
   estimatedDistance?: number;
   wayBackDistance?: number;
@@ -13,15 +13,22 @@ export interface Order {
   status: OrderStatus;
   driverInvoice?: string;
   clientInvoice?: string;
+  isPayed?: boolean;
+  kmForDriver?: number;
+  clientId: string;
   clientName: string;
   driver?: {
+    id: string;
     firstName: string;
     lastName: string;
     phone?: string;
   };
   collectionPoint?: {
+    id: string;
     fullAddress: string;
     name: string;
+    lat: string;
+    lng: string;
   };
   comment?: string;
   updatedAt: Date;

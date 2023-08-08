@@ -140,6 +140,7 @@ export const updateManyOrders = async (input: UpdateManyOrdersParams) => {
 
 export const updateOrder = async (id: string, input: UpdateOrderParams) => {
   const {
+    clientId,
     driverId,
     collectionPointId,
     collectionPointsGeoCodes,
@@ -197,6 +198,13 @@ export const updateOrder = async (id: string, input: UpdateOrderParams) => {
           ? {
               connect: {
                 id: driverId,
+              },
+            }
+          : undefined,
+        client: clientId
+          ? {
+              connect: {
+                id: clientId,
               },
             }
           : undefined,
@@ -352,12 +360,15 @@ const orderSelectedFields = {
   isPayed: true,
   estimatedDistance: true,
   wayBackDistance: true,
+  kmForDriver: true,
   hasHighway: true,
   status: true,
+  clientId: true,
   clientName: true,
   comment: true,
   driver: {
     select: {
+      id: true,
       firstName: true,
       lastName: true,
       phone: true,
@@ -365,8 +376,11 @@ const orderSelectedFields = {
   },
   collectionPoint: {
     select: {
+      id: true,
       name: true,
       fullAddress: true,
+      lng: true,
+      lat: true,
     },
   },
   updatedAt: true,

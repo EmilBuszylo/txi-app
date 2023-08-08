@@ -46,11 +46,9 @@ export const createOrderSchema = z.object({
   locationFrom: locationFromSchema,
   locationTo: locationToSchema,
   locationVia: z.array(locationFromSchema.optional()),
-  externalId: z.string().optional(),
+  externalId: z.string(),
   comment: z.string().optional(),
   // withPassenger: z.boolean().optional(),
-  estimatedKm: z.number().optional(),
-  withHighway: z.boolean().optional(),
   clientId: z.string().optional(),
   driverId: z.string().optional(),
   collectionPointId: z.string().optional(),
@@ -71,8 +69,32 @@ export function createOrder(params: CreateOrderParams) {
   });
 }
 
+export const updateOrderSchema = z.object({
+  clientId: z.string(),
+  locationFrom: locationFromSchema,
+  locationTo: locationToSchema,
+  locationVia: z.array(locationFromSchema.optional()),
+  externalId: z.string(),
+  comment: z.string().optional(),
+  clientInvoice: z.string().optional(),
+  driverInvoice: z.string().optional(),
+  isPayed: z.boolean().optional(),
+  kmForDriver: z.number().optional(),
+  actualKm: z.number().optional(),
+  // withPassenger: z.boolean().optional(),
+  driverId: z.string().optional(),
+  collectionPointId: z.string().optional(),
+  collectionPointsGeoCodes: z
+    .object({
+      lng: z.string(),
+      lat: z.string(),
+    })
+    .optional(),
+});
+
 export interface UpdateOrderParams extends Pick<CreateOrderParams, 'collectionPointsGeoCodes'> {
   driverId?: string;
+  clientId: string;
   collectionPointId?: string;
   isPayed?: boolean;
   comment?: string;
@@ -81,6 +103,7 @@ export interface UpdateOrderParams extends Pick<CreateOrderParams, 'collectionPo
   withPassenger?: boolean;
   actualKm?: number;
   kmForDriver?: number;
+  externalId: string;
   locationFrom: LocationFrom;
   locationVia?: LocationFrom[];
   locationTo: LocationTo;
@@ -96,7 +119,13 @@ export function updateOrder(id: string, params: UpdateOrderParams) {
 export interface UpdateManyOrdersParams
   extends Omit<
     UpdateOrderParams,
-    'locationFrom' | 'locationTo' | 'locationVia' | 'collectionPointId' | 'collectionPointsGeoCodes'
+    | 'locationFrom'
+    | 'locationTo'
+    | 'locationVia'
+    | 'collectionPointId'
+    | 'collectionPointsGeoCodes'
+    | 'clientId'
+    | 'externalId'
   > {
   ids: string[];
 }

@@ -6,7 +6,7 @@ import { Accordion } from '@/components/ui/accordion';
 import { Button } from '@/components/ui/button';
 import { FormDescription } from '@/components/ui/form';
 
-export const LocationViaSection = () => {
+export const LocationViaSection = ({ defaultMapUrls }: { defaultMapUrls?: string[] }) => {
   const { control } = useFormContext();
 
   const { fields, append } = useFieldArray({
@@ -29,7 +29,13 @@ export const LocationViaSection = () => {
       </FormDescription>
       <Accordion type='multiple'>
         {fields.map((field, i) => {
-          return <LocationViaSectionItem key={field.id} index={i} />;
+          return (
+            <LocationViaSectionItem
+              key={field.id}
+              index={i}
+              defaultMapUrl={defaultMapUrls ? defaultMapUrls[i] : undefined}
+            />
+          );
         })}
       </Accordion>
     </div>

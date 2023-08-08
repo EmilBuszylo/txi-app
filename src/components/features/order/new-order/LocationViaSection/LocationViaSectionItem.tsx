@@ -15,9 +15,10 @@ import { Input } from '@/components/ui/input';
 
 interface LocationViaSectionItemProps {
   index: number;
+  defaultMapUrl?: string;
 }
 
-export const LocationViaSectionItem = ({ index }: LocationViaSectionItemProps) => {
+export const LocationViaSectionItem = ({ index, defaultMapUrl }: LocationViaSectionItemProps) => {
   const { control, setValue, watch } = useFormContext();
   const fieldName = `locationVia[${index}]`;
 
@@ -60,6 +61,7 @@ export const LocationViaSectionItem = ({ index }: LocationViaSectionItemProps) =
             name={`${fieldName}.address.fullAddress`}
             onSelect={onAddressFromSelect}
             description='Celem wyszukania lokalizacji wprowadź kompleny adres lub jego część np. miasto lub ulicę.'
+            defaultMapUrl={defaultMapUrl}
           />
           <FormField
             control={control}

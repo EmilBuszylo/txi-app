@@ -18,9 +18,8 @@ import {
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 
-export const LocationFromSection = () => {
+export const LocationFromSection = ({ defaultMapUrl }: { defaultMapUrl?: string }) => {
   const { control, setValue } = useFormContext();
-
   const onAddressFromSelect = (details: PlaceDetails) => {
     const city =
       details.address_components?.find((place) => place.types.includes('locality'))?.short_name ||
@@ -38,7 +37,7 @@ export const LocationFromSection = () => {
         <AccordionItem value='locationFrom'>
           <AccordionTrigger className='text-lg font-medium'>Lokalizacja Z</AccordionTrigger>
           <AccordionContent>
-            <div className='flex flex-col gap-4'>
+            <div className='flex flex-col gap-4 px-2'>
               <FormField
                 control={control}
                 name='locationFrom.date'
@@ -55,6 +54,7 @@ export const LocationFromSection = () => {
                 name='locationFrom.address.fullAddress'
                 onSelect={onAddressFromSelect}
                 description='Celem wyszukania lokalizacji wprowadź kompleny adres lub jego część np. miasto lub ulicę.'
+                defaultMapUrl={defaultMapUrl}
               />
               <FormField
                 control={control}

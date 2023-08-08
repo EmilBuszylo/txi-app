@@ -2,6 +2,7 @@
 
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useRouter } from 'next/navigation';
+import React from 'react';
 import { useForm } from 'react-hook-form';
 
 import { useClients } from '@/lib/hooks/data/useClients';
@@ -10,9 +11,11 @@ import { useCreateOrder } from '@/lib/hooks/data/useCreateOrder';
 import { useDrivers } from '@/lib/hooks/data/useDrivers';
 import { CreateOrderParams, createOrderSchema } from '@/lib/server/api/endpoints';
 
+import { EstimatedKmField } from '@/components/features/order/new-order/EstimatedKmField';
 import { LocationFromSection } from '@/components/features/order/new-order/LocationFromSection';
 import { LocationToSection } from '@/components/features/order/new-order/LocationToSection';
 import { LocationViaSection } from '@/components/features/order/new-order/LocationViaSection/LocationViaSection';
+import { ShowRouteButton } from '@/components/features/order/new-order/ShowRouteButton';
 import { Button } from '@/components/ui/button';
 import { Combobox } from '@/components/ui/combobox';
 import {
@@ -123,6 +126,8 @@ export function NewOrderForm() {
           <LocationFromSection />
           <LocationViaSection />
           <LocationToSection />
+          <ShowRouteButton />
+          <EstimatedKmField />
           <Combobox
             label='Kierowca'
             name='driverId'

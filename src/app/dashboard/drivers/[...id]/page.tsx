@@ -7,7 +7,7 @@ import { useDriver } from '@/lib/hooks/data/useDriver';
 
 import { DetailForm } from '@/components/features/driver/driver-details/DetailsForm';
 
-export default function CollectionPointDetails() {
+export default function DriverDetails() {
   const params = useParams();
   const { data, error, isLoading } = useDriver(params?.id);
 

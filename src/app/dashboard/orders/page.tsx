@@ -1,11 +1,11 @@
 'use client';
 
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 
 import { useOrders } from '@/lib/hooks/data/useOrders';
 
 import { ActionsBar } from '@/components/features/order/table/ActionsBar/ActionsBar';
-import { columns } from '@/components/features/order/table/columns';
+import { getColumns } from '@/components/features/order/table/columns';
 import { DataTable } from '@/components/ui/data-table/data-table';
 import Pagination from '@/components/ui/pgination';
 import { TooltipProvider } from '@/components/ui/tooltip';
@@ -25,6 +25,10 @@ export default function Orders() {
     page,
     limit: DEFAULT_LIMIT,
   });
+
+  const columns = useMemo(() => {
+    return getColumns({ page, limit: DEFAULT_LIMIT });
+  }, [page]);
 
   return (
     <div>

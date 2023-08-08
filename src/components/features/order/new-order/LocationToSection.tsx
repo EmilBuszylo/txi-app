@@ -10,7 +10,7 @@ import {
 import { FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 
-export const LocationToSection = () => {
+export const LocationToSection = ({ defaultMapUrl }: { defaultMapUrl?: string }) => {
   const { control, setValue } = useFormContext();
 
   const onAddressFromSelect = (details: PlaceDetails) => {
@@ -47,6 +47,7 @@ export const LocationToSection = () => {
                 name='locationTo.address.fullAddress'
                 onSelect={onAddressFromSelect}
                 description='Celem wyszukania lokalizacji wprowadź kompleny adres lub jego część np. miasto lub ulicę.'
+                defaultMapUrl={defaultMapUrl}
               />
             </div>
           </AccordionContent>

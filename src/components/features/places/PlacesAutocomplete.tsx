@@ -137,12 +137,8 @@ export const PlacesAutocomplete = ({
         )}
       />
       {mapUrl && (
-        <StyledLink
-          href={mapUrl}
-          target='_blank'
-          className='mt-1 flex items-center gap-x-1 lg:absolute lg:right-0 lg:top-[40%] lg:mt-0 lg:translate-x-[110%]'
-        >
-          Podgląd trasy <MapPinIcon className='h-6 w-6' />
+        <StyledLink href={mapUrl} target='_blank' className='mt-1 flex items-center gap-x-1'>
+          Zobacz punkt <MapPinIcon className='h-6 w-6' />
         </StyledLink>
       )}
     </div>
