@@ -207,23 +207,6 @@ export function OrderDetailsForm({
           />
           <FormField
             control={form.control}
-            name='estimatedKm'
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Km szacowane</FormLabel>
-                <FormControl>
-                  <Input {...field} type='number' />
-                </FormControl>
-                <FormDescription>
-                  W powyższym polu wyświetlana jest wyliczona na podstawie zaznaczonych punktów
-                  szacowana długość trasy podana w Km.
-                </FormDescription>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
             name='actualKm'
             render={({ field }) => (
               <FormItem>

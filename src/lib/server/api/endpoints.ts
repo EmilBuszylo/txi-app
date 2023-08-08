@@ -148,6 +148,40 @@ export function removeOrder(id: string) {
   });
 }
 
+export const calculateLocationsDistanceSchema = z.object({
+  locationFrom: locationFromSchema.optional(),
+  locationTo: locationToSchema.optional(),
+  locationVia: z.array(locationFromSchema.optional()).optional(),
+  collectionPointsGeoCodes: z
+    .object({
+      lng: z.string(),
+      lat: z.string(),
+    })
+    .optional(),
+});
+export type CalculateLocationsDistanceParams = z.infer<typeof calculateLocationsDistanceSchema>;
+
+export interface CalculateLocationsDistanceResponse {
+  estimatedDistance?: {
+    distance: number;
+    hasHighway?: boolean;
+  };
+  wayBackDistance?: {
+    distance: number;
+    hasHighway?: boolean;
+  };
+}
+
+export function calculateLocationsDistance(params: CalculateLocationsDistanceParams) {
+  return fetchJson<CalculateLocationsDistanceResponse>(
+    getNextApiPath(`${ApiRoutes.ORDERS}/distance`),
+    {
+      method: 'POST',
+      body: JSON.stringify(params),
+    }
+  );
+}
+
 // Driver endpoints start
 
 export interface GetDriversParams {

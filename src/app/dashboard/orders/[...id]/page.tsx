@@ -7,6 +7,8 @@ import { useOrder } from '@/lib/hooks/data/useOrder';
 
 import { OrderDetailsForm } from '@/components/features/order/order-details/DetailsForm';
 
+import { CollectionPoint } from '@/server/collection-points.ts/collectionPoint';
+
 export default function OrderDetails() {
   const params = useParams();
   const { data, error, isLoading } = useOrder(params?.id);
@@ -35,6 +37,7 @@ export default function OrderDetails() {
         estimatedKm: (data.estimatedDistance || 0) + (data.wayBackDistance || 0),
       }}
       orderId={params?.id}
+      collectionPoint={data.collectionPoint as CollectionPoint}
     />
   );
 }

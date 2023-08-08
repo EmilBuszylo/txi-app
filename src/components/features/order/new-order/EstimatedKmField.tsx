@@ -1,7 +1,8 @@
-import React, { useMemo } from 'react';
+import React, { useCallback, useMemo } from 'react';
 import { useFormContext } from 'react-hook-form';
 
-import { calculateDistance, Waypoint } from '@/lib/helpers/distance';
+import { Waypoint } from '@/lib/helpers/distance';
+import { useCalculateLocationsDistance } from '@/lib/hooks/data/useCalculateLocationsDistance';
 
 import { OrderDetailsFormDefaultValues } from '@/components/features/order/order-details/DetailsForm';
 import { Button } from '@/components/ui/button';
@@ -21,11 +22,13 @@ interface EstimatedKmFieldProps {
 }
 
 export const EstimatedKmField = ({ defaultCollectionPointsGeo }: EstimatedKmFieldProps) => {
-  const { control, watch, getValues } = useFormContext<OrderDetailsFormDefaultValues>();
+  const { control, watch, getValues, setValue } = useFormContext<OrderDetailsFormDefaultValues>();
 
   const locationFrom = watch('locationFrom');
   const locationTo = watch('locationTo');
   const locationVia = watch('locationVia');
+
+  const { mutateAsync: calculateDistance, isLoading } = useCalculateLocationsDistance();
 
   const isCalculationEnabled = useMemo(() => {
     const viaPoints = locationVia && locationVia.length > 0 ? [...locationVia] : [];
@@ -33,27 +36,34 @@ export const EstimatedKmField = ({ defaultCollectionPointsGeo }: EstimatedKmFiel
 
     return locationsData.filter((l) => l.address?.lng && l.address?.lng).length >= 2;
   }, [locationFrom, locationTo, locationVia]);
-  const calculateEstimatedKm = async () => {
+
+  const calculateEstimatedKm = useCallback(async () => {
     const data = getValues();
     const collectionPointsGeoData = data?.collectionPointsGeoCodes
+      ? data?.collectionPointsGeoCodes
+      : defaultCollectionPointsGeo
       ? defaultCollectionPointsGeo
-        ? defaultCollectionPointsGeo
-        : undefined
       : undefined;
 
     const viaPoints = locationVia && locationVia.length > 0 ? [...locationVia] : [];
 
-    const waypoints = [locationFrom, locationTo, ...viaPoints].map((l) => ({
-      lat: l.address.lat,
-      lng: l.address.lng,
-    }));
+    const { estimatedDistance, wayBackDistance } = await calculateDistance({
+      locationFrom,
+      locationTo,
+      locationVia: viaPoints,
+      collectionPointsGeoCodes: collectionPointsGeoData,
+    });
 
-    return await calculateDistance([
-      ...waypoints,
-      collectionPointsGeoData ? collectionPointsGeoData : undefined,
-    ]);
-    // eslint-disable-next-line no-console
-  };
+    setValue('estimatedKm', (estimatedDistance?.distance || 0) + (wayBackDistance?.distance || 0));
+  }, [
+    calculateDistance,
+    defaultCollectionPointsGeo,
+    getValues,
+    locationFrom,
+    locationTo,
+    locationVia,
+    setValue,
+  ]);
 
   return (
     <FormField
@@ -74,6 +84,7 @@ export const EstimatedKmField = ({ defaultCollectionPointsGeo }: EstimatedKmFiel
                         disabled={!isCalculationEnabled}
                         onClick={calculateEstimatedKm}
                         className='w-fit whitespace-nowrap'
+                        isLoading={isLoading}
                       >
                         Przelicz długość trasy
                       </Button>

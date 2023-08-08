@@ -6,6 +6,8 @@ import { logger } from '@/lib/logger';
 import { getPaginationMeta, PaginationMeta } from '@/lib/pagination';
 import { prisma } from '@/lib/prisma';
 import {
+  CalculateLocationsDistanceParams,
+  CalculateLocationsDistanceResponse,
   CreateOrderParams,
   GetOrdersParams,
   UpdateManyOrdersParams,
@@ -19,6 +21,44 @@ import {
   locationToSchema,
   Order,
 } from '@/server/orders/order';
+
+export const calculateLocationsDistance = async (
+  input: CalculateLocationsDistanceParams
+): Promise<CalculateLocationsDistanceResponse> => {
+  const viaWaypoints = input.locationVia
+    ?.map((loc) => ({
+      lat: loc?.address.lat,
+      lng: loc?.address.lng,
+    }))
+    .filter((loc) => typeof loc.lat === 'string' && typeof loc.lng === 'string');
+
+  //  todo temp log, remember to remove it later
+  // eslint-disable-next-line no-console
+  console.log([
+    input.collectionPointsGeoCodes,
+    {
+      lat: input.locationFrom?.address.lat,
+      lng: input.locationFrom?.address.lng,
+    },
+    ...(viaWaypoints as Waypoint[]),
+    {
+      lat: input.locationTo?.address.lat,
+      lng: input.locationTo?.address.lng,
+    },
+  ]);
+
+  const { estimatedDistance, wayBackDistance } = await _calculateOrderDistancesData({
+    collectionPointsGeoCodes: input.collectionPointsGeoCodes,
+    locationFrom: input.locationFrom,
+    locationTo: input.locationTo,
+    viaWaypoints: viaWaypoints as Waypoint[],
+  });
+
+  return {
+    estimatedDistance,
+    wayBackDistance,
+  };
+};
 
 export const createOrder = async (input: CreateOrderParams) => {
   const {
@@ -43,21 +83,6 @@ export const createOrder = async (input: CreateOrderParams) => {
         lng: loc?.address.lng,
       }))
       .filter((loc) => typeof loc.lat === 'string' && typeof loc.lng === 'string');
-
-    //  todo temp log, remember to remove it later
-    // eslint-disable-next-line no-console
-    console.log([
-      collectionPointsGeoCodes,
-      {
-        lat: locationFrom.address.lat,
-        lng: locationFrom.address.lng,
-      },
-      ...(viaWaypoints as Waypoint[]),
-      {
-        lat: locationTo.address.lat,
-        lng: locationTo.address.lng,
-      },
-    ]);
 
     const { estimatedDistance, wayBackDistance } = await _calculateOrderDistancesData({
       collectionPointsGeoCodes,
@@ -309,34 +334,43 @@ const _calculateOrderDistancesData = async ({
   viaWaypoints,
   locationTo,
 }: CalculateOrderDistancesDataProps) => {
-  if (!collectionPointsGeoCodes || !locationFrom || !locationTo)
-    return {
-      estimatedDistance: undefined,
-      wayBackDistance: undefined,
-    };
+  // if (!collectionPointsGeoCodes || !locationFrom || !locationTo)
+  //   return {
+  //     estimatedDistance: undefined,
+  //     wayBackDistance: undefined,
+  //   };
+
+  const withLocationFrom = locationFrom?.address.lng && locationFrom.address.lat;
+  const withLocationTo = locationTo?.address.lng && locationTo.address.lat;
 
   const estimatedDistance = await calculateDistance(
     [
       collectionPointsGeoCodes,
-      {
-        lat: locationFrom.address.lat,
-        lng: locationFrom.address.lng,
-      },
+      withLocationFrom
+        ? {
+            lat: locationFrom.address.lat,
+            lng: locationFrom.address.lng,
+          }
+        : undefined,
       ...(viaWaypoints as Waypoint[]),
-      {
-        lat: locationTo.address.lat,
-        lng: locationTo.address.lng,
-      },
+      withLocationTo
+        ? {
+            lat: locationTo.address.lat,
+            lng: locationTo.address.lng,
+          }
+        : undefined,
     ],
     true
   );
 
   const wayBackDistance = await calculateDistance(
     [
-      {
-        lat: locationTo.address.lat,
-        lng: locationTo.address.lng,
-      },
+      withLocationTo
+        ? {
+            lat: locationTo.address.lat,
+            lng: locationTo.address.lng,
+          }
+        : undefined,
       collectionPointsGeoCodes,
     ],
     false
