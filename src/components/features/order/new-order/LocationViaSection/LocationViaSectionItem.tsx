@@ -1,3 +1,4 @@
+import { Trash2 } from 'lucide-react';
 import { useFormContext } from 'react-hook-form';
 import { PatternFormat } from 'react-number-format';
 
@@ -16,9 +17,14 @@ import { Input } from '@/components/ui/input';
 interface LocationViaSectionItemProps {
   index: number;
   defaultMapUrl?: string;
+  removeItem: () => void;
 }
 
-export const LocationViaSectionItem = ({ index, defaultMapUrl }: LocationViaSectionItemProps) => {
+export const LocationViaSectionItem = ({
+  index,
+  defaultMapUrl,
+  removeItem,
+}: LocationViaSectionItemProps) => {
   const { control, setValue, watch } = useFormContext();
   const fieldName = `locationVia[${index}]`;
 
@@ -38,9 +44,14 @@ export const LocationViaSectionItem = ({ index, defaultMapUrl }: LocationViaSect
   return (
     <AccordionItem value={fieldName} key={fieldName} className='mb-4 rounded bg-gray-100 p-2'>
       <AccordionTrigger className='text-md px-2 font-medium'>
-        <div className='flex items-center truncate'>
-          <span className='mr-1 font-semibold'>{index + 1}.</span>
-          {watchFullAddressValue || 'Nowy adres pośredni'}
+        <div className='flex w-full items-center justify-between'>
+          <div className='flex items-center truncate'>
+            <span className='mr-1 font-semibold'>{index + 1}.</span>
+            {watchFullAddressValue || 'Nowy adres pośredni'}
+          </div>
+          <span onClick={removeItem} tabIndex={0} className='group mr-2 px-1'>
+            <Trash2 className='h-6 w-6 text-destructive transition group-hover:text-destructive/50 group-focus:text-opacity-40' />
+          </span>
         </div>
       </AccordionTrigger>
       <AccordionContent>

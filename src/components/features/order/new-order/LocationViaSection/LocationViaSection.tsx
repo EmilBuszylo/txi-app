@@ -9,7 +9,7 @@ import { FormDescription } from '@/components/ui/form';
 export const LocationViaSection = ({ defaultMapUrls }: { defaultMapUrls?: string[] }) => {
   const { control } = useFormContext();
 
-  const { fields, append } = useFieldArray({
+  const { fields, append, remove } = useFieldArray({
     name: 'locationVia',
     control: control,
   });
@@ -34,6 +34,7 @@ export const LocationViaSection = ({ defaultMapUrls }: { defaultMapUrls?: string
               key={field.id}
               index={i}
               defaultMapUrl={defaultMapUrls ? defaultMapUrls[i] : undefined}
+              removeItem={() => remove(i)}
             />
           );
         })}
