@@ -17,6 +17,7 @@ import {
   LocationTo,
   locationToSchema,
   Order,
+  OrderStatus,
 } from '@/server/orders/order';
 import { GetOrdersResponse } from '@/server/orders/orders.service';
 
@@ -27,12 +28,42 @@ function getNextApiPath(path: string): string {
 export interface GetOrdersParams {
   page: number;
   limit: number;
+  status?: OrderStatus;
+  clientName?: string;
+  driverId?: string;
+  hasActualKm?: boolean;
+  clientInvoice?: string;
+  createdAtFrom?: string;
+  createdAtTo?: string;
+  column?: string;
+  sort?: 'asc' | 'desc';
 }
 
-export function getOrders({ page, limit }: GetOrdersParams) {
+export function getOrders({
+  page,
+  limit,
+  status,
+  clientName,
+  driverId,
+  hasActualKm,
+  clientInvoice,
+  createdAtFrom,
+  createdAtTo,
+  column,
+  sort,
+}: GetOrdersParams) {
   const queryParams = new URLSearchParams({
     page: page.toString(),
     limit: limit.toString(),
+    status: status || '',
+    clientName: clientName || '',
+    driverId: driverId || '',
+    hasActualKm: hasActualKm ? hasActualKm.toString() : '',
+    clientInvoice: clientInvoice || '',
+    createdAtFrom: createdAtFrom || '',
+    createdAtTo: createdAtTo || '',
+    column: column || '',
+    sort: sort || '',
   });
   return fetchJson<GetOrdersResponse>(
     getNextApiPath(ApiRoutes.ORDERS + '?' + queryParams.toString()),
@@ -75,10 +106,10 @@ export const updateOrderSchema = z.object({
   locationTo: locationToSchema,
   locationVia: z.array(locationFromSchema.optional()),
   externalId: z.string(),
-  comment: z.string().optional(),
-  clientInvoice: z.string().optional(),
-  driverInvoice: z.string().optional(),
-  isPayed: z.boolean().optional(),
+  comment: z.string().optional().nullable(),
+  clientInvoice: z.string().optional().nullable(),
+  driverInvoice: z.string().optional().nullable(),
+  isPayed: z.boolean().optional().nullable(),
   kmForDriver: z.number().optional(),
   actualKm: z.number().optional(),
   // withPassenger: z.boolean().optional(),
@@ -98,6 +129,7 @@ export interface UpdateOrderParams extends Pick<CreateOrderParams, 'collectionPo
   collectionPointId?: string;
   isPayed?: boolean;
   comment?: string;
+  status?: OrderStatus;
   clientInvoice?: string;
   driverInvoice?: string;
   withPassenger?: boolean;

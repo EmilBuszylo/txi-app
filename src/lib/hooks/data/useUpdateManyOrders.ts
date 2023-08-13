@@ -14,7 +14,7 @@ import { GetOrdersResponse } from '@/server/orders/orders.service';
 
 export function useUpdateManyOrders(orderIds: string[], ordersListPrams: GetOrdersParams) {
   const queryClient = useQueryClient();
-  const ordersQueryKey = [ApiRoutes.ORDERS, ordersListPrams.page, ordersListPrams.limit];
+  const ordersQueryKey = [ApiRoutes.ORDERS, ordersListPrams];
 
   const updateOrdersQueryData = (data: Order[]) => {
     queryClient.setQueryData<GetOrdersResponse>(ordersQueryKey, (old) => {

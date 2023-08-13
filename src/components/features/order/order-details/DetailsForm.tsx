@@ -69,7 +69,6 @@ export function OrderDetailsForm({
   }, [defaultValues, form]);
 
   const onSubmit = async (values: UpdateOrderParams) => {
-    // eslint-disable-next-line no-console
     const collectionPointsGeoData = collectionPoints?.results.find(
       (res) => values.collectionPointId === res.id
     );

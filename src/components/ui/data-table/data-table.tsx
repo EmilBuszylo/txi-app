@@ -40,6 +40,7 @@ interface DataTableProps<TData, TValue> {
   params: GetOrdersParams;
   pagination?: ReactElement;
   ActionsBar?: React.FC<ActionsBarProps<TData[]>>;
+  toolbar?: ReactElement;
 }
 
 export function DataTable<TData, TValue>({
@@ -52,9 +53,9 @@ export function DataTable<TData, TValue>({
   pagination,
   params,
   ActionsBar,
+  toolbar,
 }: DataTableProps<TData, TValue>) {
   const [rowSelection, setRowSelection] = useState({});
-
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
 
   const table = useReactTable({
@@ -73,8 +74,18 @@ export function DataTable<TData, TValue>({
 
   return (
     <div>
+      {ActionsBar && toolbar ? (
+        <ActionsBar
+          clearSelection={() => setRowSelection({})}
+          selectedItems={table.getFilteredSelectedRowModel().rows.map((row) => row.original)}
+          selectedAmount={table.getFilteredSelectedRowModel().rows.length}
+          params={params}
+          allItemsAmount={table.getFilteredRowModel().rows.length}
+        />
+      ) : null}
       <div className='flex w-full justify-between pb-4 pt-2'>
-        {ActionsBar ? (
+        {toolbar}
+        {ActionsBar && !toolbar ? (
           <ActionsBar
             clearSelection={() => setRowSelection({})}
             selectedItems={table.getFilteredSelectedRowModel().rows.map((row) => row.original)}

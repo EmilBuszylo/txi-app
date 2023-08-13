@@ -29,8 +29,8 @@ const initialFormData = {
   phone: '',
   password: '',
   car: {
-    carModel: '',
     carBrand: '',
+    carModel: '',
     carColor: '',
     carRegistrationNumber: '',
   },
@@ -138,12 +138,12 @@ export function NewDriverForm() {
           />
           <FormField
             control={form.control}
-            name='car.carModel'
+            name='car.carBrand'
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Model</FormLabel>
+                <FormLabel>Marka</FormLabel>
                 <FormControl>
-                  <Input placeholder='Model samochodu' {...field} />
+                  <Input placeholder='Marka samochodu' {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -151,12 +151,12 @@ export function NewDriverForm() {
           />
           <FormField
             control={form.control}
-            name='car.carBrand'
+            name='car.carModel'
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Marka</FormLabel>
+                <FormLabel>Model</FormLabel>
                 <FormControl>
-                  <Input placeholder='Marka samochodu' {...field} />
+                  <Input placeholder='Model samochodu' {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>

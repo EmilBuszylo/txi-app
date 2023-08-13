@@ -1,36 +1,57 @@
 import { useCallback, useMemo } from 'react';
-import { useFormContext } from 'react-hook-form';
+import { useFormContext, useWatch } from 'react-hook-form';
 
 import { generateRouteMapLink } from '@/lib/helpers/generateRouteMapLink';
+import { useCollectionPoints } from '@/lib/hooks/data/useCollectionPoints';
 
+import { allowCalculation } from '@/components/features/order/new-order/utils';
 import { OrderDetailsFormDefaultValues } from '@/components/features/order/order-details/DetailsForm';
 import { Button } from '@/components/ui/button';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 
 export const ShowRouteButton = () => {
   const { watch } = useFormContext<OrderDetailsFormDefaultValues>();
+  const { data: collectionPoints } = useCollectionPoints({ page: 1, limit: 1000 });
 
   const locationFrom = watch('locationFrom');
   const locationTo = watch('locationTo');
-  const locationVia = watch('locationVia');
+  const locationVia = useWatch({ name: 'locationVia' });
+  const collectionPointWatch = useWatch({ name: 'collectionPointId' });
 
-  const isCalculationEnabled = useMemo(() => {
-    const viaPoints = locationVia && locationVia.length > 0 ? [...locationVia] : [];
-    const locationsData = [locationFrom, ...viaPoints, locationTo];
+  const collectionPointGeoData = useMemo(() => {
+    const collectionPoint = collectionPoints?.results.find(
+      (res) => collectionPointWatch === res.id
+    );
 
-    return locationsData.filter((l) => l.address?.lng && l.address?.lng).length >= 2;
-  }, [locationFrom, locationTo, locationVia]);
+    return collectionPoint
+      ? {
+          address: {
+            lat: collectionPoint.lat,
+            lng: collectionPoint.lng,
+          },
+        }
+      : undefined;
+  }, [collectionPointWatch, collectionPoints?.results]);
+
+  const isCalculationEnabled = allowCalculation({ locationFrom, locationVia, locationTo });
 
   const generateRouteMapLinkHandler = useCallback(() => {
     const viaPoints = locationVia && locationVia.length > 0 ? [...locationVia] : [];
-
-    const locationPoints = [locationFrom, ...viaPoints, locationTo].map((point) => ({
-      lat: point.address.lat,
-      lng: point.address.lng,
-    }));
+    const locationPoints = [
+      collectionPointGeoData,
+      locationFrom,
+      ...viaPoints,
+      locationTo,
+      collectionPointGeoData,
+    ]
+      .filter((loc) => loc)
+      .map((point) => ({
+        lat: point.address.lat,
+        lng: point.address.lng,
+      }));
 
     window.open(generateRouteMapLink(locationPoints), '_blank');
-  }, [locationFrom, locationTo, locationVia]);
+  }, [collectionPointGeoData, locationFrom, locationTo, locationVia]);
 
   return (
     <TooltipProvider>

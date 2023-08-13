@@ -1,9 +1,10 @@
-import React, { useCallback, useMemo } from 'react';
+import React, { useCallback } from 'react';
 import { useFormContext } from 'react-hook-form';
 
 import { Waypoint } from '@/lib/helpers/distance';
 import { useCalculateLocationsDistance } from '@/lib/hooks/data/useCalculateLocationsDistance';
 
+import { allowCalculation } from '@/components/features/order/new-order/utils';
 import { OrderDetailsFormDefaultValues } from '@/components/features/order/order-details/DetailsForm';
 import { Button } from '@/components/ui/button';
 import {
@@ -30,12 +31,7 @@ export const EstimatedKmField = ({ defaultCollectionPointsGeo }: EstimatedKmFiel
 
   const { mutateAsync: calculateDistance, isLoading } = useCalculateLocationsDistance();
 
-  const isCalculationEnabled = useMemo(() => {
-    const viaPoints = locationVia && locationVia.length > 0 ? [...locationVia] : [];
-    const locationsData = [locationFrom, ...viaPoints, locationTo];
-
-    return locationsData.filter((l) => l.address?.lng && l.address?.lng).length >= 2;
-  }, [locationFrom, locationTo, locationVia]);
+  const isCalculationEnabled = allowCalculation({ locationFrom, locationVia, locationTo });
 
   const calculateEstimatedKm = useCallback(async () => {
     const data = getValues();
@@ -46,15 +42,22 @@ export const EstimatedKmField = ({ defaultCollectionPointsGeo }: EstimatedKmFiel
       : undefined;
 
     const viaPoints = locationVia && locationVia.length > 0 ? [...locationVia] : [];
+    try {
+      const { estimatedDistance, wayBackDistance } = await calculateDistance({
+        locationFrom,
+        locationTo,
+        locationVia: viaPoints,
+        collectionPointsGeoCodes: collectionPointsGeoData,
+      });
 
-    const { estimatedDistance, wayBackDistance } = await calculateDistance({
-      locationFrom,
-      locationTo,
-      locationVia: viaPoints,
-      collectionPointsGeoCodes: collectionPointsGeoData,
-    });
-
-    setValue('estimatedKm', (estimatedDistance?.distance || 0) + (wayBackDistance?.distance || 0));
+      setValue(
+        'estimatedKm',
+        (estimatedDistance?.distance || 0) + (wayBackDistance?.distance || 0)
+      );
+    } catch {
+      //  TODO add toast with error
+      // console.log(error);
+    }
   }, [
     calculateDistance,
     defaultCollectionPointsGeo,

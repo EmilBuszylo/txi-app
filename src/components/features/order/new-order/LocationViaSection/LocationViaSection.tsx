@@ -15,18 +15,15 @@ export const LocationViaSection = ({ defaultMapUrls }: { defaultMapUrls?: string
   });
 
   return (
-    <div className='flex flex-col gap-y-4 py-4'>
-      <div className='flex w-full items-center justify-between'>
+    <div className='flex flex-col bg-gray-50 px-4 py-4'>
+      <div className='mb-4 flex w-full items-center justify-between'>
         <div className='text-lg font-medium'>Adres pośredni</div>
         <Button className='w-full md:w-auto' type='button' variant='outline' onClick={append}>
           Dodaj adres pośredni
           <PlusCircle className='ml-2 h-6 w-6 text-accent-foreground' />
         </Button>
       </div>
-      <FormDescription>
-        Możesz dodać adresy pośrednie pomiędzy lokalizacją Z oraz lokalizacją Do. Aby to zrobić
-        naciśnij przycisk &quot;Dodaj adres pośredni&quot; umiejscowiony po prawej z prawej strony.
-      </FormDescription>
+
       <Accordion type='multiple'>
         {fields.map((field, i) => {
           return (
@@ -39,6 +36,10 @@ export const LocationViaSection = ({ defaultMapUrls }: { defaultMapUrls?: string
           );
         })}
       </Accordion>
+      <FormDescription>
+        Możesz dodać adresy pośrednie pomiędzy lokalizacją Z oraz lokalizacją Do. Aby to zrobić
+        naciśnij przycisk &quot;Dodaj adres pośredni&quot; umiejscowiony po prawej z prawej strony.
+      </FormDescription>
     </div>
   );
 };

@@ -1,11 +1,16 @@
 import { Row } from '@tanstack/table-core';
 
+import { statusLabelPerStatus } from '@/components/features/order/utils';
 import { Badge } from '@/components/ui/badge';
 
 import { Order, OrderStatus } from '@/server/orders/order';
 
 export const StatusCell = ({ row }: { row: Row<Order> }) => {
-  return <Badge className={statusOnBadgeStyle[row.original.status]}>{row.original.status}</Badge>;
+  return (
+    <Badge className={statusOnBadgeStyle[row.original.status]}>
+      {statusLabelPerStatus[row.original.status]}
+    </Badge>
+  );
 };
 
 const statusOnBadgeStyle: Record<OrderStatus, string> = {

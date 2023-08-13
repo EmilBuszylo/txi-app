@@ -1,5 +1,7 @@
 import { useFormContext } from 'react-hook-form';
 
+import { useLocationsDateInfo } from '@/components/features/order/new-order/hooks/useLocationsDateInfo';
+import { OrderDetailsFormDefaultValues } from '@/components/features/order/order-details/DetailsForm';
 import { PlaceDetails, PlacesAutocomplete } from '@/components/features/places/PlacesAutocomplete';
 import {
   Accordion,
@@ -9,10 +11,11 @@ import {
 } from '@/components/ui/accordion';
 import { FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 
 export const LocationToSection = ({ defaultMapUrl }: { defaultMapUrl?: string }) => {
-  const { control, setValue } = useFormContext();
-
+  const { control, setValue } = useFormContext<OrderDetailsFormDefaultValues>();
+  const locationDateInfo = useLocationsDateInfo({ isClient: true });
   const onAddressFromSelect = (details: PlaceDetails) => {
     const city =
       details.address_components?.find((place) => place.types.includes('locality'))?.short_name ||
@@ -24,9 +27,16 @@ export const LocationToSection = ({ defaultMapUrl }: { defaultMapUrl?: string })
     setValue('locationTo.address.lng', details.geometry.location.lng().toString());
   };
 
+  const isDateInputDisabled = locationDateInfo.isFromDateFilled || locationDateInfo.isViaDateFilled;
+
   return (
     <div>
-      <Accordion type='single' collapsible defaultValue='locationTo' className='pb-6 pt-2'>
+      <Accordion
+        type='single'
+        collapsible
+        defaultValue='locationTo'
+        className='bg-gray-50 px-4 py-2'
+      >
         <AccordionItem value='locationTo'>
           <AccordionTrigger className='text-lg font-medium'>Lokalizacja Do</AccordionTrigger>
           <AccordionContent>
@@ -34,14 +44,40 @@ export const LocationToSection = ({ defaultMapUrl }: { defaultMapUrl?: string })
               <FormField
                 control={control}
                 name='locationTo.date'
-                render={({ field }) => (
-                  <FormItem className='flex flex-col'>
-                    <FormLabel>Data/godzina</FormLabel>
-                    <Input placeholder='Wprowadź imię pasażera' {...field} type='datetime-local' />
-                    <FormMessage />
-                    <FormDescription>Podaj datę i godzinę rozpoczęcia przejazdu</FormDescription>
-                  </FormItem>
-                )}
+                render={({ field }) =>
+                  isDateInputDisabled ? (
+                    <TooltipProvider>
+                      <Tooltip>
+                        <TooltipTrigger disabled={true}>
+                          <FormItem className='flex flex-col items-start'>
+                            <FormLabel>Data/godzina</FormLabel>
+                            <Input
+                              {...field}
+                              type='datetime-local'
+                              disabled={isDateInputDisabled}
+                            />
+                            <FormMessage />
+                            <FormDescription>
+                              Podaj datę i godzinę zakończenia przejazdu
+                            </FormDescription>
+                          </FormItem>
+                        </TooltipTrigger>
+                        <TooltipContent>
+                          {isDateInputDisabled
+                            ? 'Tylko jedno wypełnione pole z datą jest dozwolone.'
+                            : null}
+                        </TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
+                  ) : (
+                    <FormItem className='flex flex-col items-start'>
+                      <FormLabel>Data/godzina</FormLabel>
+                      <Input {...field} type='datetime-local' disabled={isDateInputDisabled} />
+                      <FormMessage />
+                      <FormDescription> Podaj datę i godzinę zakończenia przejazdu</FormDescription>
+                    </FormItem>
+                  )
+                }
               />
               <PlacesAutocomplete
                 name='locationTo.address.fullAddress'
@@ -52,11 +88,11 @@ export const LocationToSection = ({ defaultMapUrl }: { defaultMapUrl?: string })
             </div>
           </AccordionContent>
         </AccordionItem>
+        <FormDescription className='mt-2'>
+          Wprowadź informacje niezbędne do określenia punktu końcowego zlecenia. Aby to zrobić
+          naciśnij napis &quot;Lokalizacja Do&quot;
+        </FormDescription>
       </Accordion>
-      <FormDescription>
-        Wprowadź informacje niezbędne do określenia punktu końcowego zlecenia. Aby to zrobić
-        naciśnij napis &quot;Lokalizacja Do&quot;
-      </FormDescription>
     </div>
   );
 };

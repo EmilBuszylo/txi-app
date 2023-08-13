@@ -10,6 +10,8 @@ import { ActionCell } from '@/components/features/order/table/cells/ActionCell';
 import { StatusCell } from '@/components/features/order/table/cells/StatusCell';
 import { Checkbox } from '@/components/ui/checkbox';
 import { ColumnWithTooltip } from '@/components/ui/data-table/columns/ColumnWithTooltip';
+import { DataTableColumnSortHeader } from '@/components/ui/data-table/DataTableColumnHeader/DataTableColumnSortHeader';
+import { SortStateProps } from '@/components/ui/data-table/hooks/useSorts';
 import { RelativeDate } from '@/components/ui/date/RelativeDate';
 import { StyledLink } from '@/components/ui/link/StyledLink';
 
@@ -17,7 +19,16 @@ import { dateFormats } from '@/constant/date-formats';
 import { Routes } from '@/constant/routes';
 import { Order } from '@/server/orders/order';
 
-export const getColumns = (params: GetOrdersParams): ColumnDef<Order>[] => {
+interface GetColumnsProps {
+  params: GetOrdersParams;
+  updateSort?: (name: string, sort: 'asc' | 'desc') => void;
+  sortParameters?: SortStateProps;
+}
+export const getColumns = ({
+  params,
+  sortParameters,
+  updateSort,
+}: GetColumnsProps): ColumnDef<Order>[] => {
   return [
     {
       id: 'select',
@@ -164,15 +175,24 @@ export const getColumns = (params: GetOrdersParams): ColumnDef<Order>[] => {
       cell: ({ row }) => (
         <ColumnWithTooltip
           trigger={
-            <span className='text-ellipsis text-left line-clamp-1'>{row.original.comment}</span>
+            <span className='max-w-[250px] text-ellipsis text-left line-clamp-1'>
+              {row.original.comment}
+            </span>
           }
-          content={<div>{row.original.comment}</div>}
+          content={<div className='max-w-[350px]'>{row.original.comment}</div>}
         />
       ),
     },
     {
       accessorKey: 'createdAt',
-      header: 'Dodano',
+      header: ({ column }) => (
+        <DataTableColumnSortHeader
+          column={column}
+          title='Dodano'
+          sortParameters={sortParameters}
+          updateSort={(sort) => updateSort?.('createdAt', sort)}
+        />
+      ),
       cell: ({ row }) => <RelativeDate date={row.original.createdAt} />,
     },
     {

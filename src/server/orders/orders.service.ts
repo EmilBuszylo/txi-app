@@ -1,4 +1,4 @@
-import { format } from 'date-fns';
+import { addDays, format, subMinutes } from 'date-fns';
 import { z } from 'zod';
 
 import { calculateDistance, Waypoint } from '@/lib/helpers/distance';
@@ -20,6 +20,7 @@ import {
   LocationTo,
   locationToSchema,
   Order,
+  OrderStatus,
 } from '@/server/orders/order';
 
 export const calculateLocationsDistance = async (
@@ -91,7 +92,20 @@ export const createOrder = async (input: CreateOrderParams) => {
       viaWaypoints: viaWaypoints as Waypoint[],
     });
 
-    const count = await prisma.order.count();
+    const currentDayDate = new Date().setHours(0, 0, 0, 0);
+
+    const nextDay = subMinutes(addDays(currentDayDate, 1), 1);
+
+    const count = await prisma.order.count({
+      where: {
+        createdAt: {
+          gte: new Date(currentDayDate),
+          lte: nextDay,
+        },
+      },
+    });
+
+    const status = input.driverId ? OrderStatus.STARTED : OrderStatus.NEW;
 
     return prisma.order.create({
       data: {
@@ -103,7 +117,7 @@ export const createOrder = async (input: CreateOrderParams) => {
         hasHighway: estimatedDistance?.hasHighway,
         locationVia: locationVia as unknown as string,
         wayBackDistance: wayBackDistance?.distance,
-        status: 'NEW',
+        status,
         client: {
           connect: {
             id: clientId,
@@ -263,34 +277,71 @@ export interface GetOrdersResponse {
 }
 
 export const getOrders = async (input: GetOrdersParams) => {
-  const { limit, page: currentPage } = input;
+  const {
+    limit,
+    page: currentPage,
+    status,
+    clientName,
+    driverId,
+    hasActualKm,
+    clientInvoice,
+    createdAtFrom,
+    column,
+    sort,
+    createdAtTo,
+  } = input;
 
   const page = currentPage - 1;
   const take = limit || PAGINATION_LIMIT;
   const skip = page * take;
 
+  const filters = _getWhereFilterByParams({
+    status,
+    clientName,
+    driverId,
+    hasActualKm,
+    clientInvoice,
+    createdAtFrom,
+    createdAtTo,
+  });
+
   const data = await prisma.$transaction([
     prisma.order.count({
       where: {
         deletedAt: null,
+        ...filters,
+        collectionPoint: {},
       },
     }),
     prisma.order.findMany({
       where: {
         deletedAt: null,
+        ...filters,
       },
       skip,
       take,
       select: orderSelectedFields,
-      orderBy: {
-        createdAt: 'asc',
-      },
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
+      orderBy: _getSortByParams({ column, sort }),
     }),
   ]);
 
   return {
     meta: getPaginationMeta({ currentPage, itemCount: data[0], take }),
     results: data[1],
+  };
+};
+
+const _getSortByParams = ({ column, sort }: Pick<GetOrdersParams, 'column' | 'sort'>) => {
+  if (!column || !sort) {
+    return {
+      createdAt: 'desc',
+    };
+  }
+
+  return {
+    [column]: sort,
   };
 };
 
@@ -325,7 +376,7 @@ export const removeOrder = async (id: string) => {
 };
 
 const _createInternalId = (count: number) => {
-  return `txi/${format(new Date(), 'yyyy/LL/d')}${count}`;
+  return `txi/${format(new Date(), 'yyyyLLd')}/${count}`;
 };
 
 const _calculateOrderDistancesData = async ({
@@ -334,12 +385,6 @@ const _calculateOrderDistancesData = async ({
   viaWaypoints,
   locationTo,
 }: CalculateOrderDistancesDataProps) => {
-  // if (!collectionPointsGeoCodes || !locationFrom || !locationTo)
-  //   return {
-  //     estimatedDistance: undefined,
-  //     wayBackDistance: undefined,
-  //   };
-
   const withLocationFrom = locationFrom?.address.lng && locationFrom.address.lat;
   const withLocationTo = locationTo?.address.lng && locationTo.address.lat;
 
@@ -379,6 +424,47 @@ const _calculateOrderDistancesData = async ({
   return {
     estimatedDistance,
     wayBackDistance,
+  };
+};
+
+type ParamsFilter = {
+  [key: string]: string | boolean | undefined;
+};
+
+type WhereFilter = {
+  // @-ts-ignore
+  [key: string]: unknown;
+};
+
+const _getWhereFilterByParams = ({
+  status,
+  clientName,
+  driverId,
+  hasActualKm,
+  clientInvoice,
+  createdAtFrom,
+  createdAtTo,
+}: ParamsFilter): WhereFilter => {
+  return {
+    ...(status && { status }),
+    ...(clientName && { clientName }),
+    ...(driverId && { driverId }),
+    ...(typeof hasActualKm === 'boolean' && {
+      actualKm: hasActualKm
+        ? {
+            not: null,
+          }
+        : null,
+    }),
+    ...(clientInvoice && { clientInvoice: { contains: clientInvoice, mode: 'insensitive' } }),
+    ...(createdAtFrom || createdAtTo
+      ? {
+          createdAt: {
+            lte: createdAtTo ? new Date(createdAtTo as string).toISOString() : undefined, // "2022-01-30T00:00:00.000Z"
+            gte: createdAtFrom ? new Date(createdAtFrom as string).toISOString() : undefined, // "2022-01-15T00:00:00.000Z"
+          },
+        }
+      : undefined),
   };
 };
 

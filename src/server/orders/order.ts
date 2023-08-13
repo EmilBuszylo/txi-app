@@ -55,7 +55,7 @@ export const locationFromSchema = z.object({
   passenger: z.object({
     firstName: z.string(),
     lastName: z.string(),
-    phone: z.string(),
+    phone: z.string().min(1, 'Numer kontaktowy jest wymagany'),
   }),
 });
 

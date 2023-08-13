@@ -1,9 +1,11 @@
 import { Trash2 } from 'lucide-react';
-import { useFormContext } from 'react-hook-form';
+import { useFieldArray, useFormContext } from 'react-hook-form';
 import { PatternFormat } from 'react-number-format';
 
+import { useLocationsDateInfo } from '@/components/features/order/new-order/hooks/useLocationsDateInfo';
 import { PlaceDetails, PlacesAutocomplete } from '@/components/features/places/PlacesAutocomplete';
 import { AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
+import { Button } from '@/components/ui/button';
 import {
   FormControl,
   FormDescription,
@@ -13,6 +15,7 @@ import {
   FormMessage,
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 
 interface LocationViaSectionItemProps {
   index: number;
@@ -25,8 +28,13 @@ export const LocationViaSectionItem = ({
   defaultMapUrl,
   removeItem,
 }: LocationViaSectionItemProps) => {
-  const { control, setValue, watch } = useFormContext();
+  const { control, watch } = useFormContext();
+  const { update } = useFieldArray({
+    name: 'locationVia',
+    control: control,
+  });
   const fieldName = `locationVia[${index}]`;
+  const locationDateInfo = useLocationsDateInfo({ isClient: true });
 
   const watchFullAddressValue = watch(`${fieldName}.address.fullAddress`);
 
@@ -35,38 +43,75 @@ export const LocationViaSectionItem = ({
       details.address_components?.find((place) => place.types.includes('locality'))?.short_name ||
       '';
 
-    setValue(`${fieldName}.address.city`, city);
-    setValue(`${fieldName}.address.url`, details.url);
-    setValue(`${fieldName}.address.lat`, details.geometry.location.lat().toString());
-    setValue(`${fieldName}.address.lng`, details.geometry.location.lng().toString());
+    update(index, {
+      address: {
+        city,
+        url: details.url,
+        lat: details.geometry.location.lat().toString(),
+        lng: details.geometry.location.lng().toString(),
+      },
+    });
   };
 
+  const isDateInputDisabled = locationDateInfo.isToDateFilled || locationDateInfo.isFromDateFilled;
+
   return (
-    <AccordionItem value={fieldName} key={fieldName} className='mb-4 rounded bg-gray-100 p-2'>
-      <AccordionTrigger className='text-md px-2 font-medium'>
-        <div className='flex w-full items-center justify-between'>
-          <div className='flex items-center truncate'>
-            <span className='mr-1 font-semibold'>{index + 1}.</span>
-            {watchFullAddressValue || 'Nowy adres pośredni'}
+    <AccordionItem value={fieldName} key={fieldName} className='mb-4 w-full rounded bg-white p-2'>
+      <div className='flex w-full items-center gap-x-2 [&>h3]:w-full'>
+        <AccordionTrigger className='text-md w-full px-2 font-medium '>
+          <div className='flex w-full w-full items-center justify-between'>
+            <div className='flex w-full items-center truncate'>
+              <span className='mr-1 font-semibold'>{index + 1}.</span>
+              {watchFullAddressValue || 'Nowy adres pośredni'}
+            </div>
           </div>
-          <span onClick={removeItem} tabIndex={0} className='group mr-2 px-1'>
-            <Trash2 className='h-6 w-6 text-destructive transition group-hover:text-destructive/50 group-focus:text-opacity-40' />
-          </span>
-        </div>
-      </AccordionTrigger>
+        </AccordionTrigger>
+        <Button variant='destructive' onClick={removeItem} className='group mr-2 px-1'>
+          <Trash2 className='h-6 w-6' />
+        </Button>
+      </div>
       <AccordionContent>
         <div className='flex flex-col gap-4'>
           <FormField
             control={control}
             name={`${fieldName}.date`}
-            render={({ field }) => (
-              <FormItem className='flex flex-col'>
-                <FormLabel>Data/godzina</FormLabel>
-                <Input placeholder='Wprowadź imię pasażera' {...field} type='datetime-local' />
-                <FormMessage />
-                <FormDescription>Podaj datę i godzinę przejazdu</FormDescription>
-              </FormItem>
-            )}
+            render={({ field }) =>
+              isDateInputDisabled ? (
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger disabled={true}>
+                      <FormItem className='flex flex-col items-start'>
+                        <FormLabel>Data/godzina</FormLabel>
+                        <Input
+                          {...field}
+                          type='datetime-local'
+                          disabled={isDateInputDisabled}
+                          onChange={(e) => {
+                            return field.onChange(e);
+                          }}
+                        />
+                        <FormMessage />
+                        <FormDescription>
+                          Podaj datę i godzinę rozpoczęcia przejazdu
+                        </FormDescription>
+                      </FormItem>
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      {isDateInputDisabled
+                        ? 'Tylko jedno wypełnione pole z datą jest dozwolone.'
+                        : null}
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
+              ) : (
+                <FormItem className='flex flex-col items-start'>
+                  <FormLabel>Data/godzina</FormLabel>
+                  <Input {...field} type='datetime-local' disabled={isDateInputDisabled} />
+                  <FormMessage />
+                  <FormDescription>Podaj datę i godzinę przejazdu</FormDescription>
+                </FormItem>
+              )
+            }
           />
           <PlacesAutocomplete
             name={`${fieldName}.address.fullAddress`}
