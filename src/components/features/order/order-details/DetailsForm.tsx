@@ -2,7 +2,7 @@
 
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useRouter } from 'next/navigation';
-import React, { useEffect } from 'react';
+import React, { useEffect, useMemo } from 'react';
 import { useForm } from 'react-hook-form';
 
 import { useClients } from '@/lib/hooks/data/useClients';
@@ -38,11 +38,13 @@ interface OrderDetailsFormProps {
   defaultValues: OrderDetailsFormDefaultValues;
   orderId: string;
   collectionPoint?: CollectionPoint;
+  operatorName?: string;
 }
 
 export interface OrderDetailsFormDefaultValues extends UpdateOrderParams {
   estimatedKm?: number;
   hasHighway?: boolean;
+  operatorName?: string;
 }
 
 export function OrderDetailsForm({
@@ -111,6 +113,12 @@ export function OrderDetailsForm({
       }))
     : [];
 
+  const driverId = form.watch('driverId');
+
+  const operator = useMemo(() => {
+    return drivers?.results.find((res) => res.id === driverId)?.operatorName;
+  }, [driverId, drivers?.results]);
+
   return (
     <div className='lg:max-w-2xl'>
       <Form {...form}>
@@ -135,6 +143,19 @@ export function OrderDetailsForm({
             )}
           />
           <Combobox
+            label='Kierowca'
+            name='driverId'
+            items={driversData}
+            inputText='Wprowadź nazwę kierowcy'
+          />
+          <div className='flex flex-col space-y-2'>
+            <FormLabel>Operator</FormLabel>
+            <FormControl>
+              <Input disabled value={operator || ''} />
+            </FormControl>
+            <FormMessage />
+          </div>
+          <Combobox
             label='Lokalizacja rozpoczęcia kursu'
             name='collectionPointId'
             items={collectionPointsData}
@@ -146,12 +167,7 @@ export function OrderDetailsForm({
           />
           <LocationToSection defaultMapUrl={defaultValues.locationTo.address.url} />
           <ShowRouteButton />
-          <Combobox
-            label='Kierowca'
-            name='driverId'
-            items={driversData}
-            inputText='Wprowadź nazwę kierowcy'
-          />
+
           <FormField
             control={form.control}
             name='clientInvoice'

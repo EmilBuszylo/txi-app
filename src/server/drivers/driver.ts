@@ -4,6 +4,8 @@ export interface Driver {
   firstName: string | null;
   lastName: string | null;
   phone: string | null;
+  operatorId?: string | null;
+  operatorName?: string | null;
   createdAt: Date;
   driverDetails?: {
     carModel?: string | null;

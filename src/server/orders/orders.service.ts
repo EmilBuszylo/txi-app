@@ -492,6 +492,7 @@ const orderSelectedFields = {
       firstName: true,
       lastName: true,
       phone: true,
+      operatorName: true,
     },
   },
   collectionPoint: {

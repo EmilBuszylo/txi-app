@@ -85,6 +85,20 @@ export const getColumns = ({
       header: 'Nr zlecenia klienta',
     },
     {
+      accessorKey: 'operatorName',
+      header: 'Operator',
+      cell: ({ row }) => (
+        <ColumnWithTooltip
+          trigger={
+            <span className='min-w-[140px] text-ellipsis text-left line-clamp-1'>
+              {row.original.driver?.operatorName}
+            </span>
+          }
+          content={<div className='flex flex-col'>{row.original.driver?.operatorName}</div>}
+        />
+      ),
+    },
+    {
       accessorKey: 'driver',
       header: 'Kierowca',
       cell: ({ row }) => (

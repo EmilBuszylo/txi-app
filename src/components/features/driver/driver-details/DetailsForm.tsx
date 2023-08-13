@@ -2,15 +2,17 @@
 
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useRouter } from 'next/navigation';
-import { useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { PatternFormat } from 'react-number-format';
 import { z } from 'zod';
 
+import { useOperators } from '@/lib/hooks/data/useOperators';
 import { useUpdateDriver } from '@/lib/hooks/data/useUpdateDriver';
 import { UpdateDriverParams, updateDriverSchema } from '@/lib/server/api/endpoints';
 
 import { Button } from '@/components/ui/button';
+import { Combobox } from '@/components/ui/combobox';
 import {
   Form,
   FormControl,
@@ -35,6 +37,7 @@ const initialFormData = {
   lastName: '',
   phone: '',
   password: '',
+  operatorId: '',
   car: {
     carModel: '',
     carBrand: '',
@@ -49,6 +52,7 @@ export function DetailForm({ defaultValues, id }: NewDriverProps) {
     defaultValues: { ...defaultValues, password: 'passwordstring' } || initialFormData,
   });
   const router = useRouter();
+  const { data: operators } = useOperators({ page: 1, limit: 1000 });
 
   const { mutateAsync: updateDriver } = useUpdateDriver(id || '');
 
@@ -57,6 +61,13 @@ export function DetailForm({ defaultValues, id }: NewDriverProps) {
 
     router.push(Routes.DRIVERS);
   };
+
+  const operatorsData = operators
+    ? operators.results.map((result) => ({
+        value: result.id,
+        label: result.name,
+      }))
+    : [];
 
   useEffect(() => {
     if (defaultValues) {
@@ -133,7 +144,6 @@ export function DetailForm({ defaultValues, id }: NewDriverProps) {
               </FormItem>
             )}
           />
-
           <FormField
             control={form.control}
             name='phone'
@@ -161,7 +171,12 @@ export function DetailForm({ defaultValues, id }: NewDriverProps) {
               );
             }}
           />
-
+          <Combobox
+            label='Operator'
+            name='operatorId'
+            items={operatorsData}
+            inputText='Wybierz operatora'
+          />
           <FormField
             control={form.control}
             name='car.carModel'

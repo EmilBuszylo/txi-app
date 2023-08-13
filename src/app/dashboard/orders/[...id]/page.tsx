@@ -35,6 +35,7 @@ export default function OrderDetails() {
         driverId: data.driver?.id,
         kmForDriver: data.kmForDriver || 0,
         estimatedKm: (data.estimatedDistance || 0) + (data.wayBackDistance || 0),
+        operatorName: data.driver?.operatorName,
       }}
       orderId={params?.id}
       collectionPoint={data.collectionPoint as CollectionPoint}

@@ -41,6 +41,21 @@ model Client {
   @@map("clients")
 }
 
+model Operator {
+  id   String @id @default(uuid())
+  name String @unique
+
+  drivers User[]  @relation("driversOperator")
+
+  deletedAt     DateTime?
+  createdAt     DateTime        @default(now())
+  updatedAt     DateTime        @updatedAt
+  DriverDetails DriverDetails[]
+
+  @@unique([id, name])
+  @@map("operators")
+}
+
 model Order {
   id            String      @id @default(uuid())
   internalId    String      @unique
@@ -48,19 +63,19 @@ model Order {
   status        OrderStatus
   clientInvoice String?
   driverInvoice String?
-  isPayed       Boolean @default(false)
+  isPayed       Boolean     @default(false)
   comment       String?
   locationFrom  Json
   locationVia   Json?
   locationTo    Json
 
-  withPassenger Boolean?
-  estimatedDistance   Int? // calculated distance between start point and end point with via points
-  wayBackDistance     Int? // calculated distance from end point to start point without via points
-  actualKm      Int? // final distance
-  kmForDriver   Int? // modified by user
+  withPassenger     Boolean?
+  estimatedDistance Int? // calculated distance between start point and end point with via points
+  wayBackDistance   Int? // calculated distance from end point to start point without via points
+  actualKm          Int? // final distance
+  kmForDriver       Int? // modified by user
 
-  hasHighway   Boolean?
+  hasHighway Boolean?
 
   client     Client @relation(fields: [clientId, clientName], references: [id, name])
   clientId   String
@@ -74,7 +89,6 @@ model Order {
 
   collectionPoint   CollectionPoint? @relation(fields: [collectionPointId], references: [id])
   collectionPointId String?
-  //operator - todo waiting for list from Ewelina
 
   deletedAt DateTime?
   createdAt DateTime  @default(now())
@@ -93,7 +107,10 @@ model DriverDetails {
 
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   userId String @unique
-  //operator - todo waiting for list from Ewelina
+
+  operator     Operator? @relation(fields: [operatorId, operatorName], references: [id, name])
+  operatorId   String?
+  operatorName String?
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -115,6 +132,10 @@ model User {
 
   driverOrders     Order[] @relation("driverOrders")
   lastEditedOrders Order[] @relation("lastEditorOrders")
+
+  operator     Operator? @relation("driversOperator", fields: [operatorId, operatorName], references: [id, name])
+  operatorId   String?
+  operatorName String?
 
   deletedAt DateTime?
   createdAt DateTime  @default(now())

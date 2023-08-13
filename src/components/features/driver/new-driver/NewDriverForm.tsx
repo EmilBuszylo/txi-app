@@ -2,13 +2,16 @@
 
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useRouter } from 'next/navigation';
+import React from 'react';
 import { useForm } from 'react-hook-form';
 import { PatternFormat } from 'react-number-format';
 
 import { useCreateDriver } from '@/lib/hooks/data/useCreateDriver';
+import { useOperators } from '@/lib/hooks/data/useOperators';
 import { CreateDriverParams, createDriverSchema } from '@/lib/server/api/endpoints';
 
 import { Button } from '@/components/ui/button';
+import { Combobox } from '@/components/ui/combobox';
 import {
   Form,
   FormControl,
@@ -28,6 +31,7 @@ const initialFormData = {
   lastName: '',
   phone: '',
   password: '',
+  operatorId: '',
   car: {
     carBrand: '',
     carModel: '',
@@ -42,6 +46,7 @@ export function NewDriverForm() {
     defaultValues: initialFormData,
   });
   const router = useRouter();
+  const { data: operators } = useOperators({ page: 1, limit: 1000 });
 
   const { mutateAsync: createDriver } = useCreateDriver();
 
@@ -50,6 +55,13 @@ export function NewDriverForm() {
 
     router.push(Routes.DRIVERS);
   };
+
+  const operatorsData = operators
+    ? operators.results.map((result) => ({
+        value: result.id,
+        label: result.name,
+      }))
+    : [];
 
   return (
     <div className='lg:max-w-2xl'>
@@ -135,6 +147,12 @@ export function NewDriverForm() {
                 </FormItem>
               );
             }}
+          />
+          <Combobox
+            label='Operator'
+            name='operatorId'
+            items={operatorsData}
+            inputText='Wybierz operatora'
           />
           <FormField
             control={form.control}

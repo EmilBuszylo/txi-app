@@ -11,6 +11,7 @@ import { GetCollectionPointsResponse } from '@/server/collection-points.ts/colle
 import { CollectionPoint } from '@/server/collection-points.ts/collectionPoint';
 import { Driver } from '@/server/drivers/driver';
 import { GetDriversResponse } from '@/server/drivers/drivers.service';
+import { GetOperatorsResponse } from '@/server/operators/operators.service';
 import {
   LocationFrom,
   locationFromSchema,
@@ -243,6 +244,7 @@ export function getDriver(id: string) {
 export const createDriverSchema = z.object({
   firstName: z.string(),
   lastName: z.string(),
+  operatorId: z.string().optional().nullable(),
   phone: z.string().refine(
     (phone) => {
       const pn = parsePhoneNumber(phone);
@@ -277,6 +279,7 @@ export const updateDriverSchema = z.object({
   login: z.string(),
   firstName: z.string(),
   lastName: z.string(),
+  operatorId: z.string().optional().nullable(),
   phone: z.string().refine(
     (phone) => {
       const pn = parsePhoneNumber(phone);
@@ -385,6 +388,26 @@ export function getClients({ page, limit }: GetClientsParams) {
 
   return fetchJson<GetClientsResponse>(
     getNextApiPath(ApiRoutes.CLIENTS + '?' + queryParams.toString()),
+    {
+      method: 'GET',
+    }
+  );
+}
+
+// Operators endpoints
+
+export interface GetOperatorsParams {
+  page: number;
+  limit: number;
+}
+
+export function getOperators({ page, limit }: GetOperatorsParams) {
+  const queryParams = new URLSearchParams({
+    page: page.toString(),
+    limit: limit.toString(),
+  });
+  return fetchJson<GetOperatorsResponse>(
+    getNextApiPath(ApiRoutes.OPERATORS + '?' + queryParams.toString()),
     {
       method: 'GET',
     }

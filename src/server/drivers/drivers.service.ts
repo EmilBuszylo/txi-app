@@ -9,24 +9,25 @@ import { getPaginationMeta, PaginationMeta } from '@/lib/pagination';
 import { prisma } from '@/lib/prisma';
 import {
   CreateDriverParams,
-  GetOrdersParams,
+  GetDriversParams,
   UpdateDriverParams,
 } from '@/lib/server/api/endpoints';
 
 import { Driver } from '@/server/drivers/driver';
 
 export const createDriver = async (input: CreateDriverParams): Promise<Driver> => {
+  const { operatorId, password, phone } = input;
   try {
-    const hashed_password = await hash(input.password, 12);
+    const hashed_password = await hash(password, 12);
 
-    let phone = input?.phone ? PhoneNumber.parsePhoneNumber(input.phone) : undefined;
+    let phoneNumber = phone ? PhoneNumber.parsePhoneNumber(phone) : undefined;
 
-    if (typeof phone !== 'undefined' && !phone.valid) {
+    if (typeof phone !== 'undefined' && !phoneNumber.valid) {
       logger.warn({
-        error: `wrong format of phone number ${input.phone}`,
+        error: `wrong format of phone number ${phone}`,
         stack: 'createDriver',
       });
-      phone = undefined;
+      phoneNumber = undefined;
     }
 
     return await prisma.user.create({
@@ -34,9 +35,16 @@ export const createDriver = async (input: CreateDriverParams): Promise<Driver> =
         login: generateDriverLogin(input.firstName, input.lastName),
         firstName: input.firstName,
         lastName: input.lastName,
-        phone: phone?.number.e164,
+        phone: phoneNumber?.number.e164,
         password: hashed_password,
         role: 'DRIVER',
+        operator: operatorId
+          ? {
+              connect: {
+                id: operatorId,
+              },
+            }
+          : undefined,
         driverDetails: {
           create: {
             ...input.car,
@@ -52,14 +60,15 @@ export const createDriver = async (input: CreateDriverParams): Promise<Driver> =
 };
 
 export const updateDriver = async (id: string, input: UpdateDriverParams): Promise<Driver> => {
-  let phone = input?.phone ? PhoneNumber.parsePhoneNumber(input.phone) : undefined;
+  const { operatorId, phone } = input;
+  let phoneNumber = phone ? PhoneNumber.parsePhoneNumber(phone) : undefined;
 
-  if (typeof phone !== 'undefined' && !phone.valid) {
+  if (typeof phoneNumber !== 'undefined' && !phoneNumber.valid) {
     logger.warn({
-      error: `wrong format of phone number ${input.phone}`,
+      error: `wrong format of phone number ${phone}`,
       stack: 'createDriver',
     });
-    phone = undefined;
+    phoneNumber = undefined;
   }
 
   try {
@@ -71,7 +80,14 @@ export const updateDriver = async (id: string, input: UpdateDriverParams): Promi
       data: {
         firstName: input.firstName,
         lastName: input.lastName,
-        phone: phone?.number.e164,
+        phone: phoneNumber?.number.e164,
+        operator: operatorId
+          ? {
+              connect: {
+                id: operatorId,
+              },
+            }
+          : undefined,
         driverDetails: {
           update: {
             ...input.car,
@@ -93,7 +109,7 @@ export interface GetDriversResponse {
   results: Driver[];
 }
 
-export const getDrivers = async (input: GetOrdersParams): Promise<GetDriversResponse> => {
+export const getDrivers = async (input: GetDriversParams): Promise<GetDriversResponse> => {
   const { limit, page: requestPage } = input;
 
   const page = requestPage ? requestPage - 1 : 0;
@@ -171,6 +187,8 @@ const driverSelectedFields = {
   firstName: true,
   lastName: true,
   phone: true,
+  operatorId: true,
+  operatorName: true,
   createdAt: true,
   driverDetails: {
     select: {

@@ -22,6 +22,7 @@ export interface Order {
     firstName: string;
     lastName: string;
     phone?: string;
+    operatorName?: string;
   };
   collectionPoint?: {
     id: string;

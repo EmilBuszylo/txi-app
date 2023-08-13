@@ -18,7 +18,8 @@
     "prepare": "husky install"
   },
   "prisma": {
-    "seed": "ts-node --compiler-options {\"module\":\"CommonJS\"} prisma/seed-clients.ts"
+    "seed": "ts-node --compiler-options {\"module\":\"CommonJS\"} prisma/seed-clients.ts",
+    "seed:operators": "ts-node --compiler-options {\"module\":\"CommonJS\"} prisma/seed-operators.ts"
   },
   "dependencies": {
     "@googlemaps/google-maps-services-js": "^3.3.34",

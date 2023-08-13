@@ -32,6 +32,7 @@ export default function DriverDetails() {
         firstName: data.firstName || '',
         lastName: data.lastName || '',
         phone: data.phone || '',
+        operatorId: data.operatorId,
         car: data.driverDetails
           ? {
               carModel: data.driverDetails.carModel || '',

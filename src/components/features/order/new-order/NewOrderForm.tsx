@@ -2,7 +2,7 @@
 
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useRouter } from 'next/navigation';
-import React from 'react';
+import React, { useMemo } from 'react';
 import { useForm } from 'react-hook-form';
 
 import { useClients } from '@/lib/hooks/data/useClients';
@@ -94,6 +94,12 @@ export function NewOrderForm() {
       }))
     : [];
 
+  const driverId = form.watch('driverId');
+
+  const operator = useMemo(() => {
+    return drivers?.results.find((res) => res.id === driverId)?.operatorName;
+  }, [driverId, drivers?.results]);
+
   return (
     <div className='lg:max-w-2xl'>
       <Form {...form}>
@@ -118,6 +124,19 @@ export function NewOrderForm() {
             )}
           />
           <Combobox
+            label='Kierowca'
+            name='driverId'
+            items={driversData}
+            inputText='Wprowadź nazwę kierowcy'
+          />
+          <div className='flex flex-col space-y-2'>
+            <FormLabel>Operator</FormLabel>
+            <FormControl>
+              <Input disabled value={operator || ''} />
+            </FormControl>
+            <FormMessage />
+          </div>
+          <Combobox
             label='Lokalizacja rozpoczęcia kursu'
             name='collectionPointId'
             items={collectionPointsData}
@@ -128,12 +147,7 @@ export function NewOrderForm() {
           <LocationToSection />
           <ShowRouteButton />
           <EstimatedKmField />
-          <Combobox
-            label='Kierowca'
-            name='driverId'
-            items={driversData}
-            inputText='Wprowadź nazwę kierowcy'
-          />
+
           <FormField
             control={form.control}
             name='comment'

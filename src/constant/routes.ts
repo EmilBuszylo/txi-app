@@ -10,4 +10,5 @@ export enum ApiRoutes {
   DRIVERS = '/drivers',
   COLLECTION_POINTS = '/collection-points',
   CLIENTS = '/clients',
+  OPERATORS = '/operators',
 }
