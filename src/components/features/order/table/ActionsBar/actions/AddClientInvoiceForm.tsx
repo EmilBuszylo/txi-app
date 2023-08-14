@@ -56,7 +56,7 @@ export const AddClientInvoiceForm = ({ ids, onSuccess, params }: AddClientInvoic
             <FormItem>
               <FormLabel>Nr faktury</FormLabel>
               <FormControl>
-                <Input placeholder='Wprowadź numer faktury' {...field} />
+                <Input placeholder='Wprowadź numer faktury klienta' {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>

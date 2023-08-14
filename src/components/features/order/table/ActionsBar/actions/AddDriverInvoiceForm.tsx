@@ -56,7 +56,7 @@ export const AddDriverInvoiceFrom = ({ ids, params, onSuccess }: AddDriverInvoic
             <FormItem>
               <FormLabel>Nr faktury</FormLabel>
               <FormControl>
-                <Input placeholder='Wprowadź numer faktury' {...field} />
+                <Input placeholder='Wprowadź numer faktury kierowcy' {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
