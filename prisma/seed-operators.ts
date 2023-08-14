@@ -3,13 +3,86 @@ const prisma = new PrismaClient();
 
 const operatorsList = [
   {
-    name: 'Operator ZXY',
+    name: 'Szymon Warzycha',
   },
   {
-    name: 'Operator Warszawa',
+    name: 'Łukasz Kupczyk',
   },
   {
-    name: 'Operator Wrocław',
+    name: 'Michał Drozdowski',
+  },
+  {
+    name: 'Mariusz Hoppel',
+  },
+  {
+    name: 'Waldemar Sorek',
+  },
+  {
+    name: 'Bartłomiej Kurdziel',
+  },
+  {
+    name: 'Adam Sobolewski',
+  },
+  {
+    name: 'Elżbieta Nowicka - Wem',
+  },
+  {
+    name: 'Maciej Kucharski Szczecin',
+  },
+  {
+    name: 'Marcin Kowalski Alkar',
+  },
+  {
+    name: 'Damian Olszowy',
+  },
+  {
+    name: 'Kinga Kościerzyna',
+  },
+  {
+    name: 'Adam Krzemiński Strzebiń',
+  },
+  {
+    name: 'Dominik Peh Lublin',
+  },
+  {
+    name: 'Łukasz Wojtynów Legnica',
+  },
+  {
+    name: 'Wojciech Szczecinek',
+  },
+  {
+    name: 'Jarosław Kacała TaxiVel',
+  },
+  {
+    name: 'Igor Warszawa',
+  },
+  {
+    name: 'Andrzej Pszech',
+  },
+  {
+    name: 'Marcin Kamrowski',
+  },
+
+  {
+    name: 'Wiesław Krawczyk',
+  },
+  {
+    name: 'Witek Naumczyk',
+  },
+  {
+    name: 'Krzysztof Ząbkowice Śląskie',
+  },
+  {
+    name: 'Tadeusz Kłodzko',
+  },
+  {
+    name: 'Karolina Gdańsk',
+  },
+  {
+    name: 'Paweł Gajewski',
+  },
+  {
+    name: 'Jarek Gdańsk',
   },
 ];
 async function main() {

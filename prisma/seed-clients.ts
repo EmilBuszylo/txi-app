@@ -3,13 +3,34 @@ const prisma = new PrismaClient();
 
 const clientsList = [
   {
-    name: 'ABC company',
+    name: 'Ecco',
   },
   {
-    name: 'Przejazdy kolejowe kolejorz',
+    name: 'Captrain',
   },
   {
-    name: 'Społka cywilina Janusz Kosiniań',
+    name: 'CargoWay',
+  },
+  {
+    name: 'Tekol',
+  },
+  {
+    name: 'HSL',
+  },
+  {
+    name: 'Cargo Przewozy Towarowe',
+  },
+  {
+    name: 'Ost-West',
+  },
+  {
+    name: 'LTG',
+  },
+  {
+    name: 'PCC',
+  },
+  {
+    name: 'Laude',
   },
 ];
 async function main() {

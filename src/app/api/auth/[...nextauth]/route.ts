@@ -1,7 +1,16 @@
-import { NextApiHandler } from 'next';
+import { NextRequest, NextResponse } from 'next/server';
 import NextAuth from 'next-auth';
 
 import { authOptions } from '@/lib/auth';
 
-const handler: NextApiHandler = (req, res) => NextAuth(req, res, authOptions);
-export { handler as GET, handler as POST };
+export async function GET(req: NextRequest, res: NextResponse) {
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore
+  return NextAuth(req, res, authOptions);
+}
+
+export async function POST(req: NextRequest, res: NextResponse) {
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore
+  return NextAuth(req, res, authOptions);
+}
