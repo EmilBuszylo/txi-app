@@ -16,6 +16,7 @@ import { LocationFromSection } from '@/components/features/order/new-order/Locat
 import { LocationToSection } from '@/components/features/order/new-order/LocationToSection';
 import { LocationViaSection } from '@/components/features/order/new-order/LocationViaSection/LocationViaSection';
 import { ShowRouteButton } from '@/components/features/order/new-order/ShowRouteButton';
+import { statusLabelPerStatus } from '@/components/features/order/utils';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Combobox } from '@/components/ui/combobox';
@@ -29,10 +30,18 @@ import {
   FormMessage,
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
 
 import { Routes } from '@/constant/routes';
 import { CollectionPoint } from '@/server/collection-points.ts/collectionPoint';
+import { OrderStatus } from '@/server/orders/order';
 
 interface OrderDetailsFormProps {
   defaultValues: OrderDetailsFormDefaultValues;
@@ -138,6 +147,30 @@ export function OrderDetailsForm({
                 <FormControl>
                   <Input placeholder='Nr zlecenia' {...field} />
                 </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name='status'
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Status</FormLabel>
+                <Select onValueChange={field.onChange} defaultValue={field.value}>
+                  <FormControl>
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                  </FormControl>
+                  <SelectContent>
+                    {Object.keys(OrderStatus).map((status) => (
+                      <SelectItem key={status} value={status}>
+                        {statusLabelPerStatus[status as OrderStatus]}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
                 <FormMessage />
               </FormItem>
             )}

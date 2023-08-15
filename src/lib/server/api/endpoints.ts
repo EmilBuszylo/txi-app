@@ -107,6 +107,7 @@ export const updateOrderSchema = z.object({
   locationTo: locationToSchema,
   locationVia: z.array(locationFromSchema.optional()),
   externalId: z.string(),
+  status: z.string(),
   comment: z.string().optional().nullable(),
   clientInvoice: z.string().optional().nullable(),
   driverInvoice: z.string().optional().nullable(),
@@ -130,7 +131,7 @@ export interface UpdateOrderParams extends Pick<CreateOrderParams, 'collectionPo
   collectionPointId?: string;
   isPayed?: boolean;
   comment?: string;
-  status?: OrderStatus;
+  status?: string;
   clientInvoice?: string;
   driverInvoice?: string;
   withPassenger?: boolean;
