@@ -112,7 +112,10 @@ export const updateOrderSchema = z.object({
   clientInvoice: z.string().optional().nullable(),
   driverInvoice: z.string().optional().nullable(),
   isPayed: z.boolean().optional().nullable(),
-  kmForDriver: z.number().optional(),
+  kmForDriver: z.preprocess(
+    (a) => parseInt(z.string().parse(a), 10),
+    z.number().positive().optional().nullable()
+  ),
   actualKm: z.number().optional(),
   // withPassenger: z.boolean().optional(),
   driverId: z.string().optional(),

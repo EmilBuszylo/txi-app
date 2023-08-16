@@ -7,16 +7,15 @@ import { formatDate } from '@/lib/helpers/date';
 import { GetOrdersParams } from '@/lib/server/api/endpoints';
 
 import { ActionCell } from '@/components/features/order/table/cells/ActionCell';
+import { InternalIdCell } from '@/components/features/order/table/cells/InternallIdCell';
 import { StatusCell } from '@/components/features/order/table/cells/StatusCell';
 import { Checkbox } from '@/components/ui/checkbox';
 import { ColumnWithTooltip } from '@/components/ui/data-table/columns/ColumnWithTooltip';
 import { DataTableColumnSortHeader } from '@/components/ui/data-table/DataTableColumnHeader/DataTableColumnSortHeader';
 import { SortStateProps } from '@/components/ui/data-table/hooks/useSorts';
 import { RelativeDate } from '@/components/ui/date/RelativeDate';
-import { StyledLink } from '@/components/ui/link/StyledLink';
 
 import { dateFormats } from '@/constant/date-formats';
-import { Routes } from '@/constant/routes';
 import { Order } from '@/server/orders/order';
 
 interface GetColumnsProps {
@@ -62,11 +61,7 @@ export const getColumns = ({
     {
       accessorKey: 'internalId',
       header: 'Nr TXI',
-      cell: ({ row }) => (
-        <StyledLink href={`${Routes.ORDERS}/${row.original.id}`}>
-          {row.original.internalId}
-        </StyledLink>
-      ),
+      cell: ({ row }) => <InternalIdCell row={row} />,
     },
     {
       accessorKey: 'clientName',
