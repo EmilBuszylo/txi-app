@@ -23,7 +23,7 @@ import {
 import { GetOrdersResponse } from '@/server/orders/orders.service';
 
 function getNextApiPath(path: string): string {
-  return SITE_URL + '/api' + path;
+  return SITE_URL + 'api' + path;
 }
 
 export interface GetOrdersParams {
