@@ -45,7 +45,7 @@ export function LoginForm() {
     try {
       await signIn('credentials', {
         ...values,
-        callbackUrl: '/dashboard/orders',
+        // callbackUrl: '/dashboard/orders',
       });
     } catch (error) {
       logger.error(error);
