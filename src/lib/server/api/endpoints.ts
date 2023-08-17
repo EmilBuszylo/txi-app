@@ -102,21 +102,18 @@ export function createOrder(params: CreateOrderParams) {
 }
 
 export const updateOrderSchema = z.object({
-  clientId: z.string(),
+  clientId: z.string().optional(),
   locationFrom: locationFromSchema,
   locationTo: locationToSchema,
   locationVia: z.array(locationFromSchema.optional()),
-  externalId: z.string(),
-  status: z.string(),
+  externalId: z.string().optional(),
+  status: z.string().optional(),
   comment: z.string().optional().nullable(),
   clientInvoice: z.string().optional().nullable(),
   driverInvoice: z.string().optional().nullable(),
   isPayed: z.boolean().optional().nullable(),
-  kmForDriver: z.preprocess(
-    (a) => parseInt(z.string().parse(a), 10),
-    z.number().positive().optional().nullable()
-  ),
-  actualKm: z.number().optional(),
+  kmForDriver: z.any().optional().nullable(),
+  actualKm: z.any().optional().nullable(),
   // withPassenger: z.boolean().optional(),
   driverId: z.string().optional(),
   collectionPointId: z.string().optional(),
@@ -130,20 +127,20 @@ export const updateOrderSchema = z.object({
 
 export interface UpdateOrderParams extends Pick<CreateOrderParams, 'collectionPointsGeoCodes'> {
   driverId?: string;
-  clientId: string;
+  clientId?: string;
   collectionPointId?: string;
   isPayed?: boolean;
   comment?: string;
-  status?: string;
+  status?: OrderStatus;
   clientInvoice?: string;
   driverInvoice?: string;
   withPassenger?: boolean;
   actualKm?: number;
   kmForDriver?: number;
-  externalId: string;
-  locationFrom: LocationFrom;
+  externalId?: string;
+  locationFrom?: LocationFrom;
   locationVia?: LocationFrom[];
-  locationTo: LocationTo;
+  locationTo?: LocationTo;
 }
 
 export function updateOrder(id: string, params: UpdateOrderParams) {

@@ -27,15 +27,22 @@ export default function OrderDetails() {
     return notFound();
   }
 
+  const estimatedKm = (data.estimatedDistance || 0) + (data.wayBackDistance || 0);
+  const kmForDriver = data?.kmForDriver || 0;
+
   return (
     <OrderDetailsForm
       defaultValues={{
         ...data,
         collectionPointId: data.collectionPoint?.id,
         driverId: data.driver?.id,
-        kmForDriver: data.kmForDriver || 0,
-        estimatedKm: (data.estimatedDistance || 0) + (data.wayBackDistance || 0),
+        kmForDriver,
+        estimatedKm,
         operatorName: data.driver?.operatorName,
+        intakeDistance: data.intakeDistance || undefined,
+        updatedAt: data.updatedAt as unknown as string,
+        distanceDifference: estimatedKm - kmForDriver,
+        hasHighway: data.hasHighway,
       }}
       orderId={params?.id}
       collectionPoint={data.collectionPoint as CollectionPoint}

@@ -11,9 +11,13 @@ import { Order } from '@/server/orders/order';
 
 export const InternalIdCell = ({ row }: { row: Row<Order> }) => {
   const estimatedKm = (row.original.estimatedDistance || 0) + (row.original.wayBackDistance || 0);
-  const isAlerted =
+  const diffBetweenDriverKmAndEstimated =
     (row.original.kmForDriver || 0) - estimatedKm > 20 ||
     estimatedKm - (row.original.kmForDriver || 0) > 20;
+  const diffBetweenActualKmAndEstimated =
+    (row.original.actualKm || 0) - estimatedKm > 20 ||
+    estimatedKm - (row.original.actualKm || 0) > 20;
+  const isAlerted = diffBetweenDriverKmAndEstimated || diffBetweenActualKmAndEstimated;
 
   return (
     <div>
@@ -29,10 +33,32 @@ export const InternalIdCell = ({ row }: { row: Row<Order> }) => {
         <TooltipProvider>
           <Tooltip>
             <TooltipTrigger>
-              <Badge variant='destructive'>Różnica w KM</Badge>
+              <div className='flex flex-col gap-y-1'>
+                {diffBetweenDriverKmAndEstimated && (
+                  <Badge variant='destructive'>Różnica w KM</Badge>
+                )}
+                {diffBetweenActualKmAndEstimated && (
+                  <Badge className='border-transparent bg-orange-600 text-white hover:bg-orange-600/80'>
+                    Różnica w KM
+                  </Badge>
+                )}
+              </div>
             </TooltipTrigger>
             <TooltipContent>
-              Różnica pomiędzy szacowanymi km a km dla kierowcy wynosi ponad 20km.
+              <ul className='flex flex-col gap-y-2'>
+                {diffBetweenDriverKmAndEstimated && (
+                  <li>
+                    Różnica pomiędzy <span className='font-semibold'>szacowanymi km</span> a{' '}
+                    <span className='font-semibold'>km dla kierowcy</span> wynosi ponad 20km.
+                  </li>
+                )}
+                {diffBetweenActualKmAndEstimated && (
+                  <li>
+                    Różnica pomiędzy <span className='font-semibold'>szacowanymi km</span> a{' '}
+                    <span className='font-semibold'>rzeczywistymi km</span> wynosi ponad 20km.
+                  </li>
+                )}
+              </ul>
             </TooltipContent>
           </Tooltip>
         </TooltipProvider>

@@ -85,12 +85,13 @@ export const createOrder = async (input: CreateOrderParams) => {
       }))
       .filter((loc) => typeof loc.lat === 'string' && typeof loc.lng === 'string');
 
-    const { estimatedDistance, wayBackDistance } = await _calculateOrderDistancesData({
-      collectionPointsGeoCodes,
-      locationFrom,
-      locationTo,
-      viaWaypoints: viaWaypoints as Waypoint[],
-    });
+    const { estimatedDistance, wayBackDistance, intakeDistance } =
+      await _calculateOrderDistancesData({
+        collectionPointsGeoCodes,
+        locationFrom,
+        locationTo,
+        viaWaypoints: viaWaypoints as Waypoint[],
+      });
 
     const currentDayDate = new Date().setHours(0, 0, 0, 0);
 
@@ -113,6 +114,7 @@ export const createOrder = async (input: CreateOrderParams) => {
         ...rest,
         locationFrom,
         locationTo,
+        intakeDistance: intakeDistance,
         estimatedDistance: estimatedDistance?.distance,
         hasHighway: estimatedDistance?.hasHighway,
         locationVia: locationVia as unknown as string,
@@ -214,12 +216,13 @@ export const updateOrder = async (id: string, input: UpdateOrderParams) => {
       });
     }
 
-    const { estimatedDistance, wayBackDistance } = await _calculateOrderDistancesData({
-      collectionPointsGeoCodes: collectionPointsGeoCodesData,
-      locationFrom,
-      locationTo,
-      viaWaypoints: viaWaypoints as Waypoint[],
-    });
+    const { estimatedDistance, wayBackDistance, intakeDistance } =
+      await _calculateOrderDistancesData({
+        collectionPointsGeoCodes: collectionPointsGeoCodesData,
+        locationFrom,
+        locationTo,
+        viaWaypoints: viaWaypoints as Waypoint[],
+      });
 
     return prisma.order.update({
       where: {
@@ -228,6 +231,7 @@ export const updateOrder = async (id: string, input: UpdateOrderParams) => {
       data: {
         locationFrom,
         locationTo,
+        intakeDistance: intakeDistance,
         estimatedDistance: estimatedDistance?.distance,
         hasHighway: estimatedDistance?.hasHighway,
         locationVia: locationVia as unknown as string,
@@ -421,9 +425,37 @@ const _calculateOrderDistancesData = async ({
     false
   );
 
+  let intakeDistance: number | undefined = undefined;
+
+  if (estimatedDistance.distance && collectionPointsGeoCodes) {
+    const distanceWithoutCollectionPoint = await calculateDistance(
+      [
+        withLocationFrom
+          ? {
+              lat: locationFrom.address.lat,
+              lng: locationFrom.address.lng,
+            }
+          : undefined,
+        ...(viaWaypoints as Waypoint[]),
+        withLocationTo
+          ? {
+              lat: locationTo.address.lat,
+              lng: locationTo.address.lng,
+            }
+          : undefined,
+      ],
+      false
+    );
+
+    intakeDistance = distanceWithoutCollectionPoint?.distance
+      ? estimatedDistance.distance
+      : undefined;
+  }
+
   return {
     estimatedDistance,
     wayBackDistance,
+    intakeDistance,
   };
 };
 
@@ -483,9 +515,11 @@ const orderSelectedFields = {
   kmForDriver: true,
   hasHighway: true,
   status: true,
+  actualKm: true,
   clientId: true,
   clientName: true,
   comment: true,
+  intakeDistance: true,
   driver: {
     select: {
       id: true,

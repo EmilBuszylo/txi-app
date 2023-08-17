@@ -54,6 +54,10 @@ export interface OrderDetailsFormDefaultValues extends UpdateOrderParams {
   estimatedKm?: number;
   hasHighway?: boolean;
   operatorName?: string;
+  intakeDistance?: number;
+  internalId: string;
+  distanceDifference: number;
+  updatedAt?: string;
 }
 
 export function OrderDetailsForm({
@@ -85,8 +89,14 @@ export function OrderDetailsForm({
     );
     const collectionPointLng = collectionPointsGeoData?.lng;
     const collectionPointLat = collectionPointsGeoData?.lat;
+
+    const kmForDriver = values.kmForDriver ? Number(values.kmForDriver) : undefined;
+    const actualKm = values.actualKm ? Number(values.actualKm) : undefined;
+
     await updateOrder({
       ...values,
+      kmForDriver,
+      actualKm,
       collectionPointsGeoCodes:
         collectionPointLng && collectionPointLat
           ? { lng: collectionPointLng, lat: collectionPointLat }
@@ -132,32 +142,16 @@ export function OrderDetailsForm({
     <div className='lg:max-w-2xl'>
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className='space-y-4'>
-          <Combobox
-            label='Firma'
-            name='clientId'
-            items={clientsData}
-            inputText='Wprowadź nazwę firmy'
-          />
-          <FormField
-            control={form.control}
-            name='externalId'
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Nr zlecenia</FormLabel>
-                <FormControl>
-                  <Input placeholder='Nr zlecenia' {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
           <FormField
             control={form.control}
             name='status'
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Status</FormLabel>
-                <Select onValueChange={field.onChange} defaultValue={field.value}>
+                <Select
+                  onValueChange={(e) => field.onChange(e as OrderStatus)}
+                  defaultValue={field.value}
+                >
                   <FormControl>
                     <SelectTrigger>
                       <SelectValue />
@@ -175,11 +169,37 @@ export function OrderDetailsForm({
               </FormItem>
             )}
           />
+          <FormField
+            control={form.control}
+            name='internalId'
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Nr zlecenia</FormLabel>
+                <FormControl>
+                  <Input placeholder='Nr zlecenia' {...field} disabled readOnly />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name='externalId'
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Nr zlecenia</FormLabel>
+                <FormControl>
+                  <Input placeholder='Nr zlecenia' {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
           <Combobox
-            label='Kierowca'
-            name='driverId'
-            items={driversData}
-            inputText='Wprowadź nazwę kierowcy'
+            label='Firma'
+            name='clientId'
+            items={clientsData}
+            inputText='Wprowadź nazwę firmy'
           />
           <div className='flex flex-col space-y-2'>
             <FormLabel>Operator</FormLabel>
@@ -189,18 +209,17 @@ export function OrderDetailsForm({
             <FormMessage />
           </div>
           <Combobox
+            label='Kierowca'
+            name='driverId'
+            items={driversData}
+            inputText='Wprowadź nazwę kierowcy'
+          />
+          <Combobox
             label='Lokalizacja rozpoczęcia kursu'
             name='collectionPointId'
             items={collectionPointsData}
             inputText='Wprowadź lokalizację'
           />
-          <LocationFromSection defaultMapUrl={defaultValues.locationFrom.address.url} />
-          <LocationViaSection
-            defaultMapUrls={defaultValues.locationVia?.map((l) => l.address.url)}
-          />
-          <LocationToSection defaultMapUrl={defaultValues.locationTo.address.url} />
-          <ShowRouteButton />
-
           <FormField
             control={form.control}
             name='clientInvoice'
@@ -216,7 +235,7 @@ export function OrderDetailsForm({
           />
           <FormField
             control={form.control}
-            name='clientInvoice'
+            name='driverInvoice'
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Nr faktury kierowcy</FormLabel>
@@ -243,9 +262,34 @@ export function OrderDetailsForm({
                     Zaznacz powyższe pole w przypadku gdy klient uregulował fakturę za zlecony kurs.
                   </FormDescription>
                 </div>
+                <FormMessage />
               </FormItem>
             )}
           />
+          <FormField
+            control={form.control}
+            name='comment'
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Uwagi</FormLabel>
+                <FormControl>
+                  <Textarea
+                    placeholder='Twoje uwagi do zlecenia'
+                    className='resize-none'
+                    {...field}
+                  />
+                </FormControl>
+                <FormDescription>Uwagi (np. preferowany punkt zborny)</FormDescription>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <LocationFromSection defaultMapUrl={defaultValues?.locationFrom?.address.url} />
+          <LocationViaSection
+            defaultMapUrls={defaultValues.locationVia?.map((l) => l.address.url)}
+          />
+          <LocationToSection defaultMapUrl={defaultValues?.locationTo?.address.url} />
+          <ShowRouteButton />
           <EstimatedKmField
             defaultCollectionPointsGeo={
               collectionPoint?.lat && collectionPoint.lng
@@ -281,21 +325,81 @@ export function OrderDetailsForm({
           />
           <FormField
             control={form.control}
-            name='comment'
+            name='distanceDifference'
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Uwagi</FormLabel>
+                <FormLabel>Rozbieżność</FormLabel>
                 <FormControl>
-                  <Textarea
-                    placeholder='Twoje uwagi do zlecenia'
-                    className='resize-none'
+                  <Input
+                    placeholder='Podaj km dla kierwocy'
                     {...field}
+                    type='number'
+                    disabled
+                    readOnly
                   />
                 </FormControl>
-                <FormDescription>Uwagi (np. preferowany punkt zborny)</FormDescription>
+                <FormMessage />
+                <FormDescription>Różnica między km szacowanymi a km dla kierowcy.</FormDescription>
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name='hasHighway'
+            render={({ field }) => (
+              <FormItem className='flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4'>
+                <FormControl>
+                  {/* eslint-disable-next-line @typescript-eslint/ban-ts-comment */}
+                  {/*@ts-ignore*/}
+                  <Checkbox checked={field.value} onCheckedChange={field.onChange} disabled />
+                </FormControl>
+                <div className='space-y-1 leading-none'>
+                  <FormLabel>Czy trasa przebiega przez drogę płatną (Autostrada)?</FormLabel>
+                </div>
                 <FormMessage />
               </FormItem>
             )}
+          />
+          <FormField
+            control={form.control}
+            name='intakeDistance'
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Dolot</FormLabel>
+                <FormControl>
+                  <Input
+                    placeholder='Dolot do początku trasy'
+                    {...field}
+                    type='number'
+                    readOnly
+                    disabled
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name='updatedAt'
+            render={({ field }) => {
+              let value = undefined;
+
+              if (field?.value) {
+                const dt = new Date(field.value);
+                dt.setMinutes(dt.getMinutes() - dt.getTimezoneOffset());
+                value = dt.toISOString().slice(0, 16);
+              }
+
+              return (
+                <FormItem className='flex flex-col items-start'>
+                  <FormLabel>Data modyfikacji</FormLabel>
+                  <Input {...field} value={value} type='datetime-local' readOnly disabled />
+                  <FormMessage />
+                  <FormDescription>Podaj datę i godzinę rozpoczęcia przejazdu</FormDescription>
+                </FormItem>
+              );
+            }}
           />
           <div className='flex w-full items-center justify-end'>
             <Button className='w-full md:w-auto' type='submit'>

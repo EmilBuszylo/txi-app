@@ -74,6 +74,7 @@ model Order {
   wayBackDistance   Int? // calculated distance from end point to start point without via points
   actualKm          Int? // final distance
   kmForDriver       Int? // modified by user
+  intakeDistance    Int? // distance from collection point to location from
 
   hasHighway Boolean?
 

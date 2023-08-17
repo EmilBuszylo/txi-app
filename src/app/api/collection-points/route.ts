@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 
-import { logger } from '@/lib/logger';
+import { authorizeRoute } from '@/lib/server/utils/authorize-route';
+import { errorResponseHandler } from '@/lib/server/utils/error-response-handler';
 
 import {
   createCollectionPoint,
@@ -9,19 +10,13 @@ import {
 
 export async function POST(req: Request) {
   try {
+    await authorizeRoute();
     const body = await req.json();
     const res = await createCollectionPoint(body);
 
     return NextResponse.json(res);
   } catch (error) {
-    logger.error(error);
-    return new NextResponse(
-      JSON.stringify({
-        status: 'error',
-        message: (error as Error).message,
-      }),
-      { status: 500 }
-    );
+    return errorResponseHandler(error as Error);
   }
 }
 
@@ -29,6 +24,7 @@ export async function GET(req: NextRequest) {
   const urlParams = new URL(req.url);
 
   try {
+    await authorizeRoute();
     const collectionPoints = await getCollectionPoints({
       page: Number(urlParams.searchParams.get('page')) || 1,
       limit: Number(urlParams.searchParams.get('limit')) || 1,
@@ -36,13 +32,6 @@ export async function GET(req: NextRequest) {
 
     return NextResponse.json(collectionPoints);
   } catch (error) {
-    logger.error(error);
-    return new NextResponse(
-      JSON.stringify({
-        status: 'error',
-        message: (error as Error).message,
-      }),
-      { status: 500 }
-    );
+    return errorResponseHandler(error as Error);
   }
 }

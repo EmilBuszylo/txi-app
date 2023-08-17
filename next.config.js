@@ -11,6 +11,20 @@ const nextConfig = {
     serverComponentsExternalPackages: ['@prisma/client', 'bcryptjs'],
   },
 
+  async headers() {
+    return [
+      {
+        source: '/api/:path*',
+        headers: [
+          {
+            key: 'Access-Control-Allow-Origin',
+            value: 'https://www.txi-zlecenia.pl',
+          },
+        ],
+      },
+    ];
+  },
+
   reactStrictMode: true,
 
   trailingSlash: true,

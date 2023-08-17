@@ -9,6 +9,7 @@ export interface Order {
   locationTo: LocationTo;
   estimatedDistance?: number;
   wayBackDistance?: number;
+  actualKm?: number;
   hasHighway?: boolean;
   status: OrderStatus;
   driverInvoice?: string;
@@ -17,6 +18,7 @@ export interface Order {
   kmForDriver?: number;
   clientId: string;
   clientName: string;
+  intakeDistance?: number;
   driver?: {
     id: string;
     firstName: string;
