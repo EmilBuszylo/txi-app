@@ -3,14 +3,8 @@ import NextAuth from 'next-auth';
 
 import { authOptions } from '@/lib/auth';
 
-export async function GET(req: NextRequest, res: NextResponse) {
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  // @ts-ignore
-  return NextAuth(req, res, authOptions);
-}
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore
+const handler = (req: NextRequest, res: NextResponse) => NextAuth(req, res, authOptions);
 
-export async function POST(req: NextRequest, res: NextResponse) {
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  // @ts-ignore
-  return NextAuth(req, res, authOptions);
-}
+export { handler as GET, handler as POST };
