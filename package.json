@@ -16,7 +16,7 @@
     "postbuild": "next-sitemap --config next-sitemap.config.js",
     "docker:local": "docker-compose -f docker-compose.local.yml up -d txi_local_database",
     "prepare": "husky install",
-    "postinstall": "prisma migrate deploy && prisma generate"
+    "postinstall": "prisma generate"
   },
   "prisma": {
     "seed": "ts-node --compiler-options {\"module\":\"CommonJS\"} prisma/seed-clients.ts",
