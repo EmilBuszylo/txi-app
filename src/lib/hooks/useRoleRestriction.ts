@@ -6,11 +6,7 @@ import { UserRole } from '@/server/users/user';
 export const useRoleRestriction = (allowedRoles: UserRole[]) => {
   const { data } = useSession();
 
-  if (!data?.user || !data?.user?.role) {
-    redirect('/404');
-  }
-
-  if (!allowedRoles.includes(data.user.role)) {
+  if (data?.user?.role && !allowedRoles.includes(data?.user.role)) {
     redirect('/404');
   }
 };

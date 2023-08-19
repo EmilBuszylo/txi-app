@@ -31,7 +31,7 @@ export const authOptions: NextAuthOptions = {
               firstName: true,
               lastName: true,
               password: true,
-              role: true,
+              // role: true,
             },
           });
 
@@ -45,7 +45,7 @@ export const authOptions: NextAuthOptions = {
               login: user.login,
               firstName: user.firstName,
               lastName: user.lastName,
-              role: user.role,
+              // role: user.role,
             };
           } else {
             return null;
