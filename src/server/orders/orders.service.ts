@@ -273,7 +273,7 @@ interface CalculateOrderDistancesDataProps
   locationTo?: LocationTo;
 }
 
-const PAGINATION_LIMIT = 20;
+const PAGINATION_LIMIT = 50;
 
 export interface GetOrdersResponse {
   meta: PaginationMeta;
@@ -283,6 +283,7 @@ export interface GetOrdersResponse {
 export const getOrders = async (input: GetOrdersParams) => {
   const {
     limit,
+    noLimit,
     page: currentPage,
     status,
     clientName,
@@ -322,8 +323,8 @@ export const getOrders = async (input: GetOrdersParams) => {
         deletedAt: null,
         ...filters,
       },
-      skip,
-      take,
+      skip: noLimit ? undefined : skip,
+      take: noLimit ? undefined : take,
       select: orderSelectedFields,
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore

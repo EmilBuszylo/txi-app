@@ -25,16 +25,19 @@ const initialPaginationMeta = {
   nextPage: null,
 };
 
-const DEFAULT_LIMIT = 20;
+const DEFAULT_LIMIT = 25;
 
 export default function Orders() {
   const { columnFilters, clearFilters, updateFilter, deleteFilter, filterParameters } =
     useFilters();
   const { sortParameters, updateSort } = useSorts();
   const [page, setPage] = useState(1);
+  const [limit, setLimit] = useState(DEFAULT_LIMIT);
+  const [noLimit, setNoLimit] = useState(false);
   const { data, isLoading, isFetching, error, isSuccess } = useOrders({
     page,
-    limit: DEFAULT_LIMIT,
+    limit,
+    noLimit,
     ...filterParameters,
     ...sortParameters,
   });
@@ -44,11 +47,11 @@ export default function Orders() {
 
   const columns = useMemo(() => {
     return getColumns({
-      params: { page, limit: DEFAULT_LIMIT, ...filterParameters },
+      params: { page, limit, noLimit, ...filterParameters },
       updateSort,
       sortParameters,
     });
-  }, [filterParameters, page, sortParameters, updateSort]);
+  }, [filterParameters, noLimit, limit, page, sortParameters, updateSort]);
 
   const clientsData = useMemo(() => {
     return clients?.results.map((res) => ({ label: res.name, value: res.name })) || [];
@@ -89,6 +92,10 @@ export default function Orders() {
                 changePage={(page) => setPage(page)}
                 nextPage={() => setPage((prev) => data?.meta.nextPage || prev)}
                 previousPage={() => setPage((prev) => data?.meta.prevPage || prev)}
+                limit={limit}
+                setLimit={setLimit}
+                isNoLimit={noLimit}
+                setNoLimit={setNoLimit}
               />
             }
             toolbar={

@@ -15,19 +15,20 @@ const initialPaginationMeta = {
   nextPage: null,
 };
 
-const DEFAULT_LIMIT = 20;
+const DEFAULT_LIMIT = 25;
 
 export default function CollectionPoints() {
   const [page, setPage] = useState(1);
+  const [limit, setLimit] = useState(DEFAULT_LIMIT);
 
   const { data, isLoading, isFetching, error, isSuccess } = useCollectionPoints({
     page: 1,
-    limit: DEFAULT_LIMIT,
+    limit,
   });
 
   const columns = useMemo(() => {
-    return getColumns({ page, limit: DEFAULT_LIMIT });
-  }, [page]);
+    return getColumns({ page, limit });
+  }, [limit, page]);
 
   return (
     <div>
@@ -35,7 +36,7 @@ export default function CollectionPoints() {
         <p>Oh no, there was an error</p>
       ) : (
         <DataTable
-          params={{ limit: DEFAULT_LIMIT, page }}
+          params={{ limit, page }}
           pagination={
             <Pagination
               currentPage={page}
@@ -43,6 +44,8 @@ export default function CollectionPoints() {
               changePage={(page) => setPage(page)}
               nextPage={() => setPage((prev) => data?.meta.nextPage || prev)}
               previousPage={() => setPage((prev) => data?.meta.prevPage || prev)}
+              limit={limit}
+              setLimit={setLimit}
             />
           }
           data={data?.results || []}

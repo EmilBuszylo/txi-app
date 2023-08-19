@@ -41,6 +41,9 @@ export async function GET(req: Request) {
     const orders = await getOrders({
       page: Number(urlParams.searchParams.get('page')) || 1,
       limit: Number(urlParams.searchParams.get('limit')) || 1,
+      noLimit: urlParams.searchParams.get('noLimit')
+        ? urlParams.searchParams.get('noLimit') === 'true'
+        : undefined,
       status: (urlParams.searchParams.get('status') as OrderStatus) || undefined,
       clientName: urlParams.searchParams.get('clientName') || undefined,
       driverId: urlParams.searchParams.get('driverId') || undefined,

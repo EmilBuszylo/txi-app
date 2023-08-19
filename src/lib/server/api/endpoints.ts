@@ -29,6 +29,7 @@ function getNextApiPath(path: string): string {
 export interface GetOrdersParams {
   page: number;
   limit: number;
+  noLimit?: boolean;
   status?: OrderStatus;
   clientName?: string;
   driverId?: string;
@@ -43,6 +44,7 @@ export interface GetOrdersParams {
 export function getOrders({
   page,
   limit,
+  noLimit,
   status,
   clientName,
   driverId,
@@ -56,6 +58,7 @@ export function getOrders({
   const queryParams = new URLSearchParams({
     page: page.toString(),
     limit: limit.toString(),
+    noLimit: noLimit ? noLimit.toString() : '',
     status: status || '',
     clientName: clientName || '',
     driverId: driverId || '',
