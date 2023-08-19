@@ -1,11 +1,14 @@
 'use client';
 
 import { usePathname } from 'next/navigation';
+import { useSession } from 'next-auth/react';
 import * as React from 'react';
 
 import { LogoutButton } from '@/components/features/auth/LogoutButton';
 import SidebarIconLink from '@/components/layout/DashboardLayout/SidebarIconLink';
+import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import UnstyledLink from '@/components/ui/link/UstyledLink';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 
 import { Routes } from '@/constant/routes';
 
@@ -25,6 +28,15 @@ const isActiveRoute = (link: string, asPath: string) => {
 
 export default function Header() {
   const pathname = usePathname();
+  const { data } = useSession();
+
+  const login = data?.user?.login;
+
+  const avatarName = data?.user
+    ? `${data.user?.firstName ? data.user?.firstName[0].toUpperCase() : ''}${
+        data.user?.lastName ? data.user?.lastName[0].toUpperCase() : ''
+      }`
+    : '';
 
   return (
     <header className='flex h-full w-20 flex-col justify-between bg-gray-900 py-3.5 lg:fixed lg:left-0 lg:top-0 lg:z-50 lg:border-r lg:border-gray-100 xl:w-40'>
@@ -50,7 +62,19 @@ export default function Header() {
           </ul>
         </nav>
       </div>
-      <div className='flex flex-col items-center'>
+      <div className='flex flex-col items-center space-y-3'>
+        <div className='flex items-center'>
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger>
+                <Avatar>
+                  <AvatarFallback>{avatarName}</AvatarFallback>
+                </Avatar>
+              </TooltipTrigger>
+              <TooltipContent>{login}</TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+        </div>
         <LogoutButton />
       </div>
     </header>

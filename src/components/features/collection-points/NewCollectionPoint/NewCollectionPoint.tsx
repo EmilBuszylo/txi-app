@@ -41,8 +41,10 @@ export function NewCollectionPoint({ defaultValues, id }: NewCollectionPointProp
     },
   });
   const router = useRouter();
-  const { mutateAsync: createCollectionPoint } = useCreateCollectionPoint();
-  const { mutateAsync: updateCollectionPoint } = useUpdateCollectionPoint(id || '');
+  const { mutateAsync: createCollectionPoint, isLoading: isCreateLoding } =
+    useCreateCollectionPoint();
+  const { mutateAsync: updateCollectionPoint, isLoading: isUpdateLoading } =
+    useUpdateCollectionPoint(id || '');
 
   const onSubmit = async (values: CreateCollectionPointParams) => {
     if (id) {
@@ -97,7 +99,11 @@ export function NewCollectionPoint({ defaultValues, id }: NewCollectionPointProp
             description='Celem wyszukania lokalizacji wprowadź kompleny adres lub jego część np. miasto lub ulicę.'
           />
           <div className='flex w-full items-center justify-end'>
-            <Button className='w-full md:w-auto' type='submit'>
+            <Button
+              className='w-full md:w-auto'
+              type='submit'
+              isLoading={isCreateLoding || isUpdateLoading}
+            >
               Zapisz
             </Button>
           </div>

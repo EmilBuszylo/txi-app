@@ -48,7 +48,7 @@ export function NewDriverForm() {
   const router = useRouter();
   const { data: operators } = useOperators({ page: 1, limit: 1000 });
 
-  const { mutateAsync: createDriver } = useCreateDriver();
+  const { mutateAsync: createDriver, isLoading } = useCreateDriver();
 
   const onSubmit = async (values: CreateDriverParams) => {
     await createDriver(values);
@@ -207,7 +207,7 @@ export function NewDriverForm() {
             )}
           />
           <div className='flex w-full items-center justify-end'>
-            <Button className='w-full md:w-auto' type='submit'>
+            <Button className='w-full md:w-auto' type='submit' isLoading={isLoading}>
               Zapisz
             </Button>
           </div>

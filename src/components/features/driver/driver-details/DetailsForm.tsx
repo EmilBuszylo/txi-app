@@ -54,7 +54,7 @@ export function DetailForm({ defaultValues, id }: NewDriverProps) {
   const router = useRouter();
   const { data: operators } = useOperators({ page: 1, limit: 1000 });
 
-  const { mutateAsync: updateDriver } = useUpdateDriver(id || '');
+  const { mutateAsync: updateDriver, isLoading } = useUpdateDriver(id || '');
 
   const onSubmit = async (values: z.infer<typeof updateDriverSchema>) => {
     await updateDriver(values);
@@ -230,7 +230,7 @@ export function DetailForm({ defaultValues, id }: NewDriverProps) {
             )}
           />
           <div className='flex w-full items-center justify-end'>
-            <Button className='w-full md:w-auto' type='submit'>
+            <Button className='w-full md:w-auto' type='submit' isLoading={isLoading}>
               Zapisz
             </Button>
           </div>

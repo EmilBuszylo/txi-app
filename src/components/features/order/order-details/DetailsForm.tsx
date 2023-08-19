@@ -75,7 +75,7 @@ export function OrderDetailsForm({
   const { data: collectionPoints } = useCollectionPoints({ page: 1, limit: 1000 });
   const { data: clients } = useClients({ page: 1, limit: 1000 });
 
-  const { mutateAsync: updateOrder } = useUpdateOrder(orderId);
+  const { mutateAsync: updateOrder, isLoading } = useUpdateOrder(orderId);
 
   useEffect(() => {
     if (defaultValues) {
@@ -402,7 +402,7 @@ export function OrderDetailsForm({
             }}
           />
           <div className='flex w-full items-center justify-end'>
-            <Button className='w-full md:w-auto' type='submit'>
+            <Button className='w-full md:w-auto' type='submit' isLoading={isLoading}>
               Zapisz
             </Button>
           </div>

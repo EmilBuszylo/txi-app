@@ -31,6 +31,7 @@ export const authOptions: NextAuthOptions = {
               firstName: true,
               lastName: true,
               password: true,
+              role: true,
             },
           });
 
@@ -44,6 +45,7 @@ export const authOptions: NextAuthOptions = {
               login: user.login,
               firstName: user.firstName,
               lastName: user.lastName,
+              role: user.role,
             };
           } else {
             return null;
@@ -60,4 +62,21 @@ export const authOptions: NextAuthOptions = {
   },
   adapter: PrismaAdapter(prisma),
   session: { strategy: 'jwt' },
+  callbacks: {
+    async session({ session, token }) {
+      session = {
+        ...session,
+        user: token.user,
+      };
+      return session;
+    },
+    async jwt({ token, user }) {
+      if (user) {
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
+        token.user = user;
+      }
+      return token;
+    },
+  },
 };
