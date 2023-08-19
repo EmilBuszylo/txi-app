@@ -20,12 +20,9 @@ import {
 import { Input } from '@/components/ui/input';
 
 const formSchema = z.object({
-  login: z
-    .string()
-    .min(1, {
-      message: 'Login must be filled',
-    })
-    .email({ message: 'Login format is required' }),
+  login: z.string().min(1, {
+    message: 'Login must be filled',
+  }),
   password: z.string().min(1, {
     message: 'Password must be filled',
   }),

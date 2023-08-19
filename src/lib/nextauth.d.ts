@@ -1,21 +1,15 @@
-// nextauth.d.ts
-import { DefaultJWT } from 'next-auth/src/jwt/types';
+import { JWT as AuthJWT } from 'next-auth/jwt';
 
-interface IUser {
-  id: string;
-  role: string;
-  firstName?: string | null;
-  lastName?: string | null;
-  login: string;
-}
+import { User as AppUser } from '@/server/users/user';
+
 declare module 'next-auth' {
-  type User = IUser;
+  type User = User;
   interface Session {
-    user?: IUser;
+    user?: AppUser;
   }
 }
 declare module 'next-auth/jwt' {
-  interface JWT extends Record<string, unknown>, DefaultJWT {
-    user: IUser;
+  interface JWT extends AuthJWT {
+    user: AppUser;
   }
 }

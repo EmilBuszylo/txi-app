@@ -2,6 +2,7 @@
 
 import { usePathname } from 'next/navigation';
 
+import { useRoleRestriction } from '@/lib/hooks/useRoleRestriction';
 import { cn } from '@/lib/utils';
 
 import DashboardContent from '@/components/layout/DashboardLayout/DashboardContent/DashboardContent';
@@ -12,6 +13,7 @@ import { Card } from '@/components/ui/card';
 import UnstyledLink from '@/components/ui/link/UstyledLink';
 
 import { Routes } from '@/constant/routes';
+import { UserRole } from '@/server/users/user';
 
 const ORDER_PAGES = [
   {
@@ -26,6 +28,8 @@ const ORDER_PAGES = [
 
 export default function Layout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
+  useRoleRestriction([UserRole.ADMIN, UserRole.DISPATCHER, UserRole.CLIENT]);
+
   return (
     <>
       <TopBar leftContainer={<PageGroupsTitle />} mainContainer={<PageTitle />} />

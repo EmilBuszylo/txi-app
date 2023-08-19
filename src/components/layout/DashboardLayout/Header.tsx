@@ -1,7 +1,7 @@
 'use client';
 
 import { usePathname } from 'next/navigation';
-import { useSession } from 'next-auth/react';
+import { User } from 'next-auth';
 import * as React from 'react';
 
 import { LogoutButton } from '@/components/features/auth/LogoutButton';
@@ -11,30 +11,46 @@ import UnstyledLink from '@/components/ui/link/UstyledLink';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 
 import { Routes } from '@/constant/routes';
+import { UserRole } from '@/server/users/user';
 
 import DriversIcons from '~/svg/icons/car.svg';
 import CollectionPointsIcon from '~/svg/icons/map-pin.svg';
 import OrdersIcon from '~/svg/icons/orders.svg';
 
 const links = [
-  { href: Routes.ORDERS, label: 'Zlecenia', icon: OrdersIcon },
-  { href: Routes.DRIVERS, label: 'Kierowcy', icon: DriversIcons },
-  { href: Routes.COLLECTION_POINTS, label: 'Punkty Zborne', icon: CollectionPointsIcon },
+  {
+    href: Routes.ORDERS,
+    label: 'Zlecenia',
+    icon: OrdersIcon,
+    allowedRoles: [UserRole.ADMIN, UserRole.DISPATCHER, UserRole.CLIENT],
+  },
+  {
+    href: Routes.DRIVERS,
+    label: 'Kierowcy',
+    icon: DriversIcons,
+    allowedRoles: [UserRole.ADMIN, UserRole.DISPATCHER],
+  },
+  {
+    href: Routes.COLLECTION_POINTS,
+    label: 'Punkty Zborne',
+    icon: CollectionPointsIcon,
+    allowedRoles: [UserRole.ADMIN, UserRole.DISPATCHER],
+  },
 ];
 
 const isActiveRoute = (link: string, asPath: string) => {
   return link === asPath || (link !== '/' && asPath.startsWith(link));
 };
 
-export default function Header() {
+export default function Header({ user }: { user: User }) {
   const pathname = usePathname();
-  const { data } = useSession();
 
-  const login = data?.user?.login;
+  const login = user?.login;
+  const role = user?.role;
 
-  const avatarName = data?.user
-    ? `${data.user?.firstName ? data.user?.firstName[0].toUpperCase() : ''}${
-        data.user?.lastName ? data.user?.lastName[0].toUpperCase() : ''
+  const avatarName = user
+    ? `${user?.firstName ? user?.firstName[0].toUpperCase() : ''}${
+        user?.lastName ? user?.lastName[0].toUpperCase() : ''
       }`
     : '';
 
@@ -50,15 +66,17 @@ export default function Header() {
         </UnstyledLink>
         <nav className='w-full'>
           <ul className='flex flex-col items-center space-y-3'>
-            {links.map(({ href, label, icon: Icon }) => (
-              <li key={`${href}${label}`} className='w-full'>
-                <SidebarIconLink href={href} active={isActiveRoute(href, pathname)}>
-                  <span className='sr-only'>{label}</span>
-                  <Icon className='h-8 w-8' />
-                  <span className='hidden xl:block'>{label}</span>
-                </SidebarIconLink>
-              </li>
-            ))}
+            {links
+              .filter((link) => role && link.allowedRoles.includes(role))
+              .map(({ href, label, icon: Icon }) => (
+                <li key={`${href}${label}`} className='w-full'>
+                  <SidebarIconLink href={href} active={isActiveRoute(href, pathname)}>
+                    <span className='sr-only'>{label}</span>
+                    <Icon className='h-8 w-8' />
+                    <span className='hidden xl:block'>{label}</span>
+                  </SidebarIconLink>
+                </li>
+              ))}
           </ul>
         </nav>
       </div>
