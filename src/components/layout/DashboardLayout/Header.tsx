@@ -46,7 +46,7 @@ export default function Header({ user }: { user: User }) {
   const pathname = usePathname();
 
   const login = user?.login;
-  const role = user?.role;
+  // const role = user?.role;
 
   const avatarName = user
     ? `${user?.firstName ? user?.firstName[0].toUpperCase() : ''}${
@@ -67,7 +67,7 @@ export default function Header({ user }: { user: User }) {
         <nav className='w-full'>
           <ul className='flex flex-col items-center space-y-3'>
             {links
-              .filter((link) => role && link.allowedRoles.includes(role))
+              // .filter((link) => role && link.allowedRoles.includes(role))
               .map(({ href, label, icon: Icon }) => (
                 <li key={`${href}${label}`} className='w-full'>
                   <SidebarIconLink href={href} active={isActiveRoute(href, pathname)}>
