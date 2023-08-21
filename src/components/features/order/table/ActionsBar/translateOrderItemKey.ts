@@ -1,0 +1,17 @@
+export const translateOrderItemKeys = {
+  internalId: 'Nr TXI',
+  externalId: 'Nr zlecenia klienta',
+  estimatedDistance: 'Szacowane km',
+  kmForDriver: 'km dla kierowcy',
+  actualKm: 'Rzeczywiste km',
+  clientName: 'Nazwa klienta',
+  clientInvoice: 'Faktura klienta',
+  isPayed: 'Faktura opłacona',
+  driverInvoice: 'Faktura kierowcy',
+  collectionPoint: 'Punkt zborny',
+  locationFrom: 'Lokalizacja Z',
+  locationTo: 'Lokalizacja Do',
+  locationVia: 'Lokalizacje przez',
+  createdAt: 'Data utworzenia zlecenia',
+  updatedAt: 'Data ostatniej aktualizacji',
+};
