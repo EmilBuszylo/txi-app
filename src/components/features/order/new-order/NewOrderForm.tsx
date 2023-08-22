@@ -2,7 +2,7 @@
 
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useRouter } from 'next/navigation';
-import React, { useMemo } from 'react';
+import React, { useEffect, useMemo } from 'react';
 import { useForm } from 'react-hook-form';
 
 import { useClients } from '@/lib/hooks/data/useClients';
@@ -12,6 +12,7 @@ import { useDrivers } from '@/lib/hooks/data/useDrivers';
 import { CreateOrderParams, createOrderSchema } from '@/lib/server/api/endpoints';
 
 import { EstimatedKmField } from '@/components/features/order/new-order/EstimatedKmField';
+import { useValidateLocationDate } from '@/components/features/order/new-order/hooks/useValidateLocationDate';
 import { LocationFromSection } from '@/components/features/order/new-order/LocationFromSection';
 import { LocationToSection } from '@/components/features/order/new-order/LocationToSection';
 import { LocationViaSection } from '@/components/features/order/new-order/LocationViaSection/LocationViaSection';
@@ -49,8 +50,23 @@ export function NewOrderForm() {
   const { data: clients } = useClients({ page: 1, limit: 1000 });
 
   const { mutateAsync: createOrder, isLoading } = useCreateOrder();
+  //  responsible for locations date field validation
+  const { setLocationDateError } = useValidateLocationDate(form, false);
+
+  const errorsCount = Object.keys(form.formState.errors).length;
+  useEffect(() => {
+    if (errorsCount > 0) {
+      setLocationDateError();
+    }
+  }, [errorsCount, setLocationDateError]);
 
   const onSubmit = async (values: CreateOrderParams) => {
+    const isLocationDateError = setLocationDateError();
+
+    if (isLocationDateError) {
+      return;
+    }
+
     // eslint-disable-next-line no-console
     const collectionPointsGeoData = collectionPoints?.results.find(
       (res) => values.collectionPointId === res.id

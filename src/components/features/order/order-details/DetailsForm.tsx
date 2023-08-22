@@ -12,6 +12,7 @@ import { useUpdateOrder } from '@/lib/hooks/data/useUpdateOrder';
 import { UpdateOrderParams, updateOrderSchema } from '@/lib/server/api/endpoints';
 
 import { EstimatedKmField } from '@/components/features/order/new-order/EstimatedKmField';
+import { useValidateLocationDate } from '@/components/features/order/new-order/hooks/useValidateLocationDate';
 import { LocationFromSection } from '@/components/features/order/new-order/LocationFromSection';
 import { LocationToSection } from '@/components/features/order/new-order/LocationToSection';
 import { LocationViaSection } from '@/components/features/order/new-order/LocationViaSection/LocationViaSection';
@@ -70,6 +71,15 @@ export function OrderDetailsForm({
     defaultValues: defaultValues,
   });
   const router = useRouter();
+  //  responsible for locations date field validation
+  const { setLocationDateError } = useValidateLocationDate(form, false);
+
+  const errorsCount = Object.keys(form.formState.errors).length;
+  useEffect(() => {
+    if (errorsCount > 0) {
+      setLocationDateError();
+    }
+  }, [errorsCount, setLocationDateError]);
 
   const { data: drivers } = useDrivers({ page: 1, limit: 10000 });
   const { data: collectionPoints } = useCollectionPoints({ page: 1, limit: 1000 });
@@ -84,6 +94,12 @@ export function OrderDetailsForm({
   }, [defaultValues, form]);
 
   const onSubmit = async (values: UpdateOrderParams) => {
+    const isLocationDateError = setLocationDateError();
+
+    if (isLocationDateError) {
+      return;
+    }
+
     const collectionPointsGeoData = collectionPoints?.results.find(
       (res) => values.collectionPointId === res.id
     );

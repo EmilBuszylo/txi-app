@@ -83,7 +83,6 @@ export const createOrderSchema = z.object({
   locationVia: z.array(locationFromSchema.optional()),
   externalId: z.string(),
   comment: z.string().optional(),
-  // withPassenger: z.boolean().optional(),
   clientId: z.string().optional(),
   driverId: z.string().optional(),
   collectionPointId: z.string().optional(),
@@ -117,7 +116,6 @@ export const updateOrderSchema = z.object({
   isPayed: z.boolean().optional().nullable(),
   kmForDriver: z.any().optional().nullable(),
   actualKm: z.any().optional().nullable(),
-  // withPassenger: z.boolean().optional(),
   driverId: z.string().optional(),
   collectionPointId: z.string().optional(),
   collectionPointsGeoCodes: z
