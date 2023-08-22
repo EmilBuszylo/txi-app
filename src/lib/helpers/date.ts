@@ -6,7 +6,7 @@ type Ranges = {
   [key in Intl.RelativeTimeFormatUnit]: number;
 };
 
-export function formatDate(date: string | Date, dateFormat: string): string {
+export function formatDate(date: string | Date | undefined, dateFormat: string): string {
   if (!date) {
     return '';
   }
