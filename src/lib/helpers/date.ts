@@ -7,12 +7,15 @@ type Ranges = {
 };
 
 export function formatDate(date: string | Date, dateFormat: string): string {
+  if (!date) {
+    return '';
+  }
   return format(new Date(date), dateFormat);
 }
 
 export function relativeDate(input: string | Date): string {
   const date = new Date(input);
-  const formatter = new Intl.RelativeTimeFormat('en');
+  const formatter = new Intl.RelativeTimeFormat('pl');
   const ranges: Partial<Ranges> = {
     days: 3600 * 24,
     hours: 3600,

@@ -2,12 +2,16 @@ import { Parser } from '@json2csv/plainjs';
 import { FileSpreadsheet } from 'lucide-react';
 import { MouseEvent } from 'react';
 
+import { formatDate } from '@/lib/helpers/date';
 import { downloadFile } from '@/lib/helpers/downloadFile';
 
 import { ActionButton } from '@/components/features/order/table/ActionsBar/ActionsBar';
 import { translateOrderItemKeys } from '@/components/features/order/table/ActionsBar/translateOrderItemKey';
 import { ActionsBarProps } from '@/components/ui/data-table/data-table';
 
+import { dateFormats } from '@/constant/date-formats';
+import { CollectionPoint } from '@/server/collection-points.ts/collectionPoint';
+import { Driver } from '@/server/drivers/driver';
 import { LocationFrom, Order } from '@/server/orders/order';
 
 type CsvImportButtonProps = Pick<ActionsBarProps<Order[]>, 'selectedItems' | 'selectedAmount'>;
@@ -27,11 +31,7 @@ export const CsvImportButton = ({ selectedAmount, selectedItems }: CsvImportButt
 
           for (const itemKey of itemKeys) {
             if (translateOrderItemKeys[itemKey as keyof typeof translateOrderItemKeys]) {
-              if (
-                itemKey === 'locationFrom' ||
-                itemKey === 'locationTo' ||
-                itemKey === 'collectionPoint'
-              ) {
+              if (itemKey === 'locationFrom' || itemKey === 'locationTo') {
                 newItems[translateOrderItemKeys[itemKey as keyof typeof translateOrderItemKeys]] =
                   (item[itemKey as keyof Order] as unknown as LocationFrom)?.address?.fullAddress ||
                   '';
@@ -48,9 +48,18 @@ export const CsvImportButton = ({ selectedAmount, selectedItems }: CsvImportButt
 
                 newItems[translateOrderItemKeys[itemKey as keyof typeof translateOrderItemKeys]] =
                   val;
+              } else if (itemKey === 'collectionPoint') {
+                newItems[translateOrderItemKeys[itemKey as keyof typeof translateOrderItemKeys]] =
+                  (item[itemKey as keyof Order] as unknown as CollectionPoint)?.fullAddress || '';
+              } else if (itemKey === 'driver') {
+                newItems[
+                  translateOrderItemKeys[itemKey as keyof typeof translateOrderItemKeys]
+                ] = `${(item[itemKey as keyof Order] as unknown as Driver).firstName} ${
+                  (item[itemKey as keyof Order] as unknown as Driver).lastName
+                }`;
               } else {
                 newItems[translateOrderItemKeys[itemKey as keyof typeof translateOrderItemKeys]] =
-                  item[itemKey as keyof Order];
+                  parseCsvValue(item[itemKey as keyof Order], itemKey);
               }
             }
           }
@@ -68,4 +77,17 @@ export const CsvImportButton = ({ selectedAmount, selectedItems }: CsvImportButt
       }}
     />
   );
+};
+
+const parseCsvValue = (value: Order[keyof Order], keyName?: string): Order[keyof Order] => {
+  if (typeof value === 'boolean') {
+    return value ? 'Tak' : 'Nie';
+  }
+
+  if (keyName === 'createdAt' || keyName === 'updatedAt') {
+    if (typeof value === 'string' || value instanceof Date)
+      return formatDate(new Date(value), dateFormats.dateWithTimeFull);
+  }
+
+  return value;
 };

@@ -7,6 +7,7 @@ export const translateOrderItemKeys = {
   clientName: 'Nazwa klienta',
   clientInvoice: 'Faktura klienta',
   isPayed: 'Faktura opłacona',
+  driver: 'Kierowca',
   driverInvoice: 'Faktura kierowcy',
   collectionPoint: 'Punkt zborny',
   locationFrom: 'Lokalizacja Z',
