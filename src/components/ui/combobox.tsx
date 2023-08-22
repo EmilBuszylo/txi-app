@@ -1,4 +1,5 @@
 import { Check, ChevronsUpDown } from 'lucide-react';
+import { useState } from 'react';
 import { useFormContext } from 'react-hook-form';
 
 import { cn } from '@/lib/utils';
@@ -44,6 +45,7 @@ export const Combobox = ({
   isDisabled,
   isReadOnly,
 }: ComboboxProps) => {
+  const [open, setOpen] = useState(false);
   const { control, setValue } = useFormContext();
 
   return (
@@ -57,12 +59,13 @@ export const Combobox = ({
           return (
             <FormItem className='flex flex-col'>
               <FormLabel>{label}</FormLabel>
-              <Popover>
+              <Popover open={open} onOpenChange={setOpen}>
                 <PopoverTrigger asChild>
                   <FormControl>
                     <Button
                       variant='outline'
                       role='combobox'
+                      aria-expanded={open}
                       className={cn(
                         'w-full justify-between',
                         !displayValue && 'text-muted-foreground'
@@ -92,6 +95,7 @@ export const Combobox = ({
                           key={item.value}
                           onSelect={() => {
                             setValue(name, item.value);
+                            setOpen(false);
                           }}
                         >
                           <Check
