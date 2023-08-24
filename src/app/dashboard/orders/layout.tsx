@@ -1,6 +1,7 @@
 'use client';
 
 import { usePathname } from 'next/navigation';
+import { ReactNode } from 'react';
 
 import { cn } from '@/lib/utils';
 
@@ -24,9 +25,8 @@ const ORDER_PAGES = [
   },
 ];
 
-export default function Layout({ children }: { children: React.ReactNode }) {
+export default function Layout({ children }: { children: ReactNode }) {
   const pathname = usePathname();
-  // useRoleRestriction([UserRole.ADMIN, UserRole.DISPATCHER, UserRole.CLIENT]);
 
   return (
     <>

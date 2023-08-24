@@ -1,7 +1,7 @@
 'use client';
 
 import { usePathname } from 'next/navigation';
-import { User } from 'next-auth';
+import { useSession } from 'next-auth/react';
 import * as React from 'react';
 
 import { LogoutButton } from '@/components/features/auth/LogoutButton';
@@ -42,11 +42,13 @@ const isActiveRoute = (link: string, asPath: string) => {
   return link === asPath || (link !== '/' && asPath.startsWith(link));
 };
 
-export default function Header({ user }: { user: User }) {
+export default function Header() {
+  const { data } = useSession();
   const pathname = usePathname();
+  const user = data?.user;
 
   const login = user?.login;
-  // const role = user?.role;
+  const role = user?.role;
 
   const avatarName = user
     ? `${user?.firstName ? user?.firstName[0].toUpperCase() : ''}${
@@ -67,7 +69,7 @@ export default function Header({ user }: { user: User }) {
         <nav className='w-full'>
           <ul className='flex flex-col items-center space-y-3'>
             {links
-              // .filter((link) => role && link.allowedRoles.includes(role))
+              .filter((link) => role && link.allowedRoles.includes(role))
               .map(({ href, label, icon: Icon }) => (
                 <li key={`${href}${label}`} className='w-full'>
                   <SidebarIconLink href={href} active={isActiveRoute(href, pathname)}>

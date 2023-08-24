@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getToken } from 'next-auth/jwt';
 
+import { UserRole } from '@/server/users/user';
+
 export { default } from 'next-auth/middleware';
 
 export const middleware = async (req: NextRequest) => {
@@ -9,10 +11,16 @@ export const middleware = async (req: NextRequest) => {
     secret: process.env.NEXTAUTH_SECRET,
   });
 
+  const redirectUrl = new URL(`/auth/login`, req.url);
+
   if (!token) {
-    const url = new URL(`/auth/login`, req.url);
-    url.searchParams.set('callbackUrl ', encodeURI(req.url));
-    return NextResponse.redirect(url);
+    redirectUrl.searchParams.set('callbackUrl ', encodeURI(req.url));
+    return NextResponse.redirect(redirectUrl);
+  }
+
+  if (token?.user.role === UserRole.DRIVER) {
+    redirectUrl.searchParams.set('callbackUrl ', encodeURI(req.url));
+    return NextResponse.redirect(redirectUrl);
   }
 };
 

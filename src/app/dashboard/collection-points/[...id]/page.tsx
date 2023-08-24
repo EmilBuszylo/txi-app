@@ -1,25 +1,11 @@
-'use client';
+import { accessControl } from '@/lib/server/utils/access-control';
 
-import { useParams } from 'next/navigation';
-import { notFound } from 'next/navigation';
+import { CollectionPointDetails } from '@/components/features/collection-points/collection-point-details/CollectionPointDetails';
 
-import { useCollectionPoint } from '@/lib/hooks/data/useCollectionPoint';
+import { UserRole } from '@/server/users/user';
 
-import { NewCollectionPoint } from '@/components/features/collection-points/NewCollectionPoint/NewCollectionPoint';
+export default async function CollectionPointDetailsPage() {
+  await accessControl({ allowedRoles: [UserRole.ADMIN, UserRole.DISPATCHER] });
 
-export default function CollectionPointDetails() {
-  const params = useParams();
-  const { data, error, isLoading } = useCollectionPoint(params?.id);
-
-  const isNoData = !isLoading && !data;
-
-  if (isLoading) {
-    return <>...loading</>;
-  }
-
-  if (!params?.id || error || isNoData) {
-    return notFound();
-  }
-
-  return <NewCollectionPoint defaultValues={data} id={params?.id} />;
+  return <CollectionPointDetails />;
 }

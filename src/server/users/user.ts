@@ -4,6 +4,7 @@ export interface User {
   role: UserRole;
   firstName?: string | null;
   lastName?: string | null;
+  clientId?: string | null;
 }
 
 export enum UserRole {

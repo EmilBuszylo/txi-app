@@ -32,6 +32,7 @@ export interface GetOrdersParams {
   noLimit?: boolean;
   status?: OrderStatus;
   clientName?: string;
+  clientId?: string;
   driverId?: string;
   hasActualKm?: boolean;
   clientInvoice?: string;
@@ -47,6 +48,7 @@ export function getOrders({
   noLimit,
   status,
   clientName,
+  clientId,
   driverId,
   hasActualKm,
   clientInvoice,
@@ -61,6 +63,7 @@ export function getOrders({
     noLimit: noLimit ? noLimit.toString() : '',
     status: status || '',
     clientName: clientName || '',
+    clientId: clientId || '',
     driverId: driverId || '',
     hasActualKm: hasActualKm ? hasActualKm.toString() : '',
     clientInvoice: clientInvoice || '',
@@ -145,7 +148,7 @@ export interface UpdateOrderParams extends Pick<CreateOrderParams, 'collectionPo
 }
 
 export function updateOrder(id: string, params: UpdateOrderParams) {
-  return fetchJson<Driver>(getNextApiPath(`${ApiRoutes.ORDERS}/${id}`), {
+  return fetchJson<Order>(getNextApiPath(`${ApiRoutes.ORDERS}/${id}`), {
     method: 'PUT',
     body: JSON.stringify(params),
   });
