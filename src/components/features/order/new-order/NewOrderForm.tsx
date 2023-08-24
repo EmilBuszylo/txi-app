@@ -9,6 +9,7 @@ import { useClients } from '@/lib/hooks/data/useClients';
 import { useCollectionPoints } from '@/lib/hooks/data/useCollectionPoints';
 import { useCreateOrder } from '@/lib/hooks/data/useCreateOrder';
 import { useDrivers } from '@/lib/hooks/data/useDrivers';
+import { UseIsClientRole } from '@/lib/hooks/useIsClientRole';
 import { CreateOrderParams, createOrderSchema } from '@/lib/server/api/endpoints';
 
 import { EstimatedKmField } from '@/components/features/order/new-order/EstimatedKmField';
@@ -17,6 +18,7 @@ import { LocationFromSection } from '@/components/features/order/new-order/Locat
 import { LocationToSection } from '@/components/features/order/new-order/LocationToSection';
 import { LocationViaSection } from '@/components/features/order/new-order/LocationViaSection/LocationViaSection';
 import { ShowRouteButton } from '@/components/features/order/new-order/ShowRouteButton';
+import { HideForClientRoleWrapper } from '@/components/HideForClientRoleWrapper';
 import { Button } from '@/components/ui/button';
 import { Combobox } from '@/components/ui/combobox';
 import {
@@ -33,11 +35,12 @@ import { Textarea } from '@/components/ui/textarea';
 import { Routes } from '@/constant/routes';
 
 export function NewOrderForm() {
+  const { clientId, isClient } = UseIsClientRole();
   const form = useForm<CreateOrderParams>({
     resolver: zodResolver(createOrderSchema),
     defaultValues: {
       externalId: '',
-      clientId: '',
+      clientId: clientId || '',
       comment: '',
       collectionPointId: '',
       locationVia: [],
@@ -125,6 +128,7 @@ export function NewOrderForm() {
             name='clientId'
             items={clientsData}
             inputText='Wprowadź nazwę firmy'
+            isDisabled={isClient}
           />
           <FormField
             control={form.control}
@@ -139,31 +143,38 @@ export function NewOrderForm() {
               </FormItem>
             )}
           />
-          <Combobox
-            label='Kierowca'
-            name='driverId'
-            items={driversData}
-            inputText='Wprowadź nazwę kierowcy'
-          />
-          <div className='flex flex-col space-y-2'>
-            <FormLabel>Operator</FormLabel>
-            <FormControl>
-              <Input disabled value={operator || ''} />
-            </FormControl>
-            <FormMessage />
-          </div>
-          <Combobox
-            label='Lokalizacja rozpoczęcia kursu'
-            name='collectionPointId'
-            items={collectionPointsData}
-            inputText='Wprowadź lokalizację'
-          />
+          <HideForClientRoleWrapper>
+            <Combobox
+              label='Kierowca'
+              name='driverId'
+              items={driversData}
+              inputText='Wprowadź nazwę kierowcy'
+            />
+          </HideForClientRoleWrapper>
+          <HideForClientRoleWrapper>
+            <div className='flex flex-col space-y-2'>
+              <FormLabel>Operator</FormLabel>
+              <FormControl>
+                <Input disabled value={operator || ''} />
+              </FormControl>
+              <FormMessage />
+            </div>
+          </HideForClientRoleWrapper>
+          <HideForClientRoleWrapper>
+            <Combobox
+              label='Lokalizacja rozpoczęcia kursu'
+              name='collectionPointId'
+              items={collectionPointsData}
+              inputText='Wprowadź lokalizację'
+            />
+          </HideForClientRoleWrapper>
           <LocationFromSection />
           <LocationViaSection />
           <LocationToSection />
           <ShowRouteButton />
-          <EstimatedKmField />
-
+          <HideForClientRoleWrapper>
+            <EstimatedKmField />
+          </HideForClientRoleWrapper>
           <FormField
             control={form.control}
             name='comment'

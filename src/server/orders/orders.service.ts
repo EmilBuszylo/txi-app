@@ -33,21 +33,6 @@ export const calculateLocationsDistance = async (
     }))
     .filter((loc) => typeof loc.lat === 'string' && typeof loc.lng === 'string');
 
-  //  todo temp log, remember to remove it later
-  // eslint-disable-next-line no-console
-  console.log([
-    input.collectionPointsGeoCodes,
-    {
-      lat: input.locationFrom?.address.lat,
-      lng: input.locationFrom?.address.lng,
-    },
-    ...(viaWaypoints as Waypoint[]),
-    {
-      lat: input.locationTo?.address.lat,
-      lng: input.locationTo?.address.lng,
-    },
-  ]);
-
   const { estimatedDistance, wayBackDistance } = await _calculateOrderDistancesData({
     collectionPointsGeoCodes: input.collectionPointsGeoCodes,
     locationFrom: input.locationFrom,
@@ -126,14 +111,18 @@ export const createOrder = async (input: CreateOrderParams) => {
           },
         },
         driver: {
-          connect: {
-            id: driverId,
-          },
+          connect: collectionPointId
+            ? {
+                id: driverId,
+              }
+            : undefined,
         },
         collectionPoint: {
-          connect: {
-            id: collectionPointId,
-          },
+          connect: collectionPointId
+            ? {
+                id: collectionPointId,
+              }
+            : undefined,
         },
       },
     });
@@ -204,7 +193,7 @@ export const updateOrder = async (id: string, input: UpdateOrderParams) => {
       .filter((loc) => typeof loc.lat === 'string' && typeof loc.lng === 'string');
 
     let collectionPointsGeoCodesData = collectionPointsGeoCodes;
-    if (!collectionPointsGeoCodesData) {
+    if (!collectionPointsGeoCodesData && collectionPointId) {
       collectionPointsGeoCodesData = await prisma.collectionPoint.findUniqueOrThrow({
         where: {
           id: collectionPointId,
@@ -287,6 +276,7 @@ export const getOrders = async (input: GetOrdersParams) => {
     page: currentPage,
     status,
     clientName,
+    clientId,
     driverId,
     hasActualKm,
     clientInvoice,
@@ -303,6 +293,7 @@ export const getOrders = async (input: GetOrdersParams) => {
   const filters = _getWhereFilterByParams({
     status,
     clientName,
+    clientId,
     driverId,
     hasActualKm,
     clientInvoice,
@@ -472,6 +463,7 @@ type WhereFilter = {
 const _getWhereFilterByParams = ({
   status,
   clientName,
+  clientId,
   driverId,
   hasActualKm,
   clientInvoice,
@@ -481,6 +473,7 @@ const _getWhereFilterByParams = ({
   return {
     ...(status && { status }),
     ...(clientName && { clientName }),
+    ...(clientId && { clientId }),
     ...(driverId && { driverId }),
     ...(typeof hasActualKm === 'boolean' && {
       actualKm: hasActualKm

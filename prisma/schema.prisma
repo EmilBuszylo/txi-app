@@ -32,6 +32,7 @@ model Client {
   name String @unique
 
   orders Order[]
+  users User[]
 
   deletedAt DateTime?
   createdAt DateTime  @default(now())
@@ -133,6 +134,8 @@ model User {
 
   driverOrders     Order[] @relation("driverOrders")
   lastEditedOrders Order[] @relation("lastEditorOrders")
+  client    Client? @relation(fields: [clientId], references: [id])
+  clientId  String?
 
   operator     Operator? @relation("driversOperator", fields: [operatorId, operatorName], references: [id, name])
   operatorId   String?

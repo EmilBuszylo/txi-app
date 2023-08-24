@@ -46,6 +46,7 @@ export async function GET(req: Request) {
         : undefined,
       status: (urlParams.searchParams.get('status') as OrderStatus) || undefined,
       clientName: urlParams.searchParams.get('clientName') || undefined,
+      clientId: urlParams.searchParams.get('clientId') || undefined,
       driverId: urlParams.searchParams.get('driverId') || undefined,
       hasActualKm: urlParams.searchParams.get('hasActualKm')
         ? urlParams.searchParams.get('hasActualKm') === 'true'

@@ -190,7 +190,7 @@ export function OrderDetailsForm({
             name='internalId'
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Nr zlecenia</FormLabel>
+                <FormLabel>Nr TXI</FormLabel>
                 <FormControl>
                   <Input placeholder='Nr zlecenia' {...field} disabled readOnly />
                 </FormControl>

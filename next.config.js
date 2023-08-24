@@ -25,6 +25,12 @@ const nextConfig = {
   trailingSlash: true,
   // SVGR
   webpack(config, { isServer, dev }) {
+    if (!isServer) {
+      // don't resolve 'fs' module on the client to prevent this error on build --> Error: Can't resolve 'fs'
+      config.resolve.fallback = {
+        fs: false,
+      };
+    }
     // Configures webpack to handle SVG files with SVGR. SVGR optimizes and transforms SVG files
     // into React components. See https://react-svgr.com/docs/next/
 
