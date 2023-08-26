@@ -3,35 +3,35 @@ const prisma = new PrismaClient();
 
 const clientsList = [
   {
-    name: 'Ecco',
+    name: 'Klient Testowy',
   },
-  {
-    name: 'Captrain',
-  },
-  {
-    name: 'CargoWay',
-  },
-  {
-    name: 'Tekol',
-  },
-  {
-    name: 'HSL',
-  },
-  {
-    name: 'Cargo Przewozy Towarowe',
-  },
-  {
-    name: 'Ost-West',
-  },
-  {
-    name: 'LTG',
-  },
-  {
-    name: 'PCC',
-  },
-  {
-    name: 'Laude',
-  },
+  // {
+  //   name: 'Captrain',
+  // },
+  // {
+  //   name: 'CargoWay',
+  // },
+  // {
+  //   name: 'Tekol',
+  // },
+  // {
+  //   name: 'HSL',
+  // },
+  // {
+  //   name: 'Cargo Przewozy Towarowe',
+  // },
+  // {
+  //   name: 'Ost-West',
+  // },
+  // {
+  //   name: 'LTG',
+  // },
+  // {
+  //   name: 'PCC',
+  // },
+  // {
+  //   name: 'Laude',
+  // },
 ];
 async function main() {
   for await (const client of clientsList) {

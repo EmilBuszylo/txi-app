@@ -6,7 +6,13 @@ import { Accordion } from '@/components/ui/accordion';
 import { Button } from '@/components/ui/button';
 import { FormDescription } from '@/components/ui/form';
 
-export const LocationViaSection = ({ defaultMapUrls }: { defaultMapUrls?: string[] }) => {
+export const LocationViaSection = ({
+  defaultMapUrls,
+  isClient,
+}: {
+  defaultMapUrls?: string[];
+  isClient?: boolean;
+}) => {
   const { control } = useFormContext();
 
   const { fields, append, remove } = useFieldArray({
@@ -32,6 +38,7 @@ export const LocationViaSection = ({ defaultMapUrls }: { defaultMapUrls?: string
               index={i}
               defaultMapUrl={defaultMapUrls ? defaultMapUrls[i] : undefined}
               removeItem={() => remove(i)}
+              isClient={isClient}
             />
           );
         })}

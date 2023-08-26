@@ -20,9 +20,15 @@ import {
 import { Input } from '@/components/ui/input';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 
-export const LocationFromSection = ({ defaultMapUrl }: { defaultMapUrl?: string }) => {
+export const LocationFromSection = ({
+  defaultMapUrl,
+  isClient = false,
+}: {
+  defaultMapUrl?: string;
+  isClient?: boolean;
+}) => {
   const { control, setValue } = useFormContext();
-  const locationDateInfo = useLocationsDateInfo({ isClient: true });
+  const locationDateInfo = useLocationsDateInfo({ isClient });
 
   const onAddressFromSelect = (details: PlaceDetails) => {
     const city =

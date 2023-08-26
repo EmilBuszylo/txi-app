@@ -9,6 +9,7 @@ import { useClients } from '@/lib/hooks/data/useClients';
 import { useCollectionPoints } from '@/lib/hooks/data/useCollectionPoints';
 import { useDrivers } from '@/lib/hooks/data/useDrivers';
 import { useUpdateOrder } from '@/lib/hooks/data/useUpdateOrder';
+import { UseIsClientRole } from '@/lib/hooks/useIsClientRole';
 import { UpdateOrderParams, updateOrderSchema } from '@/lib/server/api/endpoints';
 
 import { EstimatedKmField } from '@/components/features/order/new-order/EstimatedKmField';
@@ -66,13 +67,14 @@ export function OrderDetailsForm({
   orderId,
   collectionPoint,
 }: OrderDetailsFormProps) {
+  const { isClient } = UseIsClientRole();
   const form = useForm<OrderDetailsFormDefaultValues>({
     resolver: zodResolver(updateOrderSchema),
     defaultValues: defaultValues,
   });
   const router = useRouter();
   //  responsible for locations date field validation
-  const { setLocationDateError } = useValidateLocationDate(form, false);
+  const { setLocationDateError } = useValidateLocationDate(form, isClient);
 
   const errorsCount = Object.keys(form.formState.errors).length;
   useEffect(() => {
@@ -300,11 +302,18 @@ export function OrderDetailsForm({
               </FormItem>
             )}
           />
-          <LocationFromSection defaultMapUrl={defaultValues?.locationFrom?.address.url} />
+          <LocationFromSection
+            defaultMapUrl={defaultValues?.locationFrom?.address.url}
+            isClient={isClient}
+          />
           <LocationViaSection
+            isClient={isClient}
             defaultMapUrls={defaultValues.locationVia?.map((l) => l.address.url)}
           />
-          <LocationToSection defaultMapUrl={defaultValues?.locationTo?.address.url} />
+          <LocationToSection
+            defaultMapUrl={defaultValues?.locationTo?.address.url}
+            isClient={isClient}
+          />
           <ShowRouteButton />
           <EstimatedKmField
             defaultCollectionPointsGeo={

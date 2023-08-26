@@ -53,9 +53,9 @@ export function NewOrderForm() {
   const { data: clients } = useClients({ page: 1, limit: 1000 });
 
   const { mutateAsync: createOrder, isLoading } = useCreateOrder();
-  //  responsible for locations date field validation
-  const { setLocationDateError } = useValidateLocationDate(form, false);
 
+  //  responsible for locations date field validation
+  const { setLocationDateError } = useValidateLocationDate(form, isClient);
   const errorsCount = Object.keys(form.formState.errors).length;
   useEffect(() => {
     if (errorsCount > 0) {
@@ -168,9 +168,9 @@ export function NewOrderForm() {
               inputText='Wprowadź lokalizację'
             />
           </HideForClientRoleWrapper>
-          <LocationFromSection />
-          <LocationViaSection />
-          <LocationToSection />
+          <LocationFromSection isClient={isClient} />
+          <LocationViaSection isClient={isClient} />
+          <LocationToSection isClient={isClient} />
           <ShowRouteButton />
           <HideForClientRoleWrapper>
             <EstimatedKmField />

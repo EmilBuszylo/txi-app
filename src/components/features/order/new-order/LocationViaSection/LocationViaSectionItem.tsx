@@ -21,12 +21,14 @@ interface LocationViaSectionItemProps {
   index: number;
   defaultMapUrl?: string;
   removeItem: () => void;
+  isClient?: boolean;
 }
 
 export const LocationViaSectionItem = ({
   index,
   defaultMapUrl,
   removeItem,
+  isClient = false,
 }: LocationViaSectionItemProps) => {
   const { control, watch } = useFormContext();
   const { update } = useFieldArray({
@@ -34,7 +36,7 @@ export const LocationViaSectionItem = ({
     control: control,
   });
   const fieldName = `locationVia[${index}]`;
-  const locationDateInfo = useLocationsDateInfo({ isClient: true });
+  const locationDateInfo = useLocationsDateInfo({ isClient });
 
   const watchFullAddressValue = watch(`${fieldName}.address.fullAddress`);
 

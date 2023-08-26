@@ -62,6 +62,8 @@ export const PlacesAutocomplete = ({
 }: PlacesAutocompleteProps) => {
   const { control, setValue } = useFormContext();
   const [mapUrl, setMapUrl] = useState(defaultMapUrl);
+  const [open, setOpen] = useState(false);
+
   const { placePredictions, getPlacePredictions, placesService } = usePlacesAutocompleteService({
     apiKey: process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY,
     language: 'pl',
@@ -76,12 +78,13 @@ export const PlacesAutocomplete = ({
         render={({ field }) => (
           <FormItem className='flex flex-col'>
             <FormLabel>Lokalizacja</FormLabel>
-            <Popover>
+            <Popover open={open} onOpenChange={setOpen}>
               <PopoverTrigger asChild>
                 <FormControl>
                   <Button
                     variant='outline'
                     role='combobox'
+                    aria-expanded={open}
                     className={cn(
                       'w-full justify-between',
                       !field.value && 'text-muted-foreground'
@@ -116,6 +119,7 @@ export const PlacesAutocomplete = ({
                               setMapUrl(details.url);
                             }
                           );
+                          setOpen(false);
                         }}
                       >
                         <Check
