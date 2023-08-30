@@ -14,6 +14,7 @@ import {
   UpdateOrderParams,
 } from '@/lib/server/api/endpoints';
 
+import { sendEmail } from '@/server/email/email.service';
 import {
   LocationFrom,
   locationFromSchema,
@@ -93,7 +94,7 @@ export const createOrder = async (input: CreateOrderParams) => {
 
     const status = input.driverId ? OrderStatus.STARTED : OrderStatus.NEW;
 
-    return prisma.order.create({
+    const order = await prisma.order.create({
       data: {
         internalId: _createInternalId(count),
         ...rest,
@@ -126,6 +127,19 @@ export const createOrder = async (input: CreateOrderParams) => {
         },
       },
     });
+
+    if (order) {
+      await sendEmail({
+        subject: 'Zlecenia TXI - nowe zlecenie zostało dodane',
+        orderData: {
+          id: order.id,
+          internalId: order.internalId,
+          clientName: order.clientName,
+        },
+      });
+    }
+
+    return order;
   } catch (error) {
     logger.error({ error, stack: 'createOrder' });
     throw error;

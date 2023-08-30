@@ -80,7 +80,7 @@ export function LoginForm() {
         />
         <div className='flex w-full items-center justify-end'>
           <Button className='w-full md:w-auto' type='submit' isLoading={status === 'loading'}>
-            Sign in
+            Zaloguj
           </Button>
         </div>
       </form>

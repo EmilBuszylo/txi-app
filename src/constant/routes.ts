@@ -11,4 +11,5 @@ export enum ApiRoutes {
   COLLECTION_POINTS = '/collection-points',
   CLIENTS = '/clients',
   OPERATORS = '/operators',
+  EMAIL = '/email',
 }

@@ -418,3 +418,20 @@ export function getOperators({ page, limit }: GetOperatorsParams) {
     }
   );
 }
+
+// emails
+export interface SendEmailRequest {
+  subject?: string;
+  orderData: {
+    id: string;
+    internalId: string;
+    clientName: string;
+  };
+}
+
+export function sendNewOrderEmail(params: SendEmailRequest) {
+  return fetchJson<{ success: boolean }>(getNextApiPath(ApiRoutes.EMAIL), {
+    method: 'POST',
+    body: JSON.stringify(params),
+  });
+}
