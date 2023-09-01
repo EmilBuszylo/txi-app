@@ -2,7 +2,7 @@
 
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useRouter } from 'next/navigation';
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { PatternFormat } from 'react-number-format';
 import { z } from 'zod';
@@ -47,6 +47,7 @@ const initialFormData = {
 };
 
 export function DetailForm({ defaultValues, id }: NewDriverProps) {
+  const [isDefaultAdded, setIsDefaultAdded] = useState(false);
   const form = useForm<z.infer<typeof updateDriverSchema>>({
     resolver: zodResolver(updateDriverSchema),
     defaultValues: { ...defaultValues, password: 'passwordstring' } || initialFormData,
@@ -70,10 +71,11 @@ export function DetailForm({ defaultValues, id }: NewDriverProps) {
     : [];
 
   useEffect(() => {
-    if (defaultValues) {
+    if (defaultValues && !isDefaultAdded) {
       form.reset();
+      setIsDefaultAdded(true);
     }
-  }, [defaultValues, form]);
+  }, [defaultValues, form, isDefaultAdded]);
 
   return (
     <div className='lg:max-w-2xl'>
@@ -179,12 +181,12 @@ export function DetailForm({ defaultValues, id }: NewDriverProps) {
           />
           <FormField
             control={form.control}
-            name='car.carModel'
+            name='car.carBrand'
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Model</FormLabel>
+                <FormLabel>Marka</FormLabel>
                 <FormControl>
-                  <Input placeholder='Model samochodu' {...field} />
+                  <Input placeholder='Marka samochodu' {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -192,12 +194,12 @@ export function DetailForm({ defaultValues, id }: NewDriverProps) {
           />
           <FormField
             control={form.control}
-            name='car.carBrand'
+            name='car.carModel'
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Marka</FormLabel>
+                <FormLabel>Model</FormLabel>
                 <FormControl>
-                  <Input placeholder='Marka samochodu' {...field} />
+                  <Input placeholder='Model samochodu' {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>

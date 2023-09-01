@@ -2,7 +2,7 @@
 
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useRouter } from 'next/navigation';
-import React, { useEffect, useMemo } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { useForm } from 'react-hook-form';
 
 import { useClients } from '@/lib/hooks/data/useClients';
@@ -67,6 +67,7 @@ export function OrderDetailsForm({
   orderId,
   collectionPoint,
 }: OrderDetailsFormProps) {
+  const [isDefaultAdded, setIsDefaultAdded] = useState(false);
   const { isClient } = UseIsClientRole();
   const form = useForm<OrderDetailsFormDefaultValues>({
     resolver: zodResolver(updateOrderSchema),
@@ -90,10 +91,11 @@ export function OrderDetailsForm({
   const { mutateAsync: updateOrder, isLoading } = useUpdateOrder(orderId);
 
   useEffect(() => {
-    if (defaultValues) {
+    if (defaultValues && !isDefaultAdded) {
       form.reset();
+      setIsDefaultAdded(true);
     }
-  }, [defaultValues, form]);
+  }, [defaultValues, form, isDefaultAdded]);
 
   const onSubmit = async (values: UpdateOrderParams) => {
     const isLocationDateError = setLocationDateError();

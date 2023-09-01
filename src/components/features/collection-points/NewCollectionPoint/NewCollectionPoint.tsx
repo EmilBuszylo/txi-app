@@ -2,7 +2,7 @@
 
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useRouter } from 'next/navigation';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 
 import { useCreateCollectionPoint } from '@/lib/hooks/data/useCreateCollectionPoint';
@@ -33,6 +33,7 @@ interface NewCollectionPointProps {
 }
 
 export function NewCollectionPoint({ defaultValues, id }: NewCollectionPointProps) {
+  const [isDefaultAdded, setIsDefaultAdded] = useState(false);
   const form = useForm<CreateCollectionPointParams>({
     resolver: zodResolver(createCollectionPointSchema),
     defaultValues: defaultValues || {
@@ -68,10 +69,11 @@ export function NewCollectionPoint({ defaultValues, id }: NewCollectionPointProp
   };
 
   useEffect(() => {
-    if (defaultValues) {
+    if (defaultValues && !isDefaultAdded) {
       form.reset();
+      setIsDefaultAdded(true);
     }
-  }, [defaultValues, form]);
+  }, [defaultValues, form, isDefaultAdded]);
 
   return (
     <div className='lg:max-w-2xl'>
