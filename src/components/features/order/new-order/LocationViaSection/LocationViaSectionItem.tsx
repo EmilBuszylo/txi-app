@@ -123,25 +123,12 @@ export const LocationViaSectionItem = ({
           />
           <FormField
             control={control}
-            name={`${fieldName}.passenger.firstName`}
+            name={`${fieldName}.passenger.name`}
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Imię</FormLabel>
+                <FormLabel>Nazwa</FormLabel>
                 <FormControl>
-                  <Input placeholder='Wprowadź imię pasażera' {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={control}
-            name={`${fieldName}.passenger.lastName`}
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Nazwisko</FormLabel>
-                <FormControl>
-                  <Input placeholder='Wprowadź nazwisko pasażera' {...field} />
+                  <Input placeholder='Wprowadź nazwę pasażera' {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
