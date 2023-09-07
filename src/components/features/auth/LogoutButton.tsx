@@ -24,7 +24,7 @@ export const LogoutButton = () => {
     >
       <div
         className={cn(
-          'relative z-10  flex h-12 w-20 items-center gap-x-2 rounded lg:justify-center xl:w-40  xl:px-2'
+          'relative z-10 flex h-12 w-20 items-center justify-center gap-x-2 rounded xl:w-40 xl:px-2'
         )}
       >
         <span className='sr-only'>sign out</span>

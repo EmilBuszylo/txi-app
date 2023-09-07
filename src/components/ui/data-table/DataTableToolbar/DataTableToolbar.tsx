@@ -45,7 +45,7 @@ export function DataTableToolbar({
 
   return (
     <div className='flex items-center justify-between'>
-      <div className='flex flex-1 items-center space-x-2'>
+      <div className='flex flex-1 flex-wrap items-center gap-y-4 space-x-2'>
         {/*<Input*/}
         {/*  placeholder='Filter tasks...'*/}
         {/*  // value={(table.getColumn('status')?.getFilterValue() as string) ?? ''}*/}

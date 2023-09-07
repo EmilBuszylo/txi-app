@@ -142,7 +142,7 @@ export function DataTable<TData, TValue>({
           )}
         </Table>
       </div>
-      <div className='flex w-full justify-center justify-between pb-4 pt-4'>
+      <div className='flex w-full flex-col justify-center justify-between gap-y-4 pb-4 pt-4 md:flex-row'>
         <div className='flex-1 text-sm text-muted-foreground'>
           wybranych {table.getFilteredSelectedRowModel().rows.length} z{' '}
           {table.getFilteredRowModel().rows.length}

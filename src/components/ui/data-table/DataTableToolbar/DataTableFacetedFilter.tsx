@@ -51,13 +51,17 @@ export const DataTableFacetedFilter = ({
   return (
     <Popover>
       <PopoverTrigger asChild>
-        <Button variant='outline' size='sm' className='h-8 border-dashed'>
+        <Button
+          variant='outline'
+          size='sm'
+          className='h-8 justify-start border-dashed lg:justify-center'
+        >
           <PlusCircle className='mr-2 h-4 w-4' />
           {title}
           {selectedOption && (
             <>
               <Separator orientation='vertical' className='mx-2 h-4' />
-              <div className='hidden space-x-1 lg:flex'>
+              <div className='flex space-x-1'>
                 {selectedOption && (
                   <Badge
                     variant='secondary'
@@ -114,7 +118,7 @@ export const DataTableFacetedFilter = ({
                     onSelect={() => deleteFilter(name)}
                     className='justify-center text-center'
                   >
-                    Clear filters
+                    Wyczyść filtr
                   </CommandItem>
                 </CommandGroup>
               </>

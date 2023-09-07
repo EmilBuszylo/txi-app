@@ -13,7 +13,7 @@ export const StatusCell = ({ row }: { row: Row<Order> }) => {
   );
 };
 
-const statusOnBadgeStyle: Record<OrderStatus, string> = {
+export const statusOnBadgeStyle: Record<OrderStatus, string> = {
   NEW: 'border-transparent bg-green-600 text-white hover:bg-green-600/80',
   STARTED: 'border-transparent bg-blue-600 text-white hover:bg-blue-600/80',
   IN_PROGRESS: 'border-transparent bg-orange-600 text-white hover:bg-orange-600/80',

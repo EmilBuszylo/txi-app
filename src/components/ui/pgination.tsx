@@ -39,7 +39,7 @@ export function Pagination({
 }: PaginationProps) {
   return (
     <TooltipProvider>
-      <div className='flex items-center gap-x-6'>
+      <div className='flex flex-col gap-x-6 gap-y-4 md:flex-row md:items-center'>
         {typeof limit === 'number' && setLimit && (
           <div className='flex items-center space-x-2'>
             <p className='text-sm font-medium'>Liczba wierszy</p>

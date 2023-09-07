@@ -42,12 +42,16 @@ export const DataTableDateRangeFilter = ({
   return (
     <Popover>
       <PopoverTrigger asChild>
-        <Button variant='outline' size='sm' className='h-8 border-dashed'>
+        <Button
+          variant='outline'
+          size='sm'
+          className='h-full min-h-[2rem] flex-col justify-center gap-y-2 border-dashed lg:h-8 lg:flex-row'
+        >
           {title}
           {providedValue && (
             <>
-              <Separator orientation='vertical' className='mx-2 h-4' />
-              <div className='hidden items-center gap-x-1 space-x-1 lg:flex'>
+              <Separator orientation='vertical' className='mx-2 hidden h-4 lg:block' />
+              <div className='flex flex-col items-center gap-x-1 gap-y-2 space-x-1 lg:flex-row'>
                 {Object.keys(providedValue).map((k) => (
                   <Badge key={k} variant='secondary' className=' rounded-sm px-1 font-normal'>
                     {k === 'valueFrom' ? 'Od: ' : 'Do: '}
@@ -57,9 +61,9 @@ export const DataTableDateRangeFilter = ({
                     )}
                   </Badge>
                 ))}
-                <Separator orientation='vertical' className='mx-2 h-4' />
+                <Separator orientation='vertical' className='mx-2 hidden h-4 lg:block' />
                 <XCircle
-                  className='z-20 h-4 w-4 transition hover:opacity-30'
+                  className='z-20 h-6 w-6 transition hover:opacity-30 lg:h-4 lg:w-4'
                   tabIndex={0}
                   onClick={(e) => {
                     e.preventDefault();

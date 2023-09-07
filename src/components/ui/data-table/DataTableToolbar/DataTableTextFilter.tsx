@@ -36,12 +36,16 @@ export const DataTableTextFilter = ({
   return (
     <Popover>
       <PopoverTrigger asChild>
-        <Button variant='outline' size='sm' className='h-8 border-dashed'>
+        <Button
+          variant='outline'
+          size='sm'
+          className='h-8 justify-start border-dashed lg:justify-center'
+        >
           {title}
           {providedValue && (
             <>
               <Separator orientation='vertical' className='mx-2 h-4' />
-              <div className='hidden items-center gap-x-1 space-x-1 lg:flex'>
+              <div className='flex items-center gap-x-1 space-x-1'>
                 {providedValue && (
                   <Badge
                     variant='secondary'

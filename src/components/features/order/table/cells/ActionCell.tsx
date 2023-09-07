@@ -11,11 +11,20 @@ import { Routes } from '@/constant/routes';
 import { Order, OrderStatus } from '@/server/orders/order';
 
 export const ActionCell = ({ row, params }: { row: Row<Order>; params: GetOrdersParams }) => {
-  const { mutateAsync: updateOrder } = useUpdateManyOrders([row.original.id], params);
-  const router = useRouter();
   return (
     <ActionsColumn>
-      <DropdownMenuItem onClick={() => router.push(`${Routes.ORDERS}/${row.original.id}`)}>
+      <ActionCellOptions id={row.original.id} params={params} />
+    </ActionsColumn>
+  );
+};
+
+export const ActionCellOptions = ({ id, params }: { id: string; params: GetOrdersParams }) => {
+  const { mutateAsync: updateOrder } = useUpdateManyOrders([id], params);
+  const router = useRouter();
+
+  return (
+    <>
+      <DropdownMenuItem onClick={() => router.push(`${Routes.ORDERS}/${id}`)}>
         Szczegóły/edycja
       </DropdownMenuItem>
       <DropdownMenuSeparator />
@@ -25,6 +34,6 @@ export const ActionCell = ({ row, params }: { row: Row<Order>; params: GetOrders
       >
         Anuluj zlecenie
       </DropdownMenuItem>
-    </ActionsColumn>
+    </>
   );
 };

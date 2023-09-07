@@ -17,7 +17,7 @@ export function DashboardContent({
     <div className='relative flex min-h-0 w-full flex-1 items-stretch divide-gray-100 overflow-hidden border-gray-100 lg:divide-x lg:border-t'>
       {sidebar && <LeftSidebar>{sidebar}</LeftSidebar>}
 
-      <div className='relative flex min-w-0 flex-1 flex-col gap-4 overflow-y-auto overflow-x-hidden bg-blue-50 p-4'>
+      <div className='relative flex min-w-0 flex-1 flex-col gap-4 overflow-y-auto overflow-x-hidden bg-blue-50 py-4 md:p-4'>
         {children}
       </div>
 
