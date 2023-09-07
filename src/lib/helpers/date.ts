@@ -1,4 +1,5 @@
 import { format } from 'date-fns';
+import { pl } from 'date-fns/locale';
 
 import { dateFormats } from '@/constant/date-formats';
 
@@ -10,7 +11,9 @@ export function formatDate(date: string | Date | undefined, dateFormat: string):
   if (!date) {
     return '';
   }
-  return format(new Date(date), dateFormat);
+  return format(new Date(date), dateFormat, {
+    locale: pl,
+  });
 }
 
 export function relativeDate(input: string | Date): string {
@@ -32,17 +35,21 @@ export function relativeDate(input: string | Date): string {
       const delta = secondsElapsed / range;
 
       if (key === 'seconds' && Math.abs(delta) < 10) {
-        return 'Few seconds ago';
+        return 'Przed chwilą';
       }
 
       // return regular date for more than "10 days ago"
       if (key === 'days' && Math.abs(delta) > 10) {
-        return format(date, dateFormats.date);
+        return format(date, dateFormats.date, {
+          locale: pl,
+        });
       }
 
       return formatter.format(Math.round(delta), key as Intl.RelativeTimeFormatUnit);
     }
   }
 
-  return format(date, dateFormats.date);
+  return format(date, dateFormats.date, {
+    locale: pl,
+  });
 }

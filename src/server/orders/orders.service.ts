@@ -96,7 +96,7 @@ export const createOrder = async (input: CreateOrderParams) => {
 
     const order = await prisma.order.create({
       data: {
-        internalId: _createInternalId(count),
+        internalId: _createInternalId(count + 1),
         ...rest,
         locationFrom,
         locationTo,
@@ -386,7 +386,7 @@ export const removeOrder = async (id: string) => {
 };
 
 const _createInternalId = (count: number) => {
-  return `txi/${format(new Date(), 'yyyyLLd')}/${count}`;
+  return `txi/${format(new Date(), 'yyyyLLdd')}/${count}`;
 };
 
 const _calculateOrderDistancesData = async ({

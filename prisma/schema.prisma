@@ -76,7 +76,7 @@ model Order {
   actualKm          Int? // final distance
   kmForDriver       Int? // modified by user
   intakeDistance    Int? // distance from collection point to location from
-
+  isKmDifferenceAccepted Boolean? @default(false) // temp solution to accept the difference between distances
   hasHighway Boolean?
 
   client     Client @relation(fields: [clientId, clientName], references: [id, name])
