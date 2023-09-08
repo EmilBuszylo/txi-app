@@ -128,63 +128,65 @@ export default function OrdersTable() {
               />
             </TooltipProvider>
           </div>
-          {data?.results && (
-            <div className='flex flex-col gap-y-4'>
-              <div className='flex items-center justify-between'>
-                <DataTableToolbarMobile
-                  clearFilters={clearFilters}
-                  columnFilters={columnFilters}
-                  deleteFilter={deleteFilter}
-                  updateFilter={updateFilter}
-                  dateRangeFilters={[
-                    {
-                      title: 'Data utworzenia',
-                      name: 'createdAt',
-                    },
-                  ]}
-                  textFilters={[
-                    {
-                      title: 'Nr FV klienta',
-                      name: 'clientInvoice',
-                    },
-                  ]}
-                  filters={createFiltersConfig({ clientsData, driversData })}
+          <div className='block md:hidden'>
+            {data?.results && (
+              <div className='flex flex-col gap-y-4'>
+                <div className='flex items-center justify-between'>
+                  <DataTableToolbarMobile
+                    clearFilters={clearFilters}
+                    columnFilters={columnFilters}
+                    deleteFilter={deleteFilter}
+                    updateFilter={updateFilter}
+                    dateRangeFilters={[
+                      {
+                        title: 'Data utworzenia',
+                        name: 'createdAt',
+                      },
+                    ]}
+                    textFilters={[
+                      {
+                        title: 'Nr FV klienta',
+                        name: 'clientInvoice',
+                      },
+                    ]}
+                    filters={createFiltersConfig({ clientsData, driversData })}
+                  />
+                  <Button
+                    variant='ghost'
+                    size='sm'
+                    className='-ml-3 h-8 data-[state=open]:bg-accent'
+                    onClick={() =>
+                      updateSort('createdAt', sortParameters?.sort === 'desc' ? 'asc' : 'desc')
+                    }
+                  >
+                    <span>Sortowanie</span>
+                    {sortParameters?.sort === 'desc' ? (
+                      <ArrowDownIcon className='ml-2 h-4 w-4' />
+                    ) : sortParameters?.sort === 'asc' ? (
+                      <ArrowUpIcon className='ml-2 h-4 w-4' />
+                    ) : (
+                      <ArrowUpDown className='ml-2 h-4 w-4' />
+                    )}
+                  </Button>
+                </div>
+                <OrdersTableMobile
+                  items={data?.results}
+                  params={{ page, limit, noLimit, ...filterParameters }}
                 />
-                <Button
-                  variant='ghost'
-                  size='sm'
-                  className='-ml-3 h-8 data-[state=open]:bg-accent'
-                  onClick={() =>
-                    updateSort('createdAt', sortParameters?.sort === 'desc' ? 'asc' : 'desc')
-                  }
-                >
-                  <span>Sortowanie</span>
-                  {sortParameters?.sort === 'desc' ? (
-                    <ArrowDownIcon className='ml-2 h-4 w-4' />
-                  ) : sortParameters?.sort === 'asc' ? (
-                    <ArrowUpIcon className='ml-2 h-4 w-4' />
-                  ) : (
-                    <ArrowUpDown className='ml-2 h-4 w-4' />
-                  )}
-                </Button>
+                <Pagination
+                  currentPage={page}
+                  pagesCount={data?.meta.pageCount || initialPaginationMeta.pageCount}
+                  changePage={(page) => setPage(page)}
+                  nextPage={() => setPage((prev) => data?.meta.nextPage || prev)}
+                  previousPage={() => setPage((prev) => data?.meta.prevPage || prev)}
+                  limit={limit}
+                  setLimit={setLimit}
+                  isNoLimit={noLimit}
+                  setNoLimit={setNoLimit}
+                />
               </div>
-              <OrdersTableMobile
-                items={data?.results}
-                params={{ page, limit, noLimit, ...filterParameters }}
-              />
-              <Pagination
-                currentPage={page}
-                pagesCount={data?.meta.pageCount || initialPaginationMeta.pageCount}
-                changePage={(page) => setPage(page)}
-                nextPage={() => setPage((prev) => data?.meta.nextPage || prev)}
-                previousPage={() => setPage((prev) => data?.meta.prevPage || prev)}
-                limit={limit}
-                setLimit={setLimit}
-                isNoLimit={noLimit}
-                setNoLimit={setNoLimit}
-              />
-            </div>
-          )}
+            )}
+          </div>
         </>
       )}
     </div>
