@@ -1,5 +1,5 @@
 import { Check, ChevronsUpDown } from 'lucide-react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useFormContext } from 'react-hook-form';
 
 import { cn } from '@/lib/utils';
@@ -49,6 +49,12 @@ export const Combobox = ({
   const { control, setValue } = useFormContext();
   const [options, setOptions] = useState(items);
 
+  useEffect(() => {
+    if (items) {
+      setOptions(items);
+    }
+  }, [items]);
+
   return (
     <div className='relative'>
       <FormField
@@ -88,7 +94,7 @@ export const Combobox = ({
                       aria-readonly={isReadOnly}
                       readOnly={isReadOnly}
                       onValueChange={(el) => {
-                        if (el == '') {
+                        if (!el) {
                           setOptions(items);
                         } else {
                           setOptions(items.filter((option) => option.label.includes(el)));
