@@ -9,8 +9,9 @@ import { useClients } from '@/lib/hooks/data/useClients';
 import { useCollectionPoints } from '@/lib/hooks/data/useCollectionPoints';
 import { useDrivers } from '@/lib/hooks/data/useDrivers';
 import { useUpdateOrder } from '@/lib/hooks/data/useUpdateOrder';
-import { UseIsClientRole } from '@/lib/hooks/useIsClientRole';
+import { UseIsDispatcherRole } from '@/lib/hooks/useIsDispatcherRole';
 import { UpdateOrderParams, updateOrderSchema } from '@/lib/server/api/endpoints';
+import { cn } from '@/lib/utils';
 
 import { EstimatedKmField } from '@/components/features/order/new-order/EstimatedKmField';
 import { useValidateLocationDate } from '@/components/features/order/new-order/hooks/useValidateLocationDate';
@@ -68,14 +69,14 @@ export function OrderDetailsForm({
   collectionPoint,
 }: OrderDetailsFormProps) {
   const [isDefaultAdded, setIsDefaultAdded] = useState(false);
-  const { isClient } = UseIsClientRole();
+  const { isDispatcher } = UseIsDispatcherRole();
   const form = useForm<OrderDetailsFormDefaultValues>({
     resolver: zodResolver(updateOrderSchema),
     defaultValues: defaultValues,
   });
   const router = useRouter();
   //  responsible for locations date field validation
-  const { setLocationDateError } = useValidateLocationDate(form, isClient);
+  const { setLocationDateError } = useValidateLocationDate(form, false);
 
   const errorsCount = Object.keys(form.formState.errors).length;
   useEffect(() => {
@@ -131,12 +132,14 @@ export function OrderDetailsForm({
     router.push(Routes.ORDERS);
   };
 
-  const driversData = drivers
-    ? drivers.results.map((result) => ({
-        value: result.id,
-        label: `${result.firstName} ${result.lastName}`,
-      }))
-    : [];
+  const driversData = useMemo(() => {
+    return drivers
+      ? drivers.results.map((result) => ({
+          value: result.id,
+          label: `${result.firstName} ${result.lastName}`,
+        }))
+      : [];
+  }, [drivers]);
 
   const collectionPointsData = collectionPoints
     ? collectionPoints.results.map((result) => ({
@@ -209,7 +212,12 @@ export function OrderDetailsForm({
               <FormItem>
                 <FormLabel>Nr zlecenia</FormLabel>
                 <FormControl>
-                  <Input placeholder='Nr zlecenia' {...field} />
+                  <Input
+                    placeholder='Nr zlecenia'
+                    {...field}
+                    disabled={isDispatcher}
+                    readOnly={isDispatcher}
+                  />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -247,7 +255,12 @@ export function OrderDetailsForm({
               <FormItem>
                 <FormLabel>Nr faktury klienta</FormLabel>
                 <FormControl>
-                  <Input placeholder='podaj nr faktury klienta' {...field} />
+                  <Input
+                    placeholder='podaj nr faktury klienta'
+                    {...field}
+                    disabled={isDispatcher}
+                    readOnly={isDispatcher}
+                  />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -260,7 +273,12 @@ export function OrderDetailsForm({
               <FormItem>
                 <FormLabel>Nr faktury kierowcy</FormLabel>
                 <FormControl>
-                  <Input placeholder='podaj nr faktury kierowcy' {...field} />
+                  <Input
+                    placeholder='podaj nr faktury kierowcy'
+                    {...field}
+                    disabled={isDispatcher}
+                    readOnly={isDispatcher}
+                  />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -272,12 +290,20 @@ export function OrderDetailsForm({
             render={({ field }) => (
               <FormItem className='flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4'>
                 <FormControl>
-                  {/* eslint-disable-next-line @typescript-eslint/ban-ts-comment */}
-                  {/*@ts-ignore*/}
-                  <Checkbox checked={field.value} onCheckedChange={field.onChange} />
+                  <Checkbox
+                    checked={field.value}
+                    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                    // @ts-ignore
+                    onCheckedChange={field.onChange}
+                    disabled={isDispatcher}
+                    readOnly={isDispatcher}
+                    className={cn({ 'opacity-40': isDispatcher })}
+                  />
                 </FormControl>
                 <div className='space-y-1 leading-none'>
-                  <FormLabel>Czy klient opłacił fakturę?</FormLabel>
+                  <FormLabel className={cn({ 'opacity-40': isDispatcher })}>
+                    Czy klient opłacił fakturę?
+                  </FormLabel>
                   <FormDescription>
                     Zaznacz powyższe pole w przypadku gdy klient uregulował fakturę za zlecony kurs.
                   </FormDescription>
@@ -306,15 +332,15 @@ export function OrderDetailsForm({
           />
           <LocationFromSection
             defaultMapUrl={defaultValues?.locationFrom?.address.url}
-            isClient={isClient}
+            isClient={false}
           />
           <LocationViaSection
-            isClient={isClient}
+            isClient={false}
             defaultMapUrls={defaultValues.locationVia?.map((l) => l.address.url)}
           />
           <LocationToSection
             defaultMapUrl={defaultValues?.locationTo?.address.url}
-            isClient={isClient}
+            isClient={false}
           />
           <ShowRouteButton />
           <EstimatedKmField
@@ -324,19 +350,21 @@ export function OrderDetailsForm({
                 : undefined
             }
           />
-          <FormField
-            control={form.control}
-            name='actualKm'
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Km rzeczywiste</FormLabel>
-                <FormControl>
-                  <Input placeholder='Podaj rzeczywiste km' {...field} type='number' />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+          {!isDispatcher && (
+            <FormField
+              control={form.control}
+              name='actualKm'
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Km rzeczywiste</FormLabel>
+                  <FormControl>
+                    <Input placeholder='Podaj rzeczywiste km' {...field} type='number' />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          )}
           <FormField
             control={form.control}
             name='kmForDriver'
@@ -357,32 +385,88 @@ export function OrderDetailsForm({
               <FormItem>
                 <FormLabel>Rozbieżność</FormLabel>
                 <FormControl>
-                  <Input
-                    placeholder='Podaj km dla kierwocy'
-                    {...field}
-                    type='number'
-                    disabled
-                    readOnly
-                  />
+                  <Input {...field} type='number' disabled readOnly />
                 </FormControl>
                 <FormMessage />
                 <FormDescription>Różnica między km szacowanymi a km dla kierowcy.</FormDescription>
               </FormItem>
             )}
           />
+          {!isDispatcher && (
+            <FormField
+              control={form.control}
+              name='isKmDifferenceAccepted'
+              render={({ field }) => (
+                <FormItem className='flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4'>
+                  <FormControl>
+                    <Checkbox
+                      checked={field.value}
+                      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                      // @ts-ignore
+                      onCheckedChange={field.onChange}
+                    />
+                  </FormControl>
+                  <div className='space-y-1 leading-none'>
+                    <FormLabel>Czy zaakceptowano różnice w km</FormLabel>
+                  </div>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          )}
           <FormField
             control={form.control}
             name='hasHighway'
             render={({ field }) => (
               <FormItem className='flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4'>
                 <FormControl>
-                  {/* eslint-disable-next-line @typescript-eslint/ban-ts-comment */}
-                  {/*@ts-ignore*/}
-                  <Checkbox checked={field.value} onCheckedChange={field.onChange} disabled />
+                  <Checkbox
+                    checked={field.value}
+                    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                    // @ts-ignore
+                    onCheckedChange={field.onChange}
+                    disabled
+                    readOnly
+                    className='opacity-40'
+                  />
                 </FormControl>
                 <div className='space-y-1 leading-none'>
-                  <FormLabel>Czy trasa przebiega przez drogę płatną (Autostrada)?</FormLabel>
+                  <FormLabel className='opacity-40'>
+                    Czy trasa przebiega przez drogę płatną (Autostrada)?
+                  </FormLabel>
                 </div>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name='highwaysCost'
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Koszt płatnych odcinków</FormLabel>
+                <FormControl>
+                  <Input
+                    placeholder='Podaj koszt płatnych odcinków'
+                    {...field}
+                    onKeyDown={(event) => {
+                      if (
+                        !/[0-9]/.test(event.key) &&
+                        !['ArrowLeft', 'ArrowRight', 'Backspace'].includes(event.key)
+                      ) {
+                        event.preventDefault();
+                      }
+                    }}
+                    type='text'
+                    onChange={(e) => {
+                      const newVal = e?.target?.value
+                        ? e.target.value.replaceAll(',', '').replaceAll(' ', '')
+                        : 0;
+
+                      field.onChange(Number(newVal).toLocaleString());
+                    }}
+                  />
+                </FormControl>
                 <FormMessage />
               </FormItem>
             )}
@@ -423,7 +507,7 @@ export function OrderDetailsForm({
                   <FormLabel>Data modyfikacji</FormLabel>
                   <Input {...field} value={value} type='datetime-local' readOnly disabled />
                   <FormMessage />
-                  <FormDescription>Podaj datę i godzinę rozpoczęcia przejazdu</FormDescription>
+                  <FormDescription>Podaj datę i godzinę odbioru pasażera</FormDescription>
                 </FormItem>
               );
             }}

@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { useFormContext } from 'react-hook-form';
 import { PatternFormat } from 'react-number-format';
 
@@ -28,6 +29,7 @@ export const LocationFromSection = ({
   isClient?: boolean;
 }) => {
   const { control, setValue } = useFormContext();
+  const [isOpen, setIsOpen] = useState(true);
   const locationDateInfo = useLocationsDateInfo({ isClient });
 
   const onAddressFromSelect = (details: PlaceDetails) => {
@@ -49,9 +51,16 @@ export const LocationFromSection = ({
         collapsible
         defaultValue='locationFrom'
         className='bg-gray-50 px-4 py-2'
+        onValueChange={(e) => {
+          if (e === '') {
+            setIsOpen(false);
+          } else {
+            setIsOpen(true);
+          }
+        }}
       >
         <AccordionItem value='locationFrom'>
-          <AccordionTrigger className='text-lg font-medium'>Lokalizacja Z</AccordionTrigger>
+          <AccordionTrigger className='text-lg font-medium'>Miejsce odbioru</AccordionTrigger>
           <AccordionContent>
             <div className='flex flex-col gap-4'>
               <FormField
@@ -70,9 +79,7 @@ export const LocationFromSection = ({
                               disabled={isDateInputDisabled}
                             />
                             <FormMessage />
-                            <FormDescription>
-                              Podaj datę i godzinę rozpoczęcia przejazdu
-                            </FormDescription>
+                            <FormDescription>Podaj datę i godzinę odbioru pasażera</FormDescription>
                           </FormItem>
                         </TooltipTrigger>
                         <TooltipContent>
@@ -87,7 +94,7 @@ export const LocationFromSection = ({
                       <FormLabel>Data/godzina</FormLabel>
                       <Input {...field} type='datetime-local' disabled={isDateInputDisabled} />
                       <FormMessage />
-                      <FormDescription>Podaj datę i godzinę rozpoczęcia przejazdu</FormDescription>
+                      <FormDescription>Podaj datę i godzinę odbioru pasażera</FormDescription>
                     </FormItem>
                   )
                 }
@@ -95,7 +102,7 @@ export const LocationFromSection = ({
               <PlacesAutocomplete
                 name='locationFrom.address.fullAddress'
                 onSelect={onAddressFromSelect}
-                description='Celem wyszukania lokalizacji wprowadź kompleny adres lub jego część np. miasto lub ulicę.'
+                description='Celem wyszukania lokalizacji wprowadź kompletny adres lub jego część np. miasto lub ulicę.'
                 defaultMapUrl={defaultMapUrl}
               />
               <FormField
@@ -142,10 +149,12 @@ export const LocationFromSection = ({
             </div>
           </AccordionContent>
         </AccordionItem>
-        <FormDescription className='mt-2'>
-          Wprowadź informacje niezbędne do określenia punktu startowego zlecenia. Aby to zrobić
-          naciśnij napis &quot;Lokalizacja Z&quot;
-        </FormDescription>
+        {!isOpen && (
+          <FormDescription className='mt-2'>
+            Wprowadź informacje niezbędne do określenia punktu startowego zlecenia. Aby to zrobić
+            naciśnij napis &quot;Lokalizacja Z&quot;
+          </FormDescription>
+        )}
       </Accordion>
     </div>
   );

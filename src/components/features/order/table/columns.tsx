@@ -173,6 +173,10 @@ export const getColumns = ({
     {
       accessorKey: 'clientInvoice',
       header: 'Nr faktury klienta',
+      cell: ({ row }) => {
+        const invoice = row.original.clientInvoice;
+        return <span>{invoice || 'Niewystawiona'}</span>;
+      },
     },
     {
       accessorKey: 'driverInvoice',

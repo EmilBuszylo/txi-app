@@ -93,9 +93,7 @@ export const LocationViaSectionItem = ({
                           }}
                         />
                         <FormMessage />
-                        <FormDescription>
-                          Podaj datę i godzinę rozpoczęcia przejazdu
-                        </FormDescription>
+                        <FormDescription>Podaj datę i godzinę odbioru pasażera</FormDescription>
                       </FormItem>
                     </TooltipTrigger>
                     <TooltipContent>
@@ -118,7 +116,7 @@ export const LocationViaSectionItem = ({
           <PlacesAutocomplete
             name={`${fieldName}.address.fullAddress`}
             onSelect={onAddressFromSelect}
-            description='Celem wyszukania lokalizacji wprowadź kompleny adres lub jego część np. miasto lub ulicę.'
+            description='Celem wyszukania lokalizacji wprowadź kompletny adres lub jego część np. miasto lub ulicę.'
             defaultMapUrl={defaultMapUrl}
           />
           <FormField

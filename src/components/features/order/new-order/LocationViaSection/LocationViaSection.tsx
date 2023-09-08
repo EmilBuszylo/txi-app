@@ -14,7 +14,6 @@ export const LocationViaSection = ({
   isClient?: boolean;
 }) => {
   const { control } = useFormContext();
-
   const { fields, append, remove } = useFieldArray({
     name: 'locationVia',
     control: control,
@@ -44,8 +43,8 @@ export const LocationViaSection = ({
         })}
       </Accordion>
       <FormDescription>
-        Możesz dodać adresy pośrednie pomiędzy lokalizacją Z oraz lokalizacją Do. Aby to zrobić
-        naciśnij przycisk &quot;Dodaj adres pośredni&quot; umiejscowiony po prawej z prawej strony.
+        Możesz dodać adresy pośrednie pomiędzy miejscem odbioru oraz miejscem docelowym. Aby to
+        zrobić naciśnij przycisk &quot;Dodaj adres pośredni&quot; umiejscowiony z prawej strony.
       </FormDescription>
     </div>
   );

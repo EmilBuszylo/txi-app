@@ -14,10 +14,12 @@ export const InternalIdCell = ({ row }: { row: Row<Order> }) => {
   const diffBetweenDriverKmAndEstimated =
     (row.original.kmForDriver || 0) - estimatedKm > 20 ||
     estimatedKm - (row.original.kmForDriver || 0) > 20;
-  const diffBetweenActualKmAndEstimated =
-    (row.original.actualKm || 0) - estimatedKm > 20 ||
-    estimatedKm - (row.original.actualKm || 0) > 20;
-  const isAlerted = diffBetweenDriverKmAndEstimated || diffBetweenActualKmAndEstimated;
+  //  At this moment is unnecessary, but it is possible that we will return this functionality
+  //   TODO Ask client about future of this feature
+  // const diffBetweenActualKmAndEstimated =
+  //   (row.original.actualKm || 0) - estimatedKm > 20 ||
+  //   estimatedKm - (row.original.actualKm || 0) > 20;
+  const isAlerted = diffBetweenDriverKmAndEstimated;
 
   return (
     <div>
@@ -37,11 +39,11 @@ export const InternalIdCell = ({ row }: { row: Row<Order> }) => {
                 {diffBetweenDriverKmAndEstimated && (
                   <Badge variant='destructive'>Różnica w KM</Badge>
                 )}
-                {diffBetweenActualKmAndEstimated && (
-                  <Badge className='border-transparent bg-orange-600 text-white hover:bg-orange-600/80'>
-                    Różnica w KM
-                  </Badge>
-                )}
+                {/*{diffBetweenActualKmAndEstimated && (*/}
+                {/*  <Badge className='border-transparent bg-orange-600 text-white hover:bg-orange-600/80'>*/}
+                {/*    Różnica w KM*/}
+                {/*  </Badge>*/}
+                {/*)}*/}
               </div>
             </TooltipTrigger>
             <TooltipContent>
@@ -52,12 +54,12 @@ export const InternalIdCell = ({ row }: { row: Row<Order> }) => {
                     <span className='font-semibold'>km dla kierowcy</span> wynosi ponad 20km.
                   </li>
                 )}
-                {diffBetweenActualKmAndEstimated && (
-                  <li>
-                    Różnica pomiędzy <span className='font-semibold'>szacowanymi km</span> a{' '}
-                    <span className='font-semibold'>rzeczywistymi km</span> wynosi ponad 20km.
-                  </li>
-                )}
+                {/*{diffBetweenActualKmAndEstimated && (*/}
+                {/*  <li>*/}
+                {/*    Różnica pomiędzy <span className='font-semibold'>szacowanymi km</span> a{' '}*/}
+                {/*    <span className='font-semibold'>rzeczywistymi km</span> wynosi ponad 20km.*/}
+                {/*  </li>*/}
+                {/*)}*/}
               </ul>
             </TooltipContent>
           </Tooltip>

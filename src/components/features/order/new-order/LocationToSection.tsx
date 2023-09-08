@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { useFormContext } from 'react-hook-form';
 
 import { useLocationsDateInfo } from '@/components/features/order/new-order/hooks/useLocationsDateInfo';
@@ -21,6 +22,7 @@ export const LocationToSection = ({
   isClient?: boolean;
 }) => {
   const { control, setValue } = useFormContext<OrderDetailsFormDefaultValues>();
+  const [isOpen, setIsOpen] = useState(true);
   const locationDateInfo = useLocationsDateInfo({ isClient });
   const onAddressFromSelect = (details: PlaceDetails) => {
     const city =
@@ -42,9 +44,16 @@ export const LocationToSection = ({
         collapsible
         defaultValue='locationTo'
         className='bg-gray-50 px-4 py-2'
+        onValueChange={(e) => {
+          if (e === '') {
+            setIsOpen(false);
+          } else {
+            setIsOpen(true);
+          }
+        }}
       >
         <AccordionItem value='locationTo'>
-          <AccordionTrigger className='text-lg font-medium'>Lokalizacja Do</AccordionTrigger>
+          <AccordionTrigger className='text-lg font-medium'>Miejsce docelowe</AccordionTrigger>
           <AccordionContent>
             <div className='flex flex-col gap-4'>
               <FormField
@@ -88,16 +97,18 @@ export const LocationToSection = ({
               <PlacesAutocomplete
                 name='locationTo.address.fullAddress'
                 onSelect={onAddressFromSelect}
-                description='Celem wyszukania lokalizacji wprowadź kompleny adres lub jego część np. miasto lub ulicę.'
+                description='Celem wyszukania lokalizacji wprowadź kompletny adres lub jego część np. miasto lub ulicę.'
                 defaultMapUrl={defaultMapUrl}
               />
             </div>
           </AccordionContent>
         </AccordionItem>
-        <FormDescription className='mt-2'>
-          Wprowadź informacje niezbędne do określenia punktu końcowego zlecenia. Aby to zrobić
-          naciśnij napis &quot;Lokalizacja Do&quot;
-        </FormDescription>
+        {!isOpen && (
+          <FormDescription className='mt-2'>
+            Wprowadź informacje niezbędne do określenia punktu końcowego zlecenia. Aby to zrobić
+            naciśnij napis &quot;Lokalizacja Do&quot;
+          </FormDescription>
+        )}
       </Accordion>
     </div>
   );

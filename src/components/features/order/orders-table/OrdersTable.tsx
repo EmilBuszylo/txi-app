@@ -6,6 +6,7 @@ import { useMemo, useState } from 'react';
 import { useClients } from '@/lib/hooks/data/useClients';
 import { useDrivers } from '@/lib/hooks/data/useDrivers';
 import { useOrders } from '@/lib/hooks/data/useOrders';
+import { UseIsDispatcherRole } from '@/lib/hooks/useIsDispatcherRole';
 
 import { createFiltersConfig } from '@/components/features/order/orders-table/createFiltersConfig';
 import { OrdersTableMobile } from '@/components/features/order/orders-table/OrdersTableMobile';
@@ -32,6 +33,7 @@ const DEFAULT_LIMIT = 25;
 export default function OrdersTable() {
   const { columnFilters, clearFilters, updateFilter, deleteFilter, filterParameters } =
     useFilters();
+  const { isDispatcher } = UseIsDispatcherRole();
   const { sortParameters, updateSort } = useSorts();
   const [page, setPage] = useState(1);
   const [limit, setLimit] = useState(DEFAULT_LIMIT);
@@ -88,7 +90,7 @@ export default function OrdersTable() {
                   page,
                   ...filterParameters,
                 }}
-                ActionsBar={ActionsBar}
+                ActionsBar={!isDispatcher ? ActionsBar : undefined}
                 pagination={
                   <Pagination
                     currentPage={page}

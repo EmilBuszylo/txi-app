@@ -47,6 +47,7 @@ export const Combobox = ({
 }: ComboboxProps) => {
   const [open, setOpen] = useState(false);
   const { control, setValue } = useFormContext();
+  const [options, setOptions] = useState(items);
 
   return (
     <div className='relative'>
@@ -54,7 +55,7 @@ export const Combobox = ({
         control={control}
         name={name}
         render={({ field }) => {
-          const displayValue = items.find((item) => item.value === field.value)?.label;
+          const displayValue = options.find((item) => item.value === field.value)?.label;
 
           return (
             <FormItem className='flex flex-col'>
@@ -79,17 +80,24 @@ export const Combobox = ({
                   </FormControl>
                 </PopoverTrigger>
                 <PopoverContent className='p-0 md:w-[600px]' side='bottom' align='start'>
-                  <Command className='w-full'>
+                  <Command className='w-full' shouldFilter={false}>
                     <CommandInput
                       placeholder={placeholder}
                       className='w-full'
                       disabled={isDisabled}
                       aria-readonly={isReadOnly}
                       readOnly={isReadOnly}
+                      onValueChange={(el) => {
+                        if (el == '') {
+                          setOptions(items);
+                        } else {
+                          setOptions(items.filter((option) => option.label.includes(el)));
+                        }
+                      }}
                     />
                     <CommandEmpty>{emptyStateMessage || 'Brak wyników'}</CommandEmpty>
                     <CommandGroup>
-                      {items.map((item) => (
+                      {options.map((item) => (
                         <CommandItem
                           value={item.value}
                           key={item.value}

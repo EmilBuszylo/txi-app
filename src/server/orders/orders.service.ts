@@ -129,6 +129,18 @@ export const createOrder = async (input: CreateOrderParams) => {
     });
 
     if (order) {
+      const dispatchers = await prisma.user.findMany({
+        where: {
+          role: 'DISPATCHER',
+          email: {
+            not: null,
+          },
+        },
+        select: {
+          email: true,
+        },
+      });
+
       await sendEmail({
         subject: 'Zlecenia TXI - nowe zlecenie zostało dodane',
         orderData: {
@@ -136,6 +148,7 @@ export const createOrder = async (input: CreateOrderParams) => {
           internalId: order.internalId,
           clientName: order.clientName,
         },
+        to: dispatchers.map((d) => d.email) as string[],
       });
     }
 
@@ -433,28 +446,20 @@ const _calculateOrderDistancesData = async ({
 
   let intakeDistance: number | undefined = undefined;
 
-  if (estimatedDistance.distance && collectionPointsGeoCodes) {
-    const distanceWithoutCollectionPoint = await calculateDistance(
+  if (withLocationFrom && collectionPointsGeoCodes) {
+    const distanceBetweenCollectionPointAndStart = await calculateDistance(
       [
-        withLocationFrom
-          ? {
-              lat: locationFrom.address.lat,
-              lng: locationFrom.address.lng,
-            }
-          : undefined,
-        ...(viaWaypoints as Waypoint[]),
-        withLocationTo
-          ? {
-              lat: locationTo.address.lat,
-              lng: locationTo.address.lng,
-            }
-          : undefined,
+        collectionPointsGeoCodes,
+        {
+          lat: locationFrom.address.lat,
+          lng: locationFrom.address.lng,
+        },
       ],
       false
     );
 
-    intakeDistance = distanceWithoutCollectionPoint?.distance
-      ? estimatedDistance.distance
+    intakeDistance = distanceBetweenCollectionPointAndStart?.distance
+      ? distanceBetweenCollectionPointAndStart.distance
       : undefined;
   }
 

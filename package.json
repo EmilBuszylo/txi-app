@@ -21,7 +21,8 @@
   "prisma": {
     "seed": "ts-node --compiler-options {\"module\":\"CommonJS\"} prisma/seed-clients.ts",
     "seed:operators": "ts-node --compiler-options {\"module\":\"CommonJS\"} prisma/seed-operators.ts",
-    "seed:passenger-name": "ts-node --compiler-options {\"module\":\"CommonJS\"} prisma/fix-passenger-data.ts"
+    "seed:passenger-name": "ts-node --compiler-options {\"module\":\"CommonJS\"} prisma/fix-passenger-data.ts",
+    "seed:dispatchers": "ts-node --compiler-options {\"module\":\"CommonJS\"} prisma/seed-dispatchers.ts"
   },
   "dependencies": {
     "@googlemaps/google-maps-services-js": "^3.3.34",

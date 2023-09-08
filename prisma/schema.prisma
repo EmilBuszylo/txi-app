@@ -78,6 +78,7 @@ model Order {
   intakeDistance    Int? // distance from collection point to location from
   isKmDifferenceAccepted Boolean? @default(false) // temp solution to accept the difference between distances
   hasHighway Boolean?
+  highwaysCost String?
 
   client     Client @relation(fields: [clientId, clientName], references: [id, name])
   clientId   String
@@ -128,6 +129,7 @@ model User {
   firstName String?
   lastName  String?
   phone     String? @unique
+  email    String? @unique
 
   role          UserRole
   driverDetails DriverDetails?

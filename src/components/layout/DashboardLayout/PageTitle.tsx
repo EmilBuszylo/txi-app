@@ -2,6 +2,7 @@
 
 import { ChevronLeft } from 'lucide-react';
 import { useParams, usePathname, useRouter } from 'next/navigation';
+import { useMemo } from 'react';
 
 import { cn } from '@/lib/utils';
 
@@ -14,7 +15,11 @@ export const PageTitle = ({ hiddenOn }: { hiddenOn?: 'mobile' | 'desktop' }) => 
   const params = useParams();
   const router = useRouter();
 
-  const isWayback = params && pathname.includes('new');
+  const isWayback = useMemo(() => {
+    if (pathname.includes('new')) return true;
+
+    return Boolean(params);
+  }, [params, pathname]);
 
   return (
     <div

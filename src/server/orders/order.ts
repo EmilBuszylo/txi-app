@@ -11,6 +11,7 @@ export interface Order {
   wayBackDistance?: number;
   actualKm?: number;
   hasHighway?: boolean;
+  highwaysCost?: string;
   status: OrderStatus;
   driverInvoice?: string;
   clientInvoice?: string;
@@ -19,6 +20,7 @@ export interface Order {
   clientId: string;
   clientName: string;
   intakeDistance?: number;
+  isKmDifferenceAccepted?: boolean;
   driver?: {
     id: string;
     firstName: string;

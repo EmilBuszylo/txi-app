@@ -5,7 +5,11 @@ import { SendEmailRequest } from '@/lib/server/api/endpoints';
 
 import { defaultTemplate } from '@/server/email/templates/default-template';
 
-export const sendEmail = async ({ subject, orderData }: SendEmailRequest) => {
+interface SendEmailInput extends SendEmailRequest {
+  to?: string[];
+}
+
+export const sendEmail = async ({ subject, orderData, to }: SendEmailInput) => {
   if (!process.env.EMAILS_ENABLED || process.env.EMAILS_ENABLED == 'false') {
     return {
       success: true,
@@ -27,9 +31,12 @@ export const sendEmail = async ({ subject, orderData }: SendEmailRequest) => {
     .replace(/{{txi_number}}/gm, orderData.internalId)
     .replace(/{{client_name}}/, orderData.clientName);
 
+  const receiver =
+    to && to.length > 0 ? process.env.EMAIL_RECEIVER + to?.join(',') : process.env.EMAIL_RECEIVER;
+
   const mail = {
     from: process.env.EMAIL_FROM,
-    to: process.env.EMAIL_RECEIVER,
+    to: receiver,
     subject: subject || 'TXI App',
     html: template,
   };

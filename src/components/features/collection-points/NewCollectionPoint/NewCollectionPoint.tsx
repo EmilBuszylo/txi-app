@@ -98,7 +98,7 @@ export function NewCollectionPoint({ defaultValues, id }: NewCollectionPointProp
           <PlacesAutocomplete
             name='fullAddress'
             onSelect={onAddressSelect}
-            description='Celem wyszukania lokalizacji wprowadź kompleny adres lub jego część np. miasto lub ulicę.'
+            description='Celem wyszukania lokalizacji wprowadź kompletny adres lub jego część np. miasto lub ulicę.'
           />
           <div className='flex w-full items-center justify-end'>
             <Button

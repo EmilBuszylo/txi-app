@@ -145,6 +145,8 @@ export interface UpdateOrderParams extends Pick<CreateOrderParams, 'collectionPo
   locationFrom?: LocationFrom;
   locationVia?: LocationFrom[];
   locationTo?: LocationTo;
+  highwaysCost?: string;
+  isKmDifferenceAccepted?: boolean;
 }
 
 export function updateOrder(id: string, params: UpdateOrderParams) {
@@ -164,6 +166,7 @@ export interface UpdateManyOrdersParams
     | 'collectionPointsGeoCodes'
     | 'clientId'
     | 'externalId'
+    | 'highwaysCost'
   > {
   ids: string[];
 }
