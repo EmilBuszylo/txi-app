@@ -2,6 +2,7 @@ import { Row } from '@tanstack/table-core';
 import { useRouter } from 'next/navigation';
 
 import { useUpdateManyOrders } from '@/lib/hooks/data/useUpdateManyOrders';
+import { UseIsDispatcherRole } from '@/lib/hooks/useIsDispatcherRole';
 import { GetOrdersParams } from '@/lib/server/api/endpoints';
 
 import { ActionsColumn } from '@/components/ui/data-table/columns/ActionsColumn';
@@ -19,6 +20,8 @@ export const ActionCell = ({ row, params }: { row: Row<Order>; params: GetOrders
 };
 
 export const ActionCellOptions = ({ id, params }: { id: string; params: GetOrdersParams }) => {
+  const { isDispatcher } = UseIsDispatcherRole();
+
   const { mutateAsync: updateOrder } = useUpdateManyOrders([id], params);
   const router = useRouter();
 
@@ -29,9 +32,11 @@ export const ActionCellOptions = ({ id, params }: { id: string; params: GetOrder
       <DropdownMenuItem onClick={() => router.push(`${Routes.ORDERS}/${id}`)}>
         Szczegóły/edycja
       </DropdownMenuItem>
-      <DropdownMenuItem onClick={() => updateOrders({ isKmDifferenceAccepted: true })}>
-        Zaakceptuj różnice w km
-      </DropdownMenuItem>
+      {!isDispatcher && (
+        <DropdownMenuItem onClick={() => updateOrders({ isKmDifferenceAccepted: true })}>
+          Zaakceptuj różnice w km
+        </DropdownMenuItem>
+      )}
       <DropdownMenuSeparator />
       <DropdownMenuItem
         onClick={() => updateOrder({ status: OrderStatus.CANCELLED })}
