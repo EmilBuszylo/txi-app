@@ -104,6 +104,12 @@ export function NewDriverForm() {
               </FormItem>
             )}
           />
+          <Combobox
+            label='Operator'
+            name='operatorId'
+            items={operatorsData}
+            inputText='Wybierz operatora'
+          />
           <FormField
             control={form.control}
             name='password'
@@ -147,12 +153,6 @@ export function NewDriverForm() {
                 </FormItem>
               );
             }}
-          />
-          <Combobox
-            label='Operator'
-            name='operatorId'
-            items={operatorsData}
-            inputText='Wybierz operatora'
           />
           <FormField
             control={form.control}

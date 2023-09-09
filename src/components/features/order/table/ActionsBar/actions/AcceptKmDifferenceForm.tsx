@@ -12,31 +12,31 @@ import { Checkbox } from '@/components/ui/checkbox';
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
+  FormMessage,
 } from '@/components/ui/form';
 
-const clientPayedFormSchema = z.object({
-  isPayed: z.boolean(),
+const acceptKmDifferenceFormSchema = z.object({
+  isKmDifferenceAccepted: z.boolean(),
 });
 
-type ClientPayedFormSchemaProps = z.infer<typeof clientPayedFormSchema>;
+type AcceptKmDifferenceFormSchemaProps = z.infer<typeof acceptKmDifferenceFormSchema>;
 
-interface ClientPayedFormProps {
+interface AcceptKmDifferenceFormProps {
   ids: string[];
   params: GetOrdersParams;
   onSuccess: () => void;
 }
-export const ClientPayedForm = ({ ids, params, onSuccess }: ClientPayedFormProps) => {
-  const form = useForm<ClientPayedFormSchemaProps>({
-    resolver: zodResolver(clientPayedFormSchema),
+export const AcceptKmDifferenceForm = ({ ids, params, onSuccess }: AcceptKmDifferenceFormProps) => {
+  const form = useForm<AcceptKmDifferenceFormSchemaProps>({
+    resolver: zodResolver(acceptKmDifferenceFormSchema),
   });
 
   const { mutateAsync: updateOrders } = useUpdateManyOrders(ids, params);
 
-  const onSubmit = async (values: ClientPayedFormSchemaProps) => {
+  const onSubmit = async (values: AcceptKmDifferenceFormSchemaProps) => {
     try {
       await updateOrders(values);
       onSuccess();
@@ -51,20 +51,21 @@ export const ClientPayedForm = ({ ids, params, onSuccess }: ClientPayedFormProps
       <form onSubmit={form.handleSubmit(onSubmit)} className='space-y-6'>
         <FormField
           control={form.control}
-          name='isPayed'
+          name='isKmDifferenceAccepted'
           render={({ field }) => (
             <FormItem className='flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4'>
               <FormControl>
-                {/* eslint-disable-next-line @typescript-eslint/ban-ts-comment */}
-                {/*@ts-ignore*/}
-                <Checkbox checked={field.value} onCheckedChange={field.onChange} />
+                <Checkbox
+                  checked={field.value}
+                  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                  // @ts-ignore
+                  onCheckedChange={field.onChange}
+                />
               </FormControl>
               <div className='space-y-1 leading-none'>
-                <FormLabel>Czy klient opłacił fakturę?</FormLabel>
-                <FormDescription>
-                  Zaznacz powyższe pole w przypadku gdy klient uregulował fakturę za zlecony kurs.
-                </FormDescription>
+                <FormLabel>Czy zaakceptowano różnice w km</FormLabel>
               </div>
+              <FormMessage />
             </FormItem>
           )}
         />

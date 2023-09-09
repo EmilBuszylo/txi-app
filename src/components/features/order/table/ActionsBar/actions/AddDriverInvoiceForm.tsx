@@ -62,7 +62,7 @@ export const AddDriverInvoiceFrom = ({ ids, params, onSuccess }: AddDriverInvoic
             </FormItem>
           )}
         />
-        <Button type='submit'>Submit</Button>
+        <Button type='submit'>Zapisz</Button>
       </form>
     </Form>
   );

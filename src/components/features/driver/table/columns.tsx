@@ -7,7 +7,6 @@ import { GetDriversParams } from '@/lib/server/api/endpoints';
 import { ActionCell } from '@/components/features/driver/table/cells/ActionCell';
 import { CarDetailsCell } from '@/components/features/driver/table/cells/CarDetailsCell';
 import { PhoneCell } from '@/components/features/driver/table/cells/PhoneCell';
-import { Checkbox } from '@/components/ui/checkbox';
 import { RelativeDate } from '@/components/ui/date/RelativeDate';
 
 import { Driver } from '@/server/drivers/driver';
@@ -15,23 +14,9 @@ import { Driver } from '@/server/drivers/driver';
 export function getColumns(params: GetDriversParams): ColumnDef<Driver>[] {
   return [
     {
-      id: 'select',
-      header: ({ table }) => (
-        <Checkbox
-          checked={table.getIsAllPageRowsSelected()}
-          onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
-          aria-label='Select all'
-        />
-      ),
-      cell: ({ row }) => (
-        <Checkbox
-          checked={row.getIsSelected()}
-          onCheckedChange={(value) => row.toggleSelected(!!value)}
-          aria-label='Select row'
-        />
-      ),
-      enableSorting: false,
-      enableHiding: false,
+      id: 'orderNumber',
+      header: 'L.p.',
+      cell: ({ row }) => <span>{row.index}</span>,
     },
     {
       accessorKey: 'login',

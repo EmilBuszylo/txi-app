@@ -22,10 +22,15 @@ export const ActionCellOptions = ({ id, params }: { id: string; params: GetOrder
   const { mutateAsync: updateOrder } = useUpdateManyOrders([id], params);
   const router = useRouter();
 
+  const { mutateAsync: updateOrders } = useUpdateManyOrders([id], params);
+
   return (
     <>
       <DropdownMenuItem onClick={() => router.push(`${Routes.ORDERS}/${id}`)}>
         Szczegóły/edycja
+      </DropdownMenuItem>
+      <DropdownMenuItem onClick={() => updateOrders({ isKmDifferenceAccepted: true })}>
+        Zaakceptuj różnice w km
       </DropdownMenuItem>
       <DropdownMenuSeparator />
       <DropdownMenuItem

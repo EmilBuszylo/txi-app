@@ -169,10 +169,12 @@ export default function OrdersTable() {
                     )}
                   </Button>
                 </div>
-                <OrdersTableMobile
-                  items={data?.results}
-                  params={{ page, limit, noLimit, ...filterParameters }}
-                />
+                {Array.isArray(data.results) && (
+                  <OrdersTableMobile
+                    items={data?.results}
+                    params={{ page, limit, noLimit, ...filterParameters }}
+                  />
+                )}
                 <Pagination
                   currentPage={page}
                   pagesCount={data?.meta.pageCount || initialPaginationMeta.pageCount}

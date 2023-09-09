@@ -1,9 +1,10 @@
 import { PopoverClose } from '@radix-ui/react-popover';
-import { Banknote, Car, FileInput, LucideIcon, XIcon } from 'lucide-react';
+import { Banknote, Car, CheckSquare, FileInput, LucideIcon, XIcon } from 'lucide-react';
 import { MouseEvent, PropsWithChildren, useRef } from 'react';
 
 import { cn } from '@/lib/utils';
 
+import { AcceptKmDifferenceForm } from '@/components/features/order/table/ActionsBar/actions/AcceptKmDifferenceForm';
 import { AddClientInvoiceForm } from '@/components/features/order/table/ActionsBar/actions/AddClientInvoiceForm';
 import { AddDriverInvoiceFrom } from '@/components/features/order/table/ActionsBar/actions/AddDriverInvoiceForm';
 import { ClientPayedForm } from '@/components/features/order/table/ActionsBar/actions/ClientPayedForm';
@@ -64,6 +65,17 @@ export const ActionsBar = ({
           />
         </ActionButtonWithPopover>
         <CsvImportButton selectedAmount={selectedAmount} selectedItems={selectedItems} />
+        <ActionButtonWithPopover
+          label='Zaakceptuj różnice w KM'
+          icon={CheckSquare}
+          isDisabled={!selectedAmount}
+        >
+          <AcceptKmDifferenceForm
+            ids={selectedItems.map((item) => item.id)}
+            params={params}
+            onSuccess={onSuccessAction}
+          />
+        </ActionButtonWithPopover>
       </TooltipProvider>
       <div
         className={cn('flex-1 text-sm font-semibold text-gray-900', {

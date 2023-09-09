@@ -62,7 +62,7 @@ export const AddClientInvoiceForm = ({ ids, onSuccess, params }: AddClientInvoic
             </FormItem>
           )}
         />
-        <Button type='submit'>Submit</Button>
+        <Button type='submit'>Zapisz</Button>
       </form>
     </Form>
   );

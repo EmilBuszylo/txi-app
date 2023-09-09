@@ -532,6 +532,8 @@ const orderSelectedFields = {
   clientId: true,
   clientName: true,
   comment: true,
+  isKmDifferenceAccepted: true,
+  highwaysCost: true,
   intakeDistance: true,
   driver: {
     select: {

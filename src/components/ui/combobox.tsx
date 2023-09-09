@@ -85,7 +85,11 @@ export const Combobox = ({
                     </Button>
                   </FormControl>
                 </PopoverTrigger>
-                <PopoverContent className='p-0 md:w-[600px]' side='bottom' align='start'>
+                <PopoverContent
+                  className='max-h-[405px] overflow-hidden p-0 md:w-[600px]'
+                  side='bottom'
+                  align='start'
+                >
                   <Command className='w-full' shouldFilter={false}>
                     <CommandInput
                       placeholder={placeholder}
@@ -97,7 +101,11 @@ export const Combobox = ({
                         if (!el) {
                           setOptions(items);
                         } else {
-                          setOptions(items.filter((option) => option.label.includes(el)));
+                          setOptions(
+                            items.filter((option) =>
+                              option.label.toLowerCase().includes(el.toLowerCase())
+                            )
+                          );
                         }
                       }}
                     />

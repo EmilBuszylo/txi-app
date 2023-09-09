@@ -19,7 +19,7 @@ export const InternalIdCell = ({ row }: { row: Row<Order> }) => {
   // const diffBetweenActualKmAndEstimated =
   //   (row.original.actualKm || 0) - estimatedKm > 20 ||
   //   estimatedKm - (row.original.actualKm || 0) > 20;
-  const isAlerted = diffBetweenDriverKmAndEstimated;
+  const isAlerted = diffBetweenDriverKmAndEstimated && !row.original.isKmDifferenceAccepted;
 
   return (
     <div>
