@@ -112,7 +112,7 @@ export const createOrder = async (input: CreateOrderParams) => {
           },
         },
         driver: {
-          connect: collectionPointId
+          connect: driverId
             ? {
                 id: driverId,
               }
@@ -240,6 +240,9 @@ export const updateOrder = async (id: string, input: UpdateOrderParams) => {
         viaWaypoints: viaWaypoints as Waypoint[],
       });
 
+    const status =
+      input.driverId && input.status === OrderStatus.NEW ? OrderStatus.STARTED : input.status;
+
     return prisma.order.update({
       where: {
         id,
@@ -253,6 +256,7 @@ export const updateOrder = async (id: string, input: UpdateOrderParams) => {
         locationVia: locationVia as unknown as string,
         wayBackDistance: wayBackDistance?.distance,
         ...rest,
+        status,
         driver: driverId
           ? {
               connect: {
