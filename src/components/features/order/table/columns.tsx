@@ -77,7 +77,7 @@ export const getColumns = ({
     },
     {
       accessorKey: 'externalId',
-      header: 'Nr zlecenia klienta',
+      header: 'Nr zlecenia',
     },
     {
       accessorKey: 'operatorName',
@@ -198,9 +198,8 @@ export const getColumns = ({
     },
     {
       accessorKey: 'createdAt',
-      header: ({ column }) => (
+      header: () => (
         <DataTableColumnSortHeader
-          column={column}
           title='Dodano'
           sortParameters={sortParameters}
           updateSort={(sort) => updateSort?.('createdAt', sort)}

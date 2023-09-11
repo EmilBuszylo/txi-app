@@ -4,7 +4,7 @@ import { useMemo, useState } from 'react';
 
 import { useOrders } from '@/lib/hooks/data/useOrders';
 
-import { getColumns } from '@/components/features/order/table/columns';
+import { getClientColumns } from '@/components/features/order/table/getClientColumns';
 import { statusLabelPerStatus } from '@/components/features/order/utils';
 import { DataTable } from '@/components/ui/data-table/data-table';
 import { DataTableToolbar } from '@/components/ui/data-table/DataTableToolbar/DataTableToolbar';
@@ -24,15 +24,6 @@ const initialPaginationMeta = {
 
 const DEFAULT_LIMIT = 25;
 
-const availableColumns = [
-  'orderNumber',
-  'externalId',
-  'status',
-  'locationFrom',
-  'locationFrom.date',
-  'createdAt',
-];
-
 export default function OrdersClientTable({ clientId }: { clientId: string }) {
   const { columnFilters, clearFilters, updateFilter, deleteFilter, filterParameters } =
     useFilters();
@@ -48,18 +39,11 @@ export default function OrdersClientTable({ clientId }: { clientId: string }) {
   });
 
   const columns = useMemo(() => {
-    return getColumns({
-      params: { page, limit, ...filterParameters, clientId },
+    return getClientColumns({
       updateSort,
       sortParameters,
-    }).filter(
-      (column) =>
-        (column.id && availableColumns.includes(column.id)) ||
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        //   @ts-ignore
-        (column?.accessorKey && availableColumns.includes(column.accessorKey))
-    );
-  }, [clientId, filterParameters, limit, page, sortParameters, updateSort]);
+    });
+  }, [sortParameters, updateSort]);
 
   return (
     <div>

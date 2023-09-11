@@ -1,6 +1,6 @@
 export const dateFormats = {
   date: 'd/M/yyyy',
-  dateWithTime: 'd MMM, yyyy h:mm a',
-  dateWithTimeFull: 'd MMMM, yyyy h:mm:ss a',
-  dateWithTimeShort: 'd MMM, h:mm a',
+  dateWithTime: 'd MMM, yyyy h:mm',
+  dateWithTimeFull: 'd MMMM, yyyy h:mm',
+  dateWithTimeShort: 'd MMM, h:mm',
 };

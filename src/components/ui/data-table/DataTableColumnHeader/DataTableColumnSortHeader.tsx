@@ -1,5 +1,6 @@
 import { Column } from '@tanstack/table-core';
-import { ArrowDownIcon, ArrowUpDown, ArrowUpIcon, EyeOff } from 'lucide-react';
+import { ArrowDownIcon, ArrowUpDown, ArrowUpIcon } from 'lucide-react';
+import { HTMLAttributes } from 'react';
 
 import { cn } from '@/lib/utils';
 
@@ -9,13 +10,11 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 
-interface DataTableColumnSortHeaderProps<TData, TValue>
-  extends React.HTMLAttributes<HTMLDivElement> {
-  column: Column<TData, TValue>;
+interface DataTableColumnSortHeaderProps<TData, TValue> extends HTMLAttributes<HTMLDivElement> {
+  column?: Column<TData, TValue>;
   title: string;
   updateSort?: (sort: 'asc' | 'desc') => void;
   sortParameters?: SortStateProps;
@@ -24,7 +23,6 @@ interface DataTableColumnSortHeaderProps<TData, TValue>
 export function DataTableColumnSortHeader<TData, TValue>({
   title,
   className,
-  column,
   sortParameters,
   updateSort,
 }: DataTableColumnSortHeaderProps<TData, TValue>) {
@@ -50,16 +48,11 @@ export function DataTableColumnSortHeader<TData, TValue>({
         <DropdownMenuContent align='start'>
           <DropdownMenuItem onClick={() => updateSort('asc')}>
             <ArrowUpIcon className='mr-2 h-3.5 w-3.5 text-muted-foreground/70' />
-            Asc
+            Rosnąco
           </DropdownMenuItem>
           <DropdownMenuItem onClick={() => updateSort('desc')}>
             <ArrowDownIcon className='mr-2 h-3.5 w-3.5 text-muted-foreground/70' />
-            Desc
-          </DropdownMenuItem>
-          <DropdownMenuSeparator />
-          <DropdownMenuItem onClick={() => column.toggleVisibility(false)}>
-            <EyeOff className='mr-2 h-3.5 w-3.5 text-muted-foreground/70' />
-            Hide
+            Malejąco
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
