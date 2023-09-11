@@ -51,7 +51,7 @@ export const getColumns = ({
     {
       id: 'orderNumber',
       header: 'L.p.',
-      cell: ({ row }) => <span>{row.index}</span>,
+      cell: ({ row }) => <span>{row.index + 1}</span>,
     },
     {
       accessorKey: 'status',

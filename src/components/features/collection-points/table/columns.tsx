@@ -14,7 +14,7 @@ export function getColumns(params: GetCollectionPointsParams): ColumnDef<Collect
     {
       id: 'orderNumber',
       header: 'L.p.',
-      cell: ({ row }) => <span>{row.index}</span>,
+      cell: ({ row }) => <span>{row.index + 1}</span>,
     },
     {
       accessorKey: 'name',
