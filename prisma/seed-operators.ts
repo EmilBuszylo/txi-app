@@ -3,7 +3,7 @@ const prisma = new PrismaClient();
 
 const operatorsList = [
   {
-    name: 'Szymon Warzycha',
+    name: 'Szymon Szczecin',
   },
 ];
 async function main() {
