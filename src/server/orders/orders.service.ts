@@ -399,7 +399,7 @@ export const removeOrder = async (id: string) => {
 };
 
 const _createInternalId = (count: number) => {
-  return `txi/${format(new Date(), 'yyyyLLdd')}/${count}`;
+  return `TXI/${format(new Date(), 'yyyyLLdd')}/${count}`;
 };
 
 const _calculateOrderDistancesData = async ({
