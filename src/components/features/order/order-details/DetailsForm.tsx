@@ -507,7 +507,6 @@ export function OrderDetailsForm({
                   <FormLabel>Data modyfikacji</FormLabel>
                   <Input {...field} value={value} type='datetime-local' readOnly disabled />
                   <FormMessage />
-                  <FormDescription>Podaj datę i godzinę odbioru pasażera</FormDescription>
                 </FormItem>
               );
             }}

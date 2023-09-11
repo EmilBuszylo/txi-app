@@ -1,7 +1,7 @@
 import { OrderStatus } from '@/server/orders/order';
 
 export const statusLabelPerStatus: Record<OrderStatus, string> = {
-  NEW: 'Nowy',
+  NEW: 'Nowe',
   STARTED: 'Wydane',
   IN_PROGRESS: 'W toku',
   COMPLETED: 'Zakończone',

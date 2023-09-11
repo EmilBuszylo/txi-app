@@ -152,7 +152,7 @@ export const LocationFromSection = ({
         {!isOpen && (
           <FormDescription className='mt-2'>
             Wprowadź informacje niezbędne do określenia punktu startowego zlecenia. Aby to zrobić
-            naciśnij napis &quot;Lokalizacja Z&quot;
+            naciśnij napis &quot;Miejsce odbioru&quot;
           </FormDescription>
         )}
       </Accordion>

@@ -106,7 +106,7 @@ export const LocationToSection = ({
         {!isOpen && (
           <FormDescription className='mt-2'>
             Wprowadź informacje niezbędne do określenia punktu końcowego zlecenia. Aby to zrobić
-            naciśnij napis &quot;Lokalizacja Do&quot;
+            naciśnij napis &quot;Miejsce docelowe&quot;
           </FormDescription>
         )}
       </Accordion>
