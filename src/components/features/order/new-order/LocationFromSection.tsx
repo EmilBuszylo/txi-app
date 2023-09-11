@@ -50,7 +50,7 @@ export const LocationFromSection = ({
         type='single'
         collapsible
         defaultValue='locationFrom'
-        className='bg-gray-50 px-4 py-2'
+        className='bg-gray-50 py-2'
         onValueChange={(e) => {
           if (e === '') {
             setIsOpen(false);
@@ -60,9 +60,9 @@ export const LocationFromSection = ({
         }}
       >
         <AccordionItem value='locationFrom'>
-          <AccordionTrigger className='text-lg font-medium'>Miejsce odbioru</AccordionTrigger>
+          <AccordionTrigger className='px-4 text-lg font-medium'>Miejsce odbioru</AccordionTrigger>
           <AccordionContent>
-            <div className='flex flex-col gap-4'>
+            <div className='flex flex-col gap-4 px-4'>
               <FormField
                 control={control}
                 name='locationFrom.date'
@@ -150,7 +150,7 @@ export const LocationFromSection = ({
           </AccordionContent>
         </AccordionItem>
         {!isOpen && (
-          <FormDescription className='mt-2'>
+          <FormDescription className='mt-2 px-4'>
             Wprowadź informacje niezbędne do określenia punktu startowego zlecenia. Aby to zrobić
             naciśnij napis &quot;Miejsce odbioru&quot;
           </FormDescription>

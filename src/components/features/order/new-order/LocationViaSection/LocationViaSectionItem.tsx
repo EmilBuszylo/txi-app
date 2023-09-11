@@ -60,7 +60,7 @@ export const LocationViaSectionItem = ({
   return (
     <AccordionItem value={fieldName} key={fieldName} className='mb-4 w-full rounded bg-white p-2'>
       <div className='flex w-full items-center gap-x-2 [&>h3]:w-full'>
-        <AccordionTrigger className='text-md w-full px-2 font-medium '>
+        <AccordionTrigger className='text-md w-full px-4  font-medium '>
           <div className='flex w-full w-full items-center justify-between'>
             <div className='flex w-full items-center truncate'>
               <span className='mr-1 font-semibold'>{index + 1}.</span>
@@ -73,7 +73,7 @@ export const LocationViaSectionItem = ({
         </Button>
       </div>
       <AccordionContent>
-        <div className='flex flex-col gap-4'>
+        <div className='flex flex-col gap-4 px-4 '>
           <FormField
             control={control}
             name={`${fieldName}.date`}
