@@ -18,7 +18,7 @@ export const PageTitle = ({ hiddenOn }: { hiddenOn?: 'mobile' | 'desktop' }) => 
   const isWayback = useMemo(() => {
     if (pathname.includes('new')) return true;
 
-    return Boolean(params);
+    return Object.keys(params).length > 0;
   }, [params, pathname]);
 
   return (
