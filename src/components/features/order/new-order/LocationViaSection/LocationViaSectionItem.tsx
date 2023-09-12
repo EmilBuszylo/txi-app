@@ -2,6 +2,7 @@ import { Trash2 } from 'lucide-react';
 import { useFieldArray, useFormContext } from 'react-hook-form';
 import { PatternFormat } from 'react-number-format';
 
+import { AdditionalPassengersField } from '@/components/features/order/new-order/AdditionalPassengersField';
 import { useLocationsDateInfo } from '@/components/features/order/new-order/hooks/useLocationsDateInfo';
 import { PlaceDetails, PlacesAutocomplete } from '@/components/features/places/PlacesAutocomplete';
 import { AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
@@ -68,8 +69,8 @@ export const LocationViaSectionItem = ({
             </div>
           </div>
         </AccordionTrigger>
-        <Button variant='destructive' onClick={removeItem} className='group mr-2 px-1'>
-          <Trash2 className='h-6 w-6' />
+        <Button variant='ghost' onClick={removeItem} className='group mr-2'>
+          <Trash2 className='h-6 w-6 text-destructive' />
         </Button>
       </div>
       <AccordionContent>
@@ -159,6 +160,7 @@ export const LocationViaSectionItem = ({
               );
             }}
           />
+          <AdditionalPassengersField name={`${fieldName}.passenger.additionalPassengers`} />
         </div>
       </AccordionContent>
     </AccordionItem>

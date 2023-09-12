@@ -127,6 +127,7 @@ export const updateOrderSchema = z.object({
       lat: z.string(),
     })
     .optional(),
+  stopTime: z.any().optional().nullable(),
 });
 
 export interface UpdateOrderParams extends Pick<CreateOrderParams, 'collectionPointsGeoCodes'> {
@@ -147,6 +148,7 @@ export interface UpdateOrderParams extends Pick<CreateOrderParams, 'collectionPo
   locationTo?: LocationTo;
   highwaysCost?: string;
   isKmDifferenceAccepted?: boolean;
+  stopTime?: number;
 }
 
 export function updateOrder(id: string, params: UpdateOrderParams) {
@@ -167,6 +169,7 @@ export interface UpdateManyOrdersParams
     | 'clientId'
     | 'externalId'
     | 'highwaysCost'
+    | 'stopTime'
   > {
   ids: string[];
 }

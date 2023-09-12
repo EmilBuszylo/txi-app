@@ -13,6 +13,7 @@ export const translateOrderItemKeys = {
   locationFrom: 'Lokalizacja Z',
   locationTo: 'Lokalizacja Do',
   locationVia: 'Lokalizacje przez',
+  stopTime: 'Czas oczekiwania',
   createdAt: 'Data utworzenia zlecenia',
   updatedAt: 'Data ostatniej aktualizacji',
 };

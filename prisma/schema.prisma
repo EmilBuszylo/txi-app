@@ -79,6 +79,7 @@ model Order {
   isKmDifferenceAccepted Boolean? @default(false) // temp solution to accept the difference between distances
   hasHighway Boolean?
   highwaysCost String?
+  stopTime   Int? @default(0)
 
   client     Client @relation(fields: [clientId, clientName], references: [id, name])
   clientId   String

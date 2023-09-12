@@ -539,6 +539,7 @@ const orderSelectedFields = {
   isKmDifferenceAccepted: true,
   highwaysCost: true,
   intakeDistance: true,
+  stopTime: true,
   driver: {
     select: {
       id: true,

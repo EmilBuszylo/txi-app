@@ -21,6 +21,7 @@ export interface Order {
   clientName: string;
   intakeDistance?: number;
   isKmDifferenceAccepted?: boolean;
+  stopTime?: number;
   driver?: {
     id: string;
     firstName: string;
@@ -62,6 +63,14 @@ export const locationFromSchema = z.object({
     lastName: z.string().optional(),
     name: z.string(),
     phone: z.string().min(1, 'Numer kontaktowy jest wymagany'),
+    additionalPassengers: z
+      .array(
+        z.object({
+          name: z.string().optional(),
+        })
+      )
+      .optional()
+      .nullable(),
   }),
 });
 

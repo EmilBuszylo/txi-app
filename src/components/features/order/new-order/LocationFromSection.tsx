@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useFormContext } from 'react-hook-form';
 import { PatternFormat } from 'react-number-format';
 
+import { AdditionalPassengersField } from '@/components/features/order/new-order/AdditionalPassengersField';
 import { useLocationsDateInfo } from '@/components/features/order/new-order/hooks/useLocationsDateInfo';
 import { PlaceDetails, PlacesAutocomplete } from '@/components/features/places/PlacesAutocomplete';
 import {
@@ -110,7 +111,7 @@ export const LocationFromSection = ({
                 name='locationFrom.passenger.name'
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Nazwa</FormLabel>
+                    <FormLabel>Nazwa pasażera</FormLabel>
                     <FormControl>
                       <Input placeholder='Wprowadź nazwę pasażera' {...field} />
                     </FormControl>
@@ -146,6 +147,7 @@ export const LocationFromSection = ({
                   );
                 }}
               />
+              <AdditionalPassengersField name='locationFrom.passenger.additionalPassengers' />
             </div>
           </AccordionContent>
         </AccordionItem>
