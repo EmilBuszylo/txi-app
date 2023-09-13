@@ -352,22 +352,20 @@ export function OrderDetailsForm({
                 : undefined
             }
           />
-          {!isDispatcher && (
-            <FormField
-              control={form.control}
-              name='stopTime'
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Czas oczekiwania</FormLabel>
-                  <FormControl>
-                    <Input placeholder='Podaj łączny czas oczekiwania' {...field} type='number' />
-                  </FormControl>
-                  <FormMessage />
-                  <FormDescription>Czas oczekiwania wyrażony w pełnych godzinach</FormDescription>
-                </FormItem>
-              )}
-            />
-          )}
+          <FormField
+            control={form.control}
+            name='stopTime'
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Czas oczekiwania</FormLabel>
+                <FormControl>
+                  <Input placeholder='Podaj łączny czas oczekiwania' {...field} type='number' />
+                </FormControl>
+                <FormMessage />
+                <FormDescription>Czas oczekiwania wyrażony w pełnych godzinach</FormDescription>
+              </FormItem>
+            )}
+          />
           {!isDispatcher && (
             <FormField
               control={form.control}
