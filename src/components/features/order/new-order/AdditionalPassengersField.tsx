@@ -38,7 +38,7 @@ export const AdditionalPassengersField = ({ name }: AdditionalPassengersFieldPro
             <FormItem>
               <FormLabel className={cn(i !== 0 && 'sr-only')}>Dodatkowi pasażerowie</FormLabel>
               <FormDescription className={cn(i !== 0 && 'sr-only')}>
-                Dodaj dodatkowych pasażerów
+                Dodaj dodatkowych pasażerów (nie więcej niż troje).
               </FormDescription>
               <FormControl>
                 <div className='flex items-center justify-between gap-x-2'>
@@ -53,22 +53,24 @@ export const AdditionalPassengersField = ({ name }: AdditionalPassengersFieldPro
           )}
         />
       ))}
-      <TooltipProvider>
-        <Tooltip>
-          <TooltipTrigger asChild>
-            <Button
-              type='button'
-              variant='outline'
-              size='sm'
-              className='mt-2'
-              onClick={() => append({ name: '' })}
-            >
-              Dodaj pasażera <PlusCircleIcon className='ml-1 h-4 w-4' />
-            </Button>
-          </TooltipTrigger>
-          <TooltipContent>Dodaj dodatkowych pasażerów</TooltipContent>
-        </Tooltip>
-      </TooltipProvider>
+      {fields.length <= 2 && (
+        <TooltipProvider>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button
+                type='button'
+                variant='outline'
+                size='sm'
+                className='mt-2'
+                onClick={() => append({ name: '' })}
+              >
+                Dodaj pasażera <PlusCircleIcon className='ml-1 h-4 w-4' />
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent>Dodaj dodatkowych pasażerów</TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
+      )}
     </div>
   );
 };

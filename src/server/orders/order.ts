@@ -69,6 +69,7 @@ export const locationFromSchema = z.object({
           name: z.string().optional(),
         })
       )
+      .max(3)
       .optional()
       .nullable(),
   }),
