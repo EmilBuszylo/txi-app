@@ -77,7 +77,7 @@ export const getColumns = ({
     },
     {
       accessorKey: 'externalId',
-      header: 'Nr zlecenia',
+      header: 'Nr zlecenia klienta',
     },
     {
       accessorKey: 'operatorName',
