@@ -2,6 +2,8 @@ import { Trash2 } from 'lucide-react';
 import { useFieldArray, useFormContext } from 'react-hook-form';
 import { PatternFormat } from 'react-number-format';
 
+import { todayWithoutTimeZone } from '@/lib/helpers/date';
+
 import { AdditionalPassengersField } from '@/components/features/order/new-order/AdditionalPassengersField';
 import { useLocationsDateInfo } from '@/components/features/order/new-order/hooks/useLocationsDateInfo';
 import { PlaceDetails, PlacesAutocomplete } from '@/components/features/places/PlacesAutocomplete';
@@ -107,7 +109,12 @@ export const LocationViaSectionItem = ({
               ) : (
                 <FormItem className='flex flex-col items-start'>
                   <FormLabel>Data/godzina</FormLabel>
-                  <Input {...field} type='datetime-local' disabled={isDateInputDisabled} />
+                  <Input
+                    {...field}
+                    type='datetime-local'
+                    disabled={isDateInputDisabled}
+                    min={todayWithoutTimeZone}
+                  />
                   <FormMessage />
                   <FormDescription>Podaj datę i godzinę przejazdu</FormDescription>
                 </FormItem>

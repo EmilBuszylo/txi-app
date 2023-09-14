@@ -53,3 +53,5 @@ export function relativeDate(input: string | Date): string {
     locale: pl,
   });
 }
+
+export const todayWithoutTimeZone = new Date().toISOString().slice(0, -8);
