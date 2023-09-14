@@ -50,7 +50,19 @@ export enum OrderStatus {
 }
 
 export const locationFromSchema = z.object({
-  date: z.string().optional(),
+  date: z
+    .string()
+    .optional()
+    .refine(
+      (data) => {
+        if (!data) {
+          return true;
+        }
+
+        return new Date(data) > new Date();
+      },
+      { message: 'Wybrana data nie może być z przeszłości' }
+    ),
   address: z.object({
     fullAddress: z.string(),
     city: z.string(),
@@ -76,7 +88,19 @@ export const locationFromSchema = z.object({
 });
 
 export const locationToSchema = z.object({
-  date: z.string().optional(),
+  date: z
+    .string()
+    .optional()
+    .refine(
+      (data) => {
+        if (!data) {
+          return true;
+        }
+
+        return new Date(data) > new Date();
+      },
+      { message: 'Wybrana data nie może być z przeszłości' }
+    ),
   address: z.object({
     fullAddress: z.string(),
     city: z.string(),

@@ -14,6 +14,7 @@ export const translateOrderItemKeys = {
   locationTo: 'Miejsce docelowe',
   locationVia: 'Lokalizacje przez',
   stopTime: 'Czas oczekiwania',
+  highwaysCost: 'Koszt płatnych odcinków',
   createdAt: 'Data utworzenia zlecenia',
   updatedAt: 'Data ostatniej aktualizacji',
 };
