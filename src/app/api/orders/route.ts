@@ -52,6 +52,9 @@ export async function GET(req: Request) {
         ? urlParams.searchParams.get('hasActualKm') === 'true'
         : undefined,
       clientInvoice: urlParams.searchParams.get('clientInvoice') || undefined,
+      hasClientInvoice: urlParams.searchParams.get('hasClientInvoice')
+        ? urlParams.searchParams.get('hasClientInvoice') === 'true'
+        : undefined,
       createdAtTo: urlParams.searchParams.get('createdAtTo') || undefined,
       createdAtFrom: urlParams.searchParams.get('createdAtFrom') || undefined,
       column: urlParams.searchParams.get('column') || undefined,

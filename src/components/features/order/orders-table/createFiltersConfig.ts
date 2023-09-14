@@ -64,7 +64,7 @@ export const createFiltersConfig = ({
     },
     {
       title: 'Faktura klienta',
-      name: 'haClientInvoice',
+      name: 'hasClientInvoice',
       options: [
         {
           label: 'Dodana',

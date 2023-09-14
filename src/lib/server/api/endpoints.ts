@@ -36,6 +36,7 @@ export interface GetOrdersParams {
   driverId?: string;
   hasActualKm?: boolean;
   clientInvoice?: string;
+  hasClientInvoice?: boolean;
   createdAtFrom?: string;
   createdAtTo?: string;
   column?: string;
@@ -52,6 +53,7 @@ export function getOrders({
   driverId,
   hasActualKm,
   clientInvoice,
+  hasClientInvoice,
   createdAtFrom,
   createdAtTo,
   column,
@@ -67,6 +69,7 @@ export function getOrders({
     driverId: driverId || '',
     hasActualKm: hasActualKm ? hasActualKm.toString() : '',
     clientInvoice: clientInvoice || '',
+    hasClientInvoice: hasClientInvoice ? hasClientInvoice.toString() : '',
     createdAtFrom: createdAtFrom || '',
     createdAtTo: createdAtTo || '',
     column: column || '',

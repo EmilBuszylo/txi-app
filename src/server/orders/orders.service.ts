@@ -311,6 +311,7 @@ export const getOrders = async (input: GetOrdersParams) => {
     driverId,
     hasActualKm,
     clientInvoice,
+    hasClientInvoice,
     createdAtFrom,
     column,
     sort,
@@ -328,6 +329,7 @@ export const getOrders = async (input: GetOrdersParams) => {
     driverId,
     hasActualKm,
     clientInvoice,
+    hasClientInvoice,
     createdAtFrom,
     createdAtTo,
   });
@@ -490,6 +492,7 @@ const _getWhereFilterByParams = ({
   driverId,
   hasActualKm,
   clientInvoice,
+  hasClientInvoice,
   createdAtFrom,
   createdAtTo,
 }: ParamsFilter): WhereFilter => {
@@ -506,6 +509,9 @@ const _getWhereFilterByParams = ({
         : null,
     }),
     ...(clientInvoice && { clientInvoice: { contains: clientInvoice, mode: 'insensitive' } }),
+    ...(typeof hasClientInvoice === 'boolean' && {
+      clientInvoice: hasClientInvoice ? { not: null } : null,
+    }),
     ...(createdAtFrom || createdAtTo
       ? {
           createdAt: {
