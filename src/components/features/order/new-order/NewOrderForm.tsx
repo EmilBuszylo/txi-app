@@ -40,10 +40,20 @@ export function NewOrderForm() {
     resolver: zodResolver(createOrderSchema),
     defaultValues: {
       externalId: '',
-      clientId: clientId || '',
-      comment: '',
-      collectionPointId: '',
+      clientId: clientId || undefined,
+      comment: undefined,
+      collectionPointId: undefined,
       locationVia: [],
+      locationFrom: {
+        date: '',
+        passenger: {
+          name: undefined,
+          phone: undefined,
+        },
+      },
+      locationTo: {
+        date: '',
+      },
     },
   });
   const router = useRouter();
@@ -135,7 +145,7 @@ export function NewOrderForm() {
             name='externalId'
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Nr zlecenia</FormLabel>
+                <FormLabel>{isClient ? 'Nr zlecenia' : 'Nr zlecenia klienta'}</FormLabel>
                 <FormControl>
                   <Input placeholder='Nr zlecenia' {...field} />
                 </FormControl>

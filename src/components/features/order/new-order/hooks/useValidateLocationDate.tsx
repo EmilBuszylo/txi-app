@@ -25,12 +25,12 @@ export const useValidateLocationDate = (
       setError('locationFrom.date', {
         type: 'custom',
         message:
-          'Przynajmniej jedna data z pośród sekcji z "Lokalizacja Z", "Lokalizacja Do", "Lokalizacja pośrednia" musi być uzupełniona.',
+          'Przynajmniej jedna data z pośród sekcji z "Miejsce odbioru", "Miejsce docelowe", "Lokalizacja pośrednia" musi być uzupełniona.',
       });
       setError('locationTo.date', {
         type: 'custom',
         message:
-          'Przynajmniej jedna data z pośród sekcji z "Lokalizacja Z", "Lokalizacja Do", "Lokalizacja pośrednia" musi być uzupełniona.',
+          'Przynajmniej jedna data z pośród sekcji z "Miejsce odbioru", "Miejsce docelowe", "Lokalizacja pośrednia" musi być uzupełniona.',
       });
 
       return true;
@@ -41,12 +41,12 @@ export const useValidateLocationDate = (
         setError('locationFrom.date', {
           type: 'custom',
           message:
-            'Tylko data z jednej sekcji z "Lokalizacja Z", "Lokalizacja Do", "Lokalizacja pośrednia" może być uzupełniona.',
+            'Tylko data z jednej sekcji z "Miejsce odbioru", "Miejsce docelowe", "Lokalizacja pośrednia" może być uzupełniona.',
         });
         setError('locationTo.date', {
           type: 'custom',
           message:
-            'Tylko data z jednej sekcji z "Lokalizacja Z", "Lokalizacja Do", "Lokalizacja pośrednia" może być uzupełniona.',
+            'Tylko data z jednej sekcji z "Miejsce odbioru", "Miejsce docelowe", "Lokalizacja pośrednia" może być uzupełniona.',
         });
 
         return true;
