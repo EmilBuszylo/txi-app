@@ -1,4 +1,4 @@
-import { z } from 'zod';
+import z from '@/lib/helpers/zod/zod';
 
 export interface Order {
   id: string;

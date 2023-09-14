@@ -1,7 +1,7 @@
 import { parsePhoneNumber } from 'awesome-phonenumber';
-import { z } from 'zod';
 
 import fetchJson from '@/lib/helpers/fetch-json';
+import z from '@/lib/helpers/zod/zod';
 
 import { SITE_URL } from '@/constant/env';
 import { ApiRoutes } from '@/constant/routes';
@@ -84,7 +84,7 @@ export const createOrderSchema = z.object({
   locationFrom: locationFromSchema,
   locationTo: locationToSchema,
   locationVia: z.array(locationFromSchema.optional()),
-  externalId: z.string(),
+  externalId: z.string().nonempty(),
   comment: z.string().optional(),
   clientId: z.string().optional(),
   driverId: z.string().optional(),
