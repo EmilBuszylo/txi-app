@@ -21,8 +21,8 @@ export const DriversTable = () => {
   const [limit, setLimit] = useState(DEFAULT_LIMIT);
 
   const { data, isLoading, isFetching, error, isSuccess } = useDrivers({
-    page: 1,
-    limit: limit,
+    page,
+    limit,
   });
 
   const columns = useMemo(() => {

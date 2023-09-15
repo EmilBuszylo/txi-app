@@ -21,8 +21,8 @@ export const OperatorsTable = () => {
   const [limit, setLimit] = useState(DEFAULT_LIMIT);
 
   const { data, isLoading, isFetching, error, isSuccess } = useOperators({
-    page: 1,
-    limit: limit,
+    page,
+    limit,
   });
 
   const columns = getColumns();

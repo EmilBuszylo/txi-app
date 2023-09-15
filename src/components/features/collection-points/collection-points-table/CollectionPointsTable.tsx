@@ -21,7 +21,7 @@ export const CollectionPointsTable = () => {
   const [limit, setLimit] = useState(DEFAULT_LIMIT);
 
   const { data, isLoading, isFetching, error, isSuccess } = useCollectionPoints({
-    page: 1,
+    page,
     limit,
   });
 
