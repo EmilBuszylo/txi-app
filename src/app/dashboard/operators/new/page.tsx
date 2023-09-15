@@ -1,11 +1,11 @@
 import { accessControl } from '@/lib/server/utils/access-control';
 
-import { NewDriverForm } from '@/components/features/driver/new-driver/NewDriverForm';
+import { NewOperatorForm } from '@/components/features/operator/new-operator/NewOperatorForm';
 
 import { UserRole } from '@/server/users/user';
 
-export default async function CreateNewDriver() {
+export default async function CreateNewOperator() {
   await accessControl({ allowedRoles: [UserRole.ADMIN, UserRole.DISPATCHER] });
 
-  return <NewDriverForm />;
+  return <NewOperatorForm />;
 }

@@ -2,6 +2,7 @@ export enum Routes {
   LOGIN = '/auth/login',
   ORDERS = '/dashboard/orders',
   DRIVERS = '/dashboard/drivers',
+  OPERATORS = '/dashboard/operators',
   COLLECTION_POINTS = '/dashboard/collection-points',
 }
 

@@ -410,6 +410,19 @@ export function getClients({ page, limit }: GetClientsParams) {
 
 // Operators endpoints
 
+export const createOperatorSchema = z.object({
+  name: z.string(),
+});
+
+export type CreateOperatorParams = z.infer<typeof createOperatorSchema>;
+
+export function createOperator(params: CreateOperatorParams) {
+  return fetchJson<Driver>(getNextApiPath(ApiRoutes.OPERATORS), {
+    method: 'POST',
+    body: JSON.stringify(params),
+  });
+}
+
 export interface GetOperatorsParams {
   page: number;
   limit: number;

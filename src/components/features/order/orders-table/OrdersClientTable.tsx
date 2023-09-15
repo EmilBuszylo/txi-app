@@ -52,7 +52,7 @@ export default function OrdersClientTable({ clientId }: { clientId: string }) {
   return (
     <div>
       {error ? (
-        <p>Oh no, there was an error</p>
+        <p>Wystąpił błąd, prosimy spróbować wczytać stronę ponownie</p>
       ) : (
         <>
           <div className='hidden md:block'>

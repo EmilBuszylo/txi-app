@@ -14,6 +14,7 @@ import { Routes } from '@/constant/routes';
 import { UserRole } from '@/server/users/user';
 
 import DriversIcons from '~/svg/icons/car.svg';
+import OperatorsIcon from '~/svg/icons/glob.svg';
 import CollectionPointsIcon from '~/svg/icons/map-pin.svg';
 import OrdersIcon from '~/svg/icons/orders.svg';
 
@@ -34,6 +35,12 @@ const links = [
     href: Routes.COLLECTION_POINTS,
     label: 'Punkty Zborne',
     icon: CollectionPointsIcon,
+    allowedRoles: [UserRole.ADMIN, UserRole.DISPATCHER],
+  },
+  {
+    href: Routes.OPERATORS,
+    label: 'Operatorzy',
+    icon: OperatorsIcon,
     allowedRoles: [UserRole.ADMIN, UserRole.DISPATCHER],
   },
 ];
