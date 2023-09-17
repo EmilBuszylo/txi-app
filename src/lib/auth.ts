@@ -61,6 +61,7 @@ export const authOptions: NextAuthOptions = {
   ],
   pages: {
     signIn: 'auth/login',
+    error: 'auth/login',
   },
   adapter: PrismaAdapter(prisma),
   session: { strategy: 'jwt' },
