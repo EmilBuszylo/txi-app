@@ -32,7 +32,9 @@ export const sendEmail = async ({ subject, orderData, to }: SendEmailInput) => {
     .replace(/{{client_name}}/, orderData.clientName);
 
   const receiver =
-    to && to.length > 0 ? process.env.EMAIL_RECEIVER + to?.join(',') : process.env.EMAIL_RECEIVER;
+    to && to.length > 0
+      ? `${process.env.EMAIL_RECEIVER},${to?.join(',')}`
+      : process.env.EMAIL_RECEIVER;
 
   const mail = {
     from: process.env.EMAIL_FROM,
