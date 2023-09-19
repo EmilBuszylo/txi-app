@@ -8,6 +8,7 @@ import { LogoutButton } from '@/components/features/auth/LogoutButton';
 import SidebarIconLink from '@/components/layout/DashboardLayout/SidebarIconLink';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import UnstyledLink from '@/components/ui/link/UstyledLink';
+import { Logo } from '@/components/ui/logo';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 
 import { Routes } from '@/constant/routes';
@@ -67,11 +68,11 @@ export default function Header() {
     <header className='flex h-full w-20 flex-col justify-between bg-gray-900 py-3.5 lg:fixed lg:left-0 lg:top-0 lg:z-50 lg:border-r lg:border-gray-100 xl:w-40'>
       <div className='flex flex-col items-center justify-center'>
         <UnstyledLink
-          className='mb-11 hidden h-11 w-11 items-center justify-center rounded bg-white lg:flex'
+          className='mb-11 hidden h-11 w-11 items-center justify-center rounded lg:flex'
           href='/'
         >
-          Logo
-          {/*<Logo className='h-8 w-8' />*/}
+          <span className='sr-only'>TXI logo</span>
+          <Logo />
         </UnstyledLink>
         <nav className='w-full'>
           <ul className='flex flex-col items-center space-y-3'>
