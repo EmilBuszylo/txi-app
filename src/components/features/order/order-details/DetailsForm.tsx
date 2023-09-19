@@ -1,5 +1,4 @@
 'use client';
-
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useRouter } from 'next/navigation';
 import React, { useEffect, useMemo, useState } from 'react';
@@ -166,7 +165,7 @@ export function OrderDetailsForm({
   return (
     <div className='lg:max-w-2xl'>
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className='space-y-4'>
+        <form onSubmit={form.handleSubmit(onSubmit)} className='space-y-4' noValidate={true}>
           <FormField
             control={form.control}
             name='status'
@@ -463,8 +462,8 @@ export function OrderDetailsForm({
                 <FormLabel>Koszt płatnych odcinków</FormLabel>
                 <FormControl>
                   <Input
-                    placeholder='Podaj koszt płatnych odcinków'
                     {...field}
+                    placeholder='Podaj koszt płatnych odcinków'
                     onKeyDown={(event) => {
                       if (
                         !/[0-9]/.test(event.key) &&

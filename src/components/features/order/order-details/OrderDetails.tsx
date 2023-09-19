@@ -42,6 +42,7 @@ export const OrderDetails = () => {
         updatedAt: data.updatedAt as unknown as string,
         distanceDifference: estimatedKm - kmForDriver,
         hasHighway: data.hasHighway,
+        highwaysCost: data.highwaysCost || '0',
       }}
       orderId={params?.id}
       collectionPoint={data.collectionPoint as CollectionPoint}

@@ -84,9 +84,53 @@ export function getOrders({
 }
 
 export const createOrderSchema = z.object({
-  locationFrom: locationFromSchema,
-  locationTo: locationToSchema,
-  locationVia: z.array(locationFromSchema.optional()),
+  locationFrom: locationFromSchema.extend({
+    date: z
+      .string()
+      .optional()
+      .refine(
+        (data) => {
+          if (!data) {
+            return true;
+          }
+
+          return new Date(data) > new Date();
+        },
+        { message: 'Wybrana data nie może być z przeszłości' }
+      ),
+  }),
+  locationTo: locationToSchema.extend({
+    date: z
+      .string()
+      .optional()
+      .refine(
+        (data) => {
+          if (!data) {
+            return true;
+          }
+
+          return new Date(data) > new Date();
+        },
+        { message: 'Wybrana data nie może być z przeszłości' }
+      ),
+  }),
+  locationVia: z.array(
+    locationFromSchema.extend({
+      date: z
+        .string()
+        .optional()
+        .refine(
+          (data) => {
+            if (!data) {
+              return true;
+            }
+
+            return new Date(data) > new Date();
+          },
+          { message: 'Wybrana data nie może być z przeszłości' }
+        ),
+    })
+  ),
   externalId: z.string().nonempty(),
   comment: z.string().optional(),
   clientId: z.string().optional(),
@@ -123,6 +167,7 @@ export const updateOrderSchema = z.object({
   kmForDriver: z.any().optional().nullable(),
   actualKm: z.any().optional().nullable(),
   driverId: z.string().optional(),
+  highwaysCost: z.string().optional(),
   collectionPointId: z.string().optional(),
   collectionPointsGeoCodes: z
     .object({
