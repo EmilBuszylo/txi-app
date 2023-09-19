@@ -3,9 +3,16 @@ const prisma = new PrismaClient();
 
 const dispatchersList = [
   {
-    firstName: 'Dyspozytor',
-    lastName: 'Testowy',
-    email: 'emil.interesy@gmail.com',
+    firstName: 'Błażej',
+    lastName: 'Borzym',
+    email: 'blazejborzym@o2.pl',
+    password: 'cdV267#w',
+  },
+  {
+    firstName: 'Piotr',
+    lastName: 'Kuchta',
+    email: 'malpka503@wp.pl',
+    password: '5pc=8XK7',
   },
 ];
 async function main() {
@@ -16,7 +23,7 @@ async function main() {
         firstName: dispatcher.firstName,
         lastName: dispatcher.lastName,
         email: dispatcher.email,
-        password: '!@Test1234',
+        password: dispatcher.password,
         role: 'DISPATCHER',
       },
     });

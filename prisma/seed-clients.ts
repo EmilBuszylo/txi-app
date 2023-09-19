@@ -3,41 +3,68 @@ const prisma = new PrismaClient();
 
 const clientsList = [
   {
-    name: 'Klient Testowy',
+    name: 'Captrain',
+    login: '',
+    password: '',
   },
-  // {
-  //   name: 'Captrain',
-  // },
-  // {
-  //   name: 'CargoWay',
-  // },
-  // {
-  //   name: 'Tekol',
-  // },
-  // {
-  //   name: 'HSL',
-  // },
-  // {
-  //   name: 'Cargo Przewozy Towarowe',
-  // },
-  // {
-  //   name: 'Ost-West',
-  // },
-  // {
-  //   name: 'LTG',
-  // },
-  // {
-  //   name: 'PCC',
-  // },
-  // {
-  //   name: 'Laude',
-  // },
+  {
+    name: 'CargoWay',
+    login: '',
+    password: '',
+  },
+  {
+    name: 'Tekol',
+    login: '',
+    password: '',
+  },
+  {
+    name: 'HSL',
+    login: '',
+    password: '',
+  },
+  {
+    name: 'Cargo Przewozy Towarowe',
+    login: '',
+    password: '',
+  },
+  {
+    name: 'Ost-West',
+    login: '',
+    password: '',
+  },
+  {
+    name: 'LTG',
+    login: '',
+    password: '',
+  },
+  {
+    name: 'PCC',
+    login: '',
+    password: '',
+  },
+  {
+    name: 'Laude',
+    login: '',
+    password: '',
+  },
 ];
 async function main() {
   for await (const client of clientsList) {
-    await prisma.client.create({
+    await prisma.user.create({
       data: {
-        name: client.name,
+        login: client.login,
+        password: client.password,
+        role: 'CLIENT',
+        client: {
+          connectOrCreate: {
+            where: {
+              name: client.name,
+            },
+            create: {
+              name: client.name,
+            },
+          },
+        },
       },
     });
   }
