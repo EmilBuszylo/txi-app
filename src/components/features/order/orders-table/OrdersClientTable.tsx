@@ -46,8 +46,15 @@ export default function OrdersClientTable({ clientId }: { clientId: string }) {
     return getClientColumns({
       updateSort,
       sortParameters,
+      params: {
+        page,
+        limit,
+        ...filterParameters,
+        ...sortParameters,
+        clientId,
+      },
     });
-  }, [sortParameters, updateSort]);
+  }, [clientId, filterParameters, limit, page, sortParameters, updateSort]);
 
   return (
     <div>

@@ -3,8 +3,12 @@
 import { ColumnDef } from '@tanstack/table-core';
 
 import { formatDate } from '@/lib/helpers/date';
+import { GetOrdersParams } from '@/lib/server/api/endpoints';
 
-import { StatusCell } from '@/components/features/order/table/cells/StatusCell';
+import { ActionCell } from '@/components/features/order/table/cells/ActionCell';
+import { statusOnBadgeStyle } from '@/components/features/order/table/cells/StatusCell';
+import { statusLabelPerStatus } from '@/components/features/order/utils';
+import { Badge } from '@/components/ui/badge';
 import { ColumnWithTooltip } from '@/components/ui/data-table/columns/ColumnWithTooltip';
 import { DataTableColumnSortHeader } from '@/components/ui/data-table/DataTableColumnHeader/DataTableColumnSortHeader';
 import { SortStateProps } from '@/components/ui/data-table/hooks/useSorts';
@@ -14,10 +18,12 @@ import { dateFormats } from '@/constant/date-formats';
 import { Order } from '@/server/orders/order';
 
 interface GetColumnsProps {
+  params: GetOrdersParams;
   updateSort?: (name: string, sort: 'asc' | 'desc') => void;
   sortParameters?: SortStateProps;
 }
 export const getClientColumns = ({
+  params,
   sortParameters,
   updateSort,
 }: GetColumnsProps): ColumnDef<Order>[] => {
@@ -30,7 +36,19 @@ export const getClientColumns = ({
     {
       accessorKey: 'status',
       header: 'Status',
-      cell: ({ row }) => <StatusCell row={row} />,
+      cell: ({ row }) => {
+        const getStatusForClient = () => {
+          if (row.original.status === 'STARTED') {
+            return 'NEW';
+          }
+
+          return row.original.status;
+        };
+
+        const status = getStatusForClient();
+
+        return <Badge className={statusOnBadgeStyle[status]}>{statusLabelPerStatus[status]}</Badge>;
+      },
     },
     {
       accessorKey: 'externalId',
@@ -100,6 +118,12 @@ export const getClientColumns = ({
         />
       ),
       cell: ({ row }) => <RelativeDate date={row.original.createdAt} />,
+    },
+    {
+      id: 'actions',
+      cell: ({ row }) => {
+        return <ActionCell row={row} params={params} />;
+      },
     },
   ];
 };

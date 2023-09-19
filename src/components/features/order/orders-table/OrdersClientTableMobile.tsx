@@ -40,6 +40,14 @@ export const OrdersClientTableMobile = ({ items, params }: OrdersTableMobileProp
 const OrderClientMobileItem = ({ item, params }: { item: Order; params: GetOrdersParams }) => {
   const locationsVia = item.locationVia?.map((loc) => loc.address.fullAddress).join(',');
 
+  const getStatusForClient = () => {
+    if (item.status === 'STARTED') {
+      return statusLabelPerStatus['NEW'];
+    }
+
+    return statusLabelPerStatus[item.status];
+  };
+
   return (
     <MobileItem>
       <MobileItemHeader>
@@ -47,9 +55,7 @@ const OrderClientMobileItem = ({ item, params }: { item: Order; params: GetOrder
           <span className='text-sm text-muted-foreground'>Nr zlecenia</span>
           {item.externalId}
         </div>
-        <Badge className={statusOnBadgeStyle[item.status]}>
-          {statusLabelPerStatus[item.status]}
-        </Badge>
+        <Badge className={statusOnBadgeStyle[item.status]}>{getStatusForClient()}</Badge>
       </MobileItemHeader>
       <MobileItemBody
         items={[
@@ -63,7 +69,7 @@ const OrderClientMobileItem = ({ item, params }: { item: Order; params: GetOrder
           },
           {
             label: 'Nr faktury',
-            value: item.clientInvoice || '',
+            value: item.clientInvoice || 'Niewystawiona',
           },
           {
             label: 'Data realizacji',
@@ -98,7 +104,7 @@ const OrderWayModal = ({ item }: { item: Order }) => {
     <Dialog>
       <DialogTrigger asChild>
         <Button size='sm' className='w-fit'>
-          Przebieg trasy
+          Podgląd
         </Button>
       </DialogTrigger>
       <DialogContent>
