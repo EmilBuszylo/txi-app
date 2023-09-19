@@ -2,7 +2,7 @@ import { Row } from '@tanstack/table-core';
 import { useRouter } from 'next/navigation';
 
 import { useUpdateManyOrders } from '@/lib/hooks/data/useUpdateManyOrders';
-import { UseIsDispatcherRole } from '@/lib/hooks/useIsDispatcherRole';
+import { UseUser } from '@/lib/hooks/useUser';
 import { GetOrdersParams } from '@/lib/server/api/endpoints';
 
 import { ActionsColumn } from '@/components/ui/data-table/columns/ActionsColumn';
@@ -10,6 +10,7 @@ import { DropdownMenuItem, DropdownMenuSeparator } from '@/components/ui/dropdow
 
 import { Routes } from '@/constant/routes';
 import { Order, OrderStatus } from '@/server/orders/order';
+import { UserRole } from '@/server/users/user';
 
 export const ActionCell = ({ row, params }: { row: Row<Order>; params: GetOrdersParams }) => {
   return (
@@ -20,19 +21,25 @@ export const ActionCell = ({ row, params }: { row: Row<Order>; params: GetOrders
 };
 
 export const ActionCellOptions = ({ id, params }: { id: string; params: GetOrdersParams }) => {
-  const { isDispatcher } = UseIsDispatcherRole();
+  const { user } = UseUser();
 
   const { mutateAsync: updateOrder } = useUpdateManyOrders([id], params);
   const router = useRouter();
 
   const { mutateAsync: updateOrders } = useUpdateManyOrders([id], params);
 
+  const allowDetailsView = user?.role && [UserRole.DISPATCHER, UserRole.ADMIN].includes(user.role);
+  const allowKmDifference = user?.role && [UserRole.ADMIN].includes(user.role);
+
   return (
     <>
-      <DropdownMenuItem onClick={() => router.push(`${Routes.ORDERS}/${id}`)}>
-        Szczegóły/edycja
-      </DropdownMenuItem>
-      {!isDispatcher && (
+      {allowDetailsView && (
+        <DropdownMenuItem onClick={() => router.push(`${Routes.ORDERS}/${id}`)}>
+          Szczegóły/edycja
+        </DropdownMenuItem>
+      )}
+
+      {allowKmDifference && (
         <DropdownMenuItem onClick={() => updateOrders({ isKmDifferenceAccepted: true })}>
           Zaakceptuj różnice w km
         </DropdownMenuItem>
