@@ -5,14 +5,22 @@ import { cn } from '@/lib/utils';
 import LogoIcon from '~/svg/logo2.svg';
 
 interface LogoProps {
-  size?: number;
+  size?: 'basic' | 'lg';
 }
 
-export const Logo = ({ size = 20 }: LogoProps) => {
+export const Logo = ({ size = 'basic' }: LogoProps) => {
   return (
     <div className='relative flex items-center justify-center'>
-      <Hexagon className={cn(`h-${size} w-${size} fill-white`)} />
-      <LogoIcon className={cn('absolute h-20 w-20 text-gray-900')} />
+      <Hexagon
+        className={cn('h-20 w-20 fill-white', {
+          'h-32 w-32': size === 'lg',
+        })}
+      />
+      <LogoIcon
+        className={cn('absolute h-20 w-20 text-gray-900', {
+          'h-32 w-32': size === 'lg',
+        })}
+      />
     </div>
   );
 };
