@@ -37,6 +37,7 @@ export default async function fetchJson<JSON = unknown>(
   init?: RequestInit
 ): Promise<JSON> {
   try {
+    logger.error({ input, init, stack: 'fetchJson error' });
     const response = await fetch(input, {
       ...init,
       headers: {
@@ -44,11 +45,11 @@ export default async function fetchJson<JSON = unknown>(
         ...init?.headers,
       },
     });
-
+    logger.error(2);
     // if the server replies, there's always some data in json
     // if there's a network error, it will throw at the previous line
     const data = await response.json();
-
+    logger.error(3, { data, response });
     // response.ok is true when res.status is 2xx
     // https://developer.mozilla.org/en-US/docs/Web/API/Response/ok
     if (response.ok) {
