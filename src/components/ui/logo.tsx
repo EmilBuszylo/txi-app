@@ -4,10 +4,14 @@ import { cn } from '@/lib/utils';
 
 import LogoIcon from '~/svg/logo2.svg';
 
-export const Logo = () => {
+interface LogoProps {
+  size?: number;
+}
+
+export const Logo = ({ size = 20 }: LogoProps) => {
   return (
-    <div className='jusify-center relative flex items-center'>
-      <Hexagon className={cn('h-20 w-20 fill-white')} />
+    <div className='relative flex items-center justify-center'>
+      <Hexagon className={cn(`h-${size} w-${size} fill-white`)} />
       <LogoIcon className={cn('absolute h-20 w-20 text-gray-900')} />
     </div>
   );
