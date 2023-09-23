@@ -40,13 +40,7 @@ export const OrdersClientTableMobile = ({ items, params }: OrdersTableMobileProp
 const OrderClientMobileItem = ({ item, params }: { item: Order; params: GetOrdersParams }) => {
   const locationsVia = item.locationVia?.map((loc) => loc.address.fullAddress).join(',');
 
-  const getStatusForClient = () => {
-    if (item.status === 'STARTED') {
-      return statusLabelPerStatus['NEW'];
-    }
-
-    return statusLabelPerStatus[item.status];
-  };
+  const status = item.status === 'STARTED' ? 'NEW' : item.status;
 
   return (
     <MobileItem>
@@ -55,7 +49,7 @@ const OrderClientMobileItem = ({ item, params }: { item: Order; params: GetOrder
           <span className='text-sm text-muted-foreground'>Nr zlecenia</span>
           {item.externalId}
         </div>
-        <Badge className={statusOnBadgeStyle[item.status]}>{getStatusForClient()}</Badge>
+        <Badge className={statusOnBadgeStyle[status]}>{statusLabelPerStatus[status]}</Badge>
       </MobileItemHeader>
       <MobileItemBody
         items={[
