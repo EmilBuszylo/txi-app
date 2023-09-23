@@ -133,7 +133,7 @@ export const createOrderSchema = z.object({
   ),
   externalId: z.string().nonempty(),
   comment: z.string().optional(),
-  clientId: z.string().optional(),
+  clientId: z.string(),
   driverId: z.string().optional(),
   collectionPointId: z.string().optional(),
   collectionPointsGeoCodes: z
@@ -403,7 +403,7 @@ export function getCollectionPoint(id: string) {
 
 export const createCollectionPointSchema = z.object({
   name: z.string(),
-  fullAddress: z.string(),
+  fullAddress: z.string().nonempty(),
   city: z.string(),
   lat: z.string(),
   lng: z.string(),

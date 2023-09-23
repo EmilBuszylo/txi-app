@@ -15,6 +15,7 @@ import {
 } from '@/lib/server/api/endpoints';
 
 import { sendEmail } from '@/server/email/email.service';
+import { getNewOrderTemplate } from '@/server/email/templates/new-order-template';
 import {
   LocationFrom,
   locationFromSchema,
@@ -142,13 +143,14 @@ export const createOrder = async (input: CreateOrderParams) => {
       });
 
       await sendEmail({
-        subject: 'Zlecenia TXI - nowe zlecenie zostało dodane',
+        subject: `Nowe zlecenie ${order.internalId} ${order.clientName}`,
         orderData: {
           id: order.id,
           internalId: order.internalId,
           clientName: order.clientName,
         },
         to: dispatchers.map((d) => d.email) as string[],
+        template: getNewOrderTemplate(order as unknown as Order),
       });
     }
 
