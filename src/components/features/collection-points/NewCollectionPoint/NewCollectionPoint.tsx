@@ -3,14 +3,17 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
-import { useForm } from 'react-hook-form';
+import { FieldPath, useForm } from 'react-hook-form';
 
+import { FetchError } from '@/lib/helpers/fetch-json';
 import { useCreateCollectionPoint } from '@/lib/hooks/data/useCreateCollectionPoint';
 import { useUpdateCollectionPoint } from '@/lib/hooks/data/useUpdateCollectionPoint';
 import {
   CreateCollectionPointParams,
   createCollectionPointSchema,
+  CreateOperatorParams,
 } from '@/lib/server/api/endpoints';
+import { databaseErrorHandler } from '@/lib/server/utils/error';
 
 import { PlaceDetails, PlacesAutocomplete } from '@/components/features/places/PlacesAutocomplete';
 import { Button } from '@/components/ui/button';
@@ -42,19 +45,32 @@ export function NewCollectionPoint({ defaultValues, id }: NewCollectionPointProp
     },
   });
   const router = useRouter();
-  const { mutateAsync: createCollectionPoint, isLoading: isCreateLoding } =
+  const { mutateAsync: createCollectionPoint, isLoading: isCreateLoading } =
     useCreateCollectionPoint();
   const { mutateAsync: updateCollectionPoint, isLoading: isUpdateLoading } =
     useUpdateCollectionPoint(id || '');
 
   const onSubmit = async (values: CreateCollectionPointParams) => {
-    if (id) {
-      await updateCollectionPoint(values);
-    } else {
-      await createCollectionPoint(values);
-    }
+    try {
+      if (id) {
+        await updateCollectionPoint(values);
+      } else {
+        await createCollectionPoint(values);
+      }
 
-    router.push(Routes.COLLECTION_POINTS);
+      router.push(Routes.COLLECTION_POINTS);
+    } catch (error) {
+      const { isDbError, targets, message } = databaseErrorHandler(error as FetchError);
+
+      if (isDbError) {
+        for (const target of targets) {
+          form.setError(target as FieldPath<CreateOperatorParams>, {
+            type: 'custom',
+            message: message,
+          });
+        }
+      }
+    }
   };
 
   const onAddressSelect = (details: PlaceDetails) => {
@@ -104,7 +120,7 @@ export function NewCollectionPoint({ defaultValues, id }: NewCollectionPointProp
             <Button
               className='w-full md:w-auto'
               type='submit'
-              isLoading={isCreateLoding || isUpdateLoading}
+              isLoading={isCreateLoading || isUpdateLoading}
             >
               Zapisz
             </Button>

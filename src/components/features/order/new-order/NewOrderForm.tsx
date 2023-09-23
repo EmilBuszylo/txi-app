@@ -3,14 +3,16 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useRouter } from 'next/navigation';
 import React, { useEffect, useMemo } from 'react';
-import { useForm } from 'react-hook-form';
+import { FieldPath, useForm } from 'react-hook-form';
 
+import { FetchError } from '@/lib/helpers/fetch-json';
 import { useClients } from '@/lib/hooks/data/useClients';
 import { useCollectionPoints } from '@/lib/hooks/data/useCollectionPoints';
 import { useCreateOrder } from '@/lib/hooks/data/useCreateOrder';
 import { useDrivers } from '@/lib/hooks/data/useDrivers';
 import { UseIsClientRole } from '@/lib/hooks/useIsClientRole';
 import { CreateOrderParams, createOrderSchema } from '@/lib/server/api/endpoints';
+import { databaseErrorHandler } from '@/lib/server/utils/error';
 
 import { EstimatedKmField } from '@/components/features/order/new-order/EstimatedKmField';
 import { useValidateLocationDate } from '@/components/features/order/new-order/hooks/useValidateLocationDate';
@@ -55,6 +57,7 @@ export function NewOrderForm() {
         date: '',
       },
     },
+    shouldUseNativeValidation: false,
   });
   const router = useRouter();
 
@@ -86,20 +89,28 @@ export function NewOrderForm() {
     );
     const collectionPointLng = collectionPointsGeoData?.lng;
     const collectionPointLat = collectionPointsGeoData?.lat;
-    await createOrder({
-      ...values,
-      collectionPointsGeoCodes:
-        collectionPointLng && collectionPointLat
-          ? { lng: collectionPointLng, lat: collectionPointLat }
-          : undefined,
-    });
+    try {
+      await createOrder({
+        ...values,
+        collectionPointsGeoCodes:
+          collectionPointLng && collectionPointLat
+            ? { lng: collectionPointLng, lat: collectionPointLat }
+            : undefined,
+      });
 
-    // TODO add error handling
-    // if (!res) {
-    //   console.error('error');
-    // }
+      router.push(Routes.ORDERS);
+    } catch (error) {
+      const { isDbError, targets, message } = databaseErrorHandler(error as FetchError);
 
-    router.push(Routes.ORDERS);
+      if (isDbError) {
+        for (const target of targets) {
+          form.setError(target as FieldPath<CreateOrderParams>, {
+            type: 'custom',
+            message: message,
+          });
+        }
+      }
+    }
   };
 
   const driversData = drivers

@@ -3,10 +3,12 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useRouter } from 'next/navigation';
 import React from 'react';
-import { useForm } from 'react-hook-form';
+import { FieldPath, useForm } from 'react-hook-form';
 
+import { FetchError } from '@/lib/helpers/fetch-json';
 import { useCreateOperator } from '@/lib/hooks/data/useCreateOperator';
 import { CreateOperatorParams, createOperatorSchema } from '@/lib/server/api/endpoints';
+import { databaseErrorHandler } from '@/lib/server/utils/error';
 
 import { Button } from '@/components/ui/button';
 import {
@@ -35,9 +37,22 @@ export function NewOperatorForm() {
   const { mutateAsync: createDriver, isLoading } = useCreateOperator();
 
   const onSubmit = async (values: CreateOperatorParams) => {
-    await createDriver(values);
+    try {
+      await createDriver(values);
 
-    router.push(Routes.OPERATORS);
+      router.push(Routes.OPERATORS);
+    } catch (error) {
+      const { isDbError, targets, message } = databaseErrorHandler(error as FetchError);
+
+      if (isDbError) {
+        for (const target of targets) {
+          form.setError(target as FieldPath<CreateOperatorParams>, {
+            type: 'custom',
+            message: message,
+          });
+        }
+      }
+    }
   };
 
   return (

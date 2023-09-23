@@ -22,6 +22,7 @@ import {
   FormMessage,
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
+import { useToast } from '@/components/ui/use-toast';
 
 import { Routes } from '@/constant/routes';
 
@@ -47,13 +48,21 @@ export function NewDriverForm() {
   });
   const router = useRouter();
   const { data: operators } = useOperators({ page: 1, limit: 1000 });
+  const { toast } = useToast();
 
   const { mutateAsync: createDriver, isLoading } = useCreateDriver();
 
   const onSubmit = async (values: CreateDriverParams) => {
-    await createDriver(values);
+    try {
+      await createDriver(values);
 
-    router.push(Routes.DRIVERS);
+      router.push(Routes.DRIVERS);
+    } catch (error) {
+      toast({
+        description: 'Nastąpił błąd aplikacji, prosimy spróbować ponownie później',
+        variant: 'destructive',
+      });
+    }
   };
 
   const operatorsData = operators
