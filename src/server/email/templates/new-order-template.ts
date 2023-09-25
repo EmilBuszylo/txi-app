@@ -158,8 +158,8 @@ export const getNewOrderTemplate = (order: Order) => {
               <table role="presentation" border="0" cellpadding="0" cellspacing="0" style="border-collapse: separate; mso-table-lspace: 0pt; mso-table-rspace: 0pt; width: 100%;" width="100%">
                 <tr>
                   <td style="font-family: sans-serif; font-size: 14px; vertical-align: top;" valign="top">
-                    <p style="font-family: sans-serif; font-size: 14px; font-weight: normal; margin: 0; margin-bottom: 15px;">Nowe zlecenie o nr TXI {{txi_id}} zostało dodane przez klienta {{client_name}}</p>
-                        <p style="font-family: sans-serif; font-size: 14px; font-weight: normal;"><span style="font-weight: bold; margin-right: 4px;">Nr zlecenia klienta:</span><span>{{externalId}}</span></p>
+                    <p style="font-family: sans-serif; font-size: 14px; font-weight: normal; margin: 0; margin-bottom: 15px;">Nowe zlecenie o nr {{txi_id}} zostało dodane przez klienta {{client_name}}</p>
+                        <p style="font-family: sans-serif; font-size: 14px; font-weight: normal;"><span style="font-weight: bold; margin-right: 4px;">Nr zlecenia:</span><span>{{txi_id}}</span></p>
                         <p style="font-family: sans-serif; font-size: 14px; font-weight: normal;"><span style="font-weight: bold; margin-right: 4px;">Miejsce odbioru:</span><span>{{locationFrom}}</span></p>   
                         <p style="font-family: sans-serif; font-size: 14px; font-weight: normal;"><span style="font-weight: bold; margin-right: 4px;">Punkty pośrednie:</span><span>{{locationVia}}</span></p>   
                         <p style="font-family: sans-serif; font-size: 14px; font-weight: normal;"><span style="font-weight: bold; margin-right: 4px;">Miejsce docelowe:</span><span>{{locationTo}}</span></p>                        

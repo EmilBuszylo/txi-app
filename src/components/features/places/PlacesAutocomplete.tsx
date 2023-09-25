@@ -68,6 +68,9 @@ export const PlacesAutocomplete = ({
     apiKey: process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY,
     language: 'pl',
     debounce: 500,
+    options: {
+      componentRestrictions: { country: 'pl' },
+    },
   });
 
   return (
