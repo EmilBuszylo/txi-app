@@ -75,7 +75,7 @@ export function LoginForm() {
             <FormItem className='h-[100px]'>
               <FormLabel>Login</FormLabel>
               <FormControl>
-                <Input placeholder='Your Login' {...field} />
+                <Input placeholder='Wprowadź login' {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -86,9 +86,9 @@ export function LoginForm() {
           name='password'
           render={({ field }) => (
             <FormItem className='h-[100px]'>
-              <FormLabel>Password</FormLabel>
+              <FormLabel>Hasło</FormLabel>
               <FormControl>
-                <Input placeholder='Your Password' {...field} type='password' />
+                <Input placeholder='Wprowadź hasło' {...field} type='password' />
               </FormControl>
               <FormMessage />
             </FormItem>

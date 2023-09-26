@@ -179,7 +179,7 @@ export const getNewOrderTemplate = (order: Order) => {
 </body>
 </html>`
     .replace('{{client_name}}', order.clientName)
-    .replace('{{txi_id}}', order.internalId)
+    .replaceAll('{{txi_id}}', order.internalId)
     .replace('{{externalId}}', order.externalId)
     .replace('{{comment}}', order?.comment || '')
     .replace('{{locationFrom}}', locationFrom)
