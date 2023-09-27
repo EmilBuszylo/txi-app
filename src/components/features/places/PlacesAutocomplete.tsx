@@ -67,9 +67,9 @@ export const PlacesAutocomplete = ({
   const { placePredictions, getPlacePredictions, placesService } = usePlacesAutocompleteService({
     apiKey: process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY,
     language: 'pl',
-    debounce: 500,
+    debounce: 200,
     options: {
-      componentRestrictions: { country: 'pl' },
+      componentRestrictions: { country: ['de', 'pl', 'cz', 'ua', 'by'] },
     },
   });
 
