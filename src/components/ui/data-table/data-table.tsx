@@ -7,7 +7,7 @@ import {
   useReactTable,
   VisibilityState,
 } from '@tanstack/react-table';
-import { ReactElement, useState } from 'react';
+import { FC, ReactElement, useState } from 'react';
 
 import { PaginationMeta } from '@/lib/pagination';
 import { GetOrdersParams } from '@/lib/server/api/endpoints';
@@ -39,7 +39,7 @@ interface DataTableProps<TData, TValue> {
   isSuccess: boolean;
   params: GetOrdersParams;
   pagination?: ReactElement;
-  ActionsBar?: React.FC<ActionsBarProps<TData[]>>;
+  ActionsBar?: FC<ActionsBarProps<TData[]>>;
   toolbar?: ReactElement;
 }
 
@@ -134,7 +134,7 @@ export function DataTable<TData, TValue>({
               ) : (
                 <TableRow>
                   <TableCell colSpan={columns.length} className='h-24 text-center'>
-                    No results.
+                    Brak wyników
                   </TableCell>
                 </TableRow>
               )}
