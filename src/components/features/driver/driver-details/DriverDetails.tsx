@@ -29,6 +29,7 @@ export default function DriverDetails() {
     <DetailForm
       defaultValues={{
         login: data.login,
+        password: '',
         firstName: data.firstName || '',
         lastName: data.lastName || '',
         phone: data.phone || '',

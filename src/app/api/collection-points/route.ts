@@ -28,6 +28,9 @@ export async function GET(req: NextRequest) {
     const collectionPoints = await getCollectionPoints({
       page: Number(urlParams.searchParams.get('page')) || 1,
       limit: Number(urlParams.searchParams.get('limit')) || 1,
+      deletedAt: urlParams.searchParams.get('deletedAt')
+        ? urlParams.searchParams.get('deletedAt') === 'true'
+        : undefined,
     });
 
     return NextResponse.json(collectionPoints);

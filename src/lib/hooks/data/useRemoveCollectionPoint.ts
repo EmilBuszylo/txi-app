@@ -12,7 +12,7 @@ export function useRemoveCollectionPoint(
   params: GetCollectionPointsParams
 ) {
   const queryClient = useQueryClient();
-  const collectionPointsQueryKey = [ApiRoutes.COLLECTION_POINTS, params.page, params.limit];
+  const collectionPointsQueryKey = [ApiRoutes.COLLECTION_POINTS, params];
 
   const updateCollectionPointsQueryData = () => {
     queryClient.setQueryData<GetCollectionPointsResponse>(collectionPointsQueryKey, (old) => {

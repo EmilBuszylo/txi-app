@@ -60,7 +60,7 @@ export const createDriver = async (input: CreateDriverParams): Promise<Driver> =
 };
 
 export const updateDriver = async (id: string, input: UpdateDriverParams): Promise<Driver> => {
-  const { operatorId, phone } = input;
+  const { operatorId, phone, password } = input;
   let phoneNumber = phone ? PhoneNumber.parsePhoneNumber(phone) : undefined;
 
   if (typeof phoneNumber !== 'undefined' && !phoneNumber.valid) {
@@ -70,6 +70,8 @@ export const updateDriver = async (id: string, input: UpdateDriverParams): Promi
     });
     phoneNumber = undefined;
   }
+
+  const hashed_password = !password || password === '' ? undefined : await hash(password, 12);
 
   try {
     return await prisma.user.update({
@@ -81,6 +83,7 @@ export const updateDriver = async (id: string, input: UpdateDriverParams): Promi
         firstName: input.firstName,
         lastName: input.lastName,
         phone: phoneNumber?.number.e164,
+        password: hashed_password,
         operator: operatorId
           ? {
               connect: {
@@ -110,7 +113,7 @@ export interface GetDriversResponse {
 }
 
 export const getDrivers = async (input: GetDriversParams): Promise<GetDriversResponse> => {
-  const { limit, page: requestPage } = input;
+  const { limit, page: requestPage, deletedAt } = input;
 
   const page = requestPage ? requestPage - 1 : 0;
   const take = limit || PAGINATION_LIMIT;
@@ -126,7 +129,7 @@ export const getDrivers = async (input: GetDriversParams): Promise<GetDriversRes
     prisma.user.findMany({
       where: {
         role: 'DRIVER',
-        deletedAt: null,
+        deletedAt: deletedAt ? { not: null } : null,
       },
       skip,
       take,
@@ -190,6 +193,7 @@ const driverSelectedFields = {
   operatorId: true,
   operatorName: true,
   createdAt: true,
+  deletedAt: true,
   driverDetails: {
     select: {
       carModel: true,

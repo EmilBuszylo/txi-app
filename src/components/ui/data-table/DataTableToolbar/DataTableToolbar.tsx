@@ -15,6 +15,7 @@ interface DataTableToolbarProps extends UseFiltersMethods {
   filters?: {
     title?: string;
     name: string;
+    defaultValue?: string | number | boolean;
     options: {
       label: string;
       value: string | number | boolean;
@@ -29,6 +30,7 @@ interface DataTableToolbarProps extends UseFiltersMethods {
     title: string;
     name: string;
   }[];
+  clearBtnVisible?: boolean;
 }
 
 export function DataTableToolbar({
@@ -40,6 +42,7 @@ export function DataTableToolbar({
   textFilters,
   dateRangeFilters,
   children,
+  clearBtnVisible = true,
 }: PropsWithChildren<DataTableToolbarProps>) {
   const isFiltered = columnFilters.size > 0;
 
@@ -81,13 +84,14 @@ export function DataTableToolbar({
             name={filter.name}
             options={filter.options}
             updateFilter={updateFilter}
+            defaultValue={filter.defaultValue}
           />
         ))}
         {children}
-        {isFiltered && (
+        {isFiltered && clearBtnVisible && (
           <Button variant='ghost' onClick={clearFilters} className='h-8 px-2 lg:px-3'>
-            Reset
-            <X className='h-4 w-4' />
+            Wyczyść
+            <X className='ml-1 h-4 w-4' />
           </Button>
         )}
       </div>

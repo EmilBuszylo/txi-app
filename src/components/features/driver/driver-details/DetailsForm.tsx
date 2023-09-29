@@ -9,6 +9,7 @@ import { z } from 'zod';
 
 import { useOperators } from '@/lib/hooks/data/useOperators';
 import { useUpdateDriver } from '@/lib/hooks/data/useUpdateDriver';
+import { UseUser } from '@/lib/hooks/useUser';
 import { UpdateDriverParams, updateDriverSchema } from '@/lib/server/api/endpoints';
 
 import { Button } from '@/components/ui/button';
@@ -47,10 +48,11 @@ const initialFormData = {
 };
 
 export function DetailForm({ defaultValues, id }: NewDriverProps) {
+  const { user } = UseUser();
   const [isDefaultAdded, setIsDefaultAdded] = useState(false);
   const form = useForm<z.infer<typeof updateDriverSchema>>({
     resolver: zodResolver(updateDriverSchema),
-    defaultValues: { ...defaultValues, password: 'passwordstring' } || initialFormData,
+    defaultValues: { ...defaultValues, password: '' } || initialFormData,
   });
   const router = useRouter();
   const { data: operators } = useOperators({ page: 1, limit: 1000 });
@@ -76,6 +78,8 @@ export function DetailForm({ defaultValues, id }: NewDriverProps) {
       setIsDefaultAdded(true);
     }
   }, [defaultValues, form, isDefaultAdded]);
+
+  const isAdmin = user?.role === 'ADMIN';
 
   return (
     <div className='lg:max-w-2xl'>
@@ -135,8 +139,8 @@ export function DetailForm({ defaultValues, id }: NewDriverProps) {
                     placeholder='Hasło kierwocy'
                     {...field}
                     type='password'
-                    disabled
-                    readOnly
+                    disabled={!isAdmin}
+                    readOnly={!isAdmin}
                   />
                 </FormControl>
                 <FormDescription>

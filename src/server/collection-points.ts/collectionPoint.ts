@@ -8,4 +8,5 @@ export interface CollectionPoint {
   url: string;
   updatedAt: Date;
   createdAt: Date;
+  deletedAt: Date | null;
 }

@@ -9,7 +9,7 @@ import { GetDriversResponse } from '@/server/drivers/drivers.service';
 
 export function useRemoveDriver(driverId: string, params: GetDriversParams) {
   const queryClient = useQueryClient();
-  const driversQueryKey = [ApiRoutes.DRIVERS, params.page, params.limit];
+  const driversQueryKey = [ApiRoutes.DRIVERS, params];
 
   const updateDriversQueryData = () => {
     queryClient.setQueryData<GetDriversResponse>(driversQueryKey, (old) => {

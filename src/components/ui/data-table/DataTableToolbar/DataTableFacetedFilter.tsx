@@ -30,6 +30,7 @@ interface DataTableFacetedFilterProps extends Omit<UseFiltersMethods, 'clearFilt
     value: string | number | boolean;
     icon?: ComponentType<{ className?: string }>;
   }[];
+  defaultValue?: string | number | boolean;
 }
 
 export const DataTableFacetedFilter = ({
@@ -39,14 +40,19 @@ export const DataTableFacetedFilter = ({
   options,
   updateFilter,
   deleteFilter,
+  defaultValue,
 }: DataTableFacetedFilterProps) => {
   const selectedOption = useMemo(() => {
     const selectedValue = columnFilters.get(name);
 
-    if (!selectedValue) return undefined;
+    if (!selectedValue) {
+      if (!defaultValue) return undefined;
+
+      updateFilter(name, defaultValue);
+    }
 
     return options.find((option) => option.value === selectedValue);
-  }, [columnFilters, name, options]);
+  }, [columnFilters, defaultValue, name, options, updateFilter]);
 
   return (
     <Popover>

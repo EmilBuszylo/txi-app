@@ -51,7 +51,7 @@ export interface GetCollectionPointsResponse {
 export const getCollectionPoints = async (
   input: GetCollectionPointsParams
 ): Promise<GetCollectionPointsResponse> => {
-  const { limit, page: requestPage } = input;
+  const { limit, page: requestPage, deletedAt } = input;
 
   const page = requestPage ? requestPage - 1 : 0;
   const take = limit || PAGINATION_LIMIT;
@@ -65,7 +65,7 @@ export const getCollectionPoints = async (
     }),
     prisma.collectionPoint.findMany({
       where: {
-        deletedAt: null,
+        deletedAt: deletedAt ? { not: null } : null,
       },
       skip,
       take,
@@ -122,4 +122,5 @@ const collectionPointSelectedFields = {
   fullAddress: true,
   updatedAt: true,
   createdAt: true,
+  deletedAt: true,
 };

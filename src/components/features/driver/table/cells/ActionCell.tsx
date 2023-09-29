@@ -19,9 +19,11 @@ export const ActionCell = ({ row, params }: { row: Row<Driver>; params: GetDrive
         Szczegóły/edycja
       </DropdownMenuItem>
       <DropdownMenuSeparator />
-      <DropdownMenuItem onClick={() => removeDriverHandler()} className='text-destructive'>
-        Usuń kierowcę
-      </DropdownMenuItem>
+      {!row.original.deletedAt && (
+        <DropdownMenuItem onClick={() => removeDriverHandler()} className='text-destructive'>
+          Usuń kierowcę
+        </DropdownMenuItem>
+      )}
     </ActionsColumn>
   );
 };

@@ -279,12 +279,14 @@ export function calculateLocationsDistance(params: CalculateLocationsDistancePar
 export interface GetDriversParams {
   page: number;
   limit: number;
+  deletedAt?: boolean;
 }
 
-export function getDrivers({ page, limit }: GetDriversParams) {
+export function getDrivers({ page, limit, deletedAt }: GetDriversParams) {
   const queryParams = new URLSearchParams({
     page: page.toString(),
     limit: limit.toString(),
+    deletedAt: deletedAt ? deletedAt.toString() : '',
   });
   return fetchJson<GetDriversResponse>(
     getNextApiPath(ApiRoutes.DRIVERS + '?' + queryParams.toString()),
@@ -314,7 +316,13 @@ export const createDriverSchema = z.object({
       message: 'Numer telefonu ma nieprawidłowy format',
     }
   ),
-  password: z.string().regex(ValidationPattern.PASSWORD_VALIDATION),
+  password: z
+    .string()
+    .regex(
+      new RegExp(ValidationPattern.PASSWORD_VALIDATION),
+      'Hasło musi zawierać przynajmniej 6 znaków, przynajmniej jedną wielką literę, jeden znak specjalny oraz jedną cyfrę'
+    )
+    .min(6, 'Hasło musi zawierać przynajmniej 6 znaków.'),
   car: z
     .object({
       carModel: z.string(),
@@ -349,7 +357,21 @@ export const updateDriverSchema = z.object({
       message: 'Numer telefonu ma nieprawidłowy format',
     }
   ),
-  password: z.string().optional(),
+  password: z
+    .string()
+    .refine((data) => {
+      if (data === '' || !data) {
+        return true;
+      }
+
+      if (data.length < 6) return false;
+
+      const passwordRegexp = new RegExp(ValidationPattern.PASSWORD_VALIDATION);
+
+      return passwordRegexp.test(data);
+    }, 'Hasło musi zawierać 6 liter, przynajmniej jedną wielką literę, jeden znak specjalny oraz jedną cyfrę')
+    .optional()
+    .nullable(),
   car: z
     .object({
       carModel: z.string(),
@@ -360,7 +382,7 @@ export const updateDriverSchema = z.object({
     .optional(),
 });
 
-export type UpdateDriverParams = Omit<z.infer<typeof updateDriverSchema>, 'password'>;
+export type UpdateDriverParams = z.infer<typeof updateDriverSchema>;
 
 export function updateDriver(id: string, params: UpdateDriverParams) {
   return fetchJson<Driver>(getNextApiPath(`${ApiRoutes.DRIVERS}/${id}`), {
@@ -379,12 +401,14 @@ export function removeDriver(id: string) {
 export interface GetCollectionPointsParams {
   page: number;
   limit: number;
+  deletedAt?: boolean;
 }
 
-export function getCollectionPoints({ page, limit }: GetCollectionPointsParams) {
+export function getCollectionPoints({ page, limit, deletedAt }: GetCollectionPointsParams) {
   const queryParams = new URLSearchParams({
     page: page.toString(),
     limit: limit.toString(),
+    deletedAt: deletedAt ? deletedAt.toString() : '',
   });
 
   return fetchJson<GetCollectionPointsResponse>(

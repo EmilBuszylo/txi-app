@@ -13,4 +13,5 @@ export interface Driver {
     carColor?: string | null;
     carRegistrationNumber?: string | null;
   } | null;
+  deletedAt: Date | null;
 }

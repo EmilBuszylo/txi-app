@@ -6,6 +6,8 @@ import { useCollectionPoints } from '@/lib/hooks/data/useCollectionPoints';
 
 import { getColumns } from '@/components/features/collection-points/table/columns';
 import { DataTable } from '@/components/ui/data-table/data-table';
+import { DataTableToolbar } from '@/components/ui/data-table/DataTableToolbar/DataTableToolbar';
+import { useFilters } from '@/components/ui/data-table/hooks/useFilters';
 import Pagination from '@/components/ui/pgination';
 
 const initialPaginationMeta = {
@@ -17,17 +19,20 @@ const initialPaginationMeta = {
 
 const DEFAULT_LIMIT = 25;
 export const CollectionPointsTable = () => {
+  const { columnFilters, clearFilters, updateFilter, deleteFilter, filterParameters } =
+    useFilters();
   const [page, setPage] = useState(1);
   const [limit, setLimit] = useState(DEFAULT_LIMIT);
 
   const { data, isLoading, isFetching, error, isSuccess } = useCollectionPoints({
     page,
     limit,
+    ...filterParameters,
   });
 
   const columns = useMemo(() => {
-    return getColumns({ page, limit });
-  }, [limit, page]);
+    return getColumns({ page, limit, ...filterParameters });
+  }, [filterParameters, limit, page]);
 
   return (
     <div>
@@ -45,6 +50,32 @@ export const CollectionPointsTable = () => {
               previousPage={() => setPage((prev) => data?.meta.prevPage || prev)}
               limit={limit}
               setLimit={setLimit}
+            />
+          }
+          toolbar={
+            <DataTableToolbar
+              clearFilters={clearFilters}
+              columnFilters={columnFilters}
+              deleteFilter={deleteFilter}
+              updateFilter={updateFilter}
+              clearBtnVisible={false}
+              filters={[
+                {
+                  title: 'status',
+                  name: 'deletedAt',
+                  defaultValue: 'false',
+                  options: [
+                    {
+                      label: 'Aktywni',
+                      value: 'false',
+                    },
+                    {
+                      label: 'Usunięci',
+                      value: 'true',
+                    },
+                  ],
+                },
+              ]}
             />
           }
           data={data?.results || []}

@@ -23,12 +23,15 @@ export async function GET(req: Request) {
 
   try {
     await authorizeRoute();
-    const orders = await getDrivers({
+    const drivers = await getDrivers({
       page: Number(urlParams.searchParams.get('page')) || 1,
       limit: Number(urlParams.searchParams.get('limit')) || 1,
+      deletedAt: urlParams.searchParams.get('deletedAt')
+        ? urlParams.searchParams.get('deletedAt') === 'true'
+        : undefined,
     });
 
-    return NextResponse.json(orders);
+    return NextResponse.json(drivers);
   } catch (error) {
     return errorResponseHandler(error as Error);
   }

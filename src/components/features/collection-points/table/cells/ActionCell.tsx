@@ -27,9 +27,11 @@ export const ActionCell = ({
         Szczegóły/edycja
       </DropdownMenuItem>
       <DropdownMenuSeparator />
-      <DropdownMenuItem onClick={() => removeCollectionPoint()} className='text-destructive'>
-        Usuń lokalizacje
-      </DropdownMenuItem>
+      {!row.original.deletedAt && (
+        <DropdownMenuItem onClick={() => removeCollectionPoint()} className='text-destructive'>
+          Usuń lokalizacje
+        </DropdownMenuItem>
+      )}
     </ActionsColumn>
   );
 };
