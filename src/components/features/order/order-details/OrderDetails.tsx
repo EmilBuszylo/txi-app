@@ -43,6 +43,10 @@ export const OrderDetails = () => {
         distanceDifference: estimatedKm - kmForDriver,
         hasHighway: data.hasHighway,
         highwaysCost: data.highwaysCost || '0',
+        clientInvoice: data.clientInvoice || undefined,
+        driverInvoice: data.driverInvoice || undefined,
+        comment: data.comment || undefined,
+        actualKm: data.actualKm || undefined,
       }}
       orderId={params?.id}
       collectionPoint={data.collectionPoint as CollectionPoint}
