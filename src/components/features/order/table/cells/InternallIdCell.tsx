@@ -22,7 +22,7 @@ export const InternalIdCell = ({ row }: { row: Row<Order> }) => {
   const isAlerted = diffBetweenDriverKmAndEstimated && !row.original.isKmDifferenceAccepted;
 
   return (
-    <div>
+    <div className='flex flex-col gap-y-1'>
       <StyledLink
         href={`${Routes.ORDERS}/${row.original.id}`}
         className={cn({
