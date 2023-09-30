@@ -370,8 +370,8 @@ export const updateDriverSchema = z.object({
 
       return passwordRegexp.test(data);
     }, 'Hasło musi zawierać 6 liter, przynajmniej jedną wielką literę, jeden znak specjalny oraz jedną cyfrę')
-    .optional()
-    .nullable(),
+    .optional(),
+
   car: z
     .object({
       carModel: z.string(),

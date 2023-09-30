@@ -1,5 +1,5 @@
 import { CheckIcon, PlusCircle } from 'lucide-react';
-import { ComponentType, useMemo } from 'react';
+import { ComponentType, useEffect, useMemo } from 'react';
 
 import { cn } from '@/lib/utils';
 
@@ -42,7 +42,7 @@ export const DataTableFacetedFilter = ({
   deleteFilter,
   defaultValue,
 }: DataTableFacetedFilterProps) => {
-  const selectedOption = useMemo(() => {
+  useEffect(() => {
     const selectedValue = columnFilters.get(name);
 
     if (!selectedValue) {
@@ -50,9 +50,13 @@ export const DataTableFacetedFilter = ({
 
       updateFilter(name, defaultValue);
     }
+  }, [columnFilters, defaultValue, name, updateFilter]);
+
+  const selectedOption = useMemo(() => {
+    const selectedValue = columnFilters.get(name);
 
     return options.find((option) => option.value === selectedValue);
-  }, [columnFilters, defaultValue, name, options, updateFilter]);
+  }, [columnFilters, name, options]);
 
   return (
     <Popover>
