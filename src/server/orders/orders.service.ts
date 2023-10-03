@@ -21,6 +21,7 @@ import {
   locationFromSchema,
   LocationTo,
   locationToSchema,
+  locationViaPointSchema,
   Order,
   OrderStatus,
 } from '@/server/orders/order';
@@ -63,7 +64,7 @@ export const createOrder = async (input: CreateOrderParams) => {
   try {
     await locationFromSchema.optional().parseAsync(locationFrom);
     await locationToSchema.optional().parseAsync(locationTo);
-    await z.array(locationFromSchema.optional()).optional().parseAsync(locationVia);
+    await z.array(locationViaPointSchema.optional()).optional().parseAsync(locationVia);
 
     const viaWaypoints = locationVia
       .map((loc) => ({
@@ -95,66 +96,68 @@ export const createOrder = async (input: CreateOrderParams) => {
 
     const status = input.driverId ? OrderStatus.STARTED : OrderStatus.NEW;
 
-    const order = await prisma.order.create({
-      data: {
-        internalId: _createInternalId(count + 1),
-        ...rest,
-        locationFrom,
-        locationTo,
-        intakeDistance: intakeDistance,
-        estimatedDistance: estimatedDistance?.distance,
-        hasHighway: estimatedDistance?.hasHighway,
-        locationVia: locationVia as unknown as string,
-        wayBackDistance: wayBackDistance?.distance,
-        status,
-        client: {
-          connect: {
-            id: clientId,
+    return await prisma.$transaction(async (tx) => {
+      const order = await tx.order.create({
+        data: {
+          internalId: _createInternalId(count + 1),
+          ...rest,
+          locationFrom,
+          locationTo,
+          intakeDistance: intakeDistance,
+          estimatedDistance: estimatedDistance?.distance,
+          hasHighway: estimatedDistance?.hasHighway,
+          locationVia: locationVia as unknown as string,
+          wayBackDistance: wayBackDistance?.distance,
+          status,
+          client: {
+            connect: {
+              id: clientId,
+            },
+          },
+          driver: {
+            connect: driverId
+              ? {
+                  id: driverId,
+                }
+              : undefined,
+          },
+          collectionPoint: {
+            connect: collectionPointId
+              ? {
+                  id: collectionPointId,
+                }
+              : undefined,
           },
         },
-        driver: {
-          connect: driverId
-            ? {
-                id: driverId,
-              }
-            : undefined,
-        },
-        collectionPoint: {
-          connect: collectionPointId
-            ? {
-                id: collectionPointId,
-              }
-            : undefined,
-        },
-      },
+      });
+
+      if (order) {
+        const dispatchers = await tx.user.findMany({
+          where: {
+            role: 'DISPATCHER',
+            email: {
+              not: null,
+            },
+          },
+          select: {
+            email: true,
+          },
+        });
+
+        await sendEmail({
+          subject: `Nowe zlecenie ${order.internalId} ${order.clientName}`,
+          orderData: {
+            id: order.id,
+            internalId: order.internalId,
+            clientName: order.clientName,
+          },
+          to: dispatchers.map((d) => d.email) as string[],
+          template: getNewOrderTemplate(order as unknown as Order),
+        });
+      }
+
+      return order;
     });
-
-    if (order) {
-      const dispatchers = await prisma.user.findMany({
-        where: {
-          role: 'DISPATCHER',
-          email: {
-            not: null,
-          },
-        },
-        select: {
-          email: true,
-        },
-      });
-
-      await sendEmail({
-        subject: `Nowe zlecenie ${order.internalId} ${order.clientName}`,
-        orderData: {
-          id: order.id,
-          internalId: order.internalId,
-          clientName: order.clientName,
-        },
-        to: dispatchers.map((d) => d.email) as string[],
-        template: getNewOrderTemplate(order as unknown as Order),
-      });
-    }
-
-    return order;
   } catch (error) {
     logger.error({ error, stack: 'createOrder' });
     throw error;
@@ -212,7 +215,7 @@ export const updateOrder = async (id: string, input: UpdateOrderParams) => {
   try {
     await locationFromSchema.optional().parseAsync(locationFrom);
     await locationToSchema.optional().parseAsync(locationTo);
-    await z.array(locationFromSchema.optional()).optional().parseAsync(locationVia);
+    await z.array(locationViaPointSchema.optional()).optional().parseAsync(locationVia);
 
     const viaWaypoints = locationVia
       ?.map((loc) => ({

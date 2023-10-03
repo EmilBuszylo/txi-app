@@ -28,6 +28,10 @@ const formSchema = z.object({
 export function LoginForm() {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
+    defaultValues: {
+      login: '',
+      password: '',
+    },
   });
   const router = useRouter();
   const { status } = useSession();

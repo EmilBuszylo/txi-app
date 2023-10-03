@@ -26,10 +26,12 @@ export const getNewOrderTemplate = (order: Order) => {
         viaPoints += ' -> ';
       }
 
-      viaPoints += `${point.address.fullAddress} ${formatDate(
-        point.date,
-        dateFormats.dateWithTimeFull
-      )} ${point.passenger.name} ${point.passenger.phone}`;
+      if (point?.passenger?.name) {
+        viaPoints += `${point.address.fullAddress} ${formatDate(
+          point.date,
+          dateFormats.dateWithTimeFull
+        )} ${point?.passenger.name} ${point?.passenger.phone}`;
+      }
 
       if (
         point.passenger?.additionalPassengers &&

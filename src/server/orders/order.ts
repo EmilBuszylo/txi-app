@@ -5,7 +5,7 @@ export interface Order {
   internalId: string;
   externalId: string;
   locationFrom: LocationFrom;
-  locationVia?: LocationFrom[];
+  locationVia?: LocationVia[];
   locationTo: LocationTo;
   estimatedDistance?: number;
   wayBackDistance?: number;
@@ -75,6 +75,27 @@ export const locationFromSchema = z.object({
   }),
 });
 
+export const locationViaPointSchema = locationFromSchema.extend({
+  passenger: z
+    .object({
+      firstName: z.string().optional(),
+      lastName: z.string().optional(),
+      name: z.string().optional(),
+      phone: z.string().min(1, 'Numer kontaktowy jest wymagany').optional(),
+      additionalPassengers: z
+        .array(
+          z.object({
+            name: z.string().optional(),
+          })
+        )
+        .max(3)
+        .optional()
+        .nullable(),
+    })
+    .optional()
+    .nullable(),
+});
+
 export const locationToSchema = z.object({
   date: z.string().optional(),
   address: z.object({
@@ -87,4 +108,5 @@ export const locationToSchema = z.object({
 });
 
 export type LocationFrom = z.infer<typeof locationFromSchema>;
+export type LocationVia = z.infer<typeof locationViaPointSchema>;
 export type LocationTo = z.infer<typeof locationToSchema>;

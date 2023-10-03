@@ -113,7 +113,7 @@ export const LocationViaSectionItem = ({
                     {...field}
                     type='datetime-local'
                     disabled={isDateInputDisabled}
-                    min={todayWithoutTimeZone}
+                    min={isClient ? todayWithoutTimeZone : undefined}
                   />
                   <FormMessage />
                   <FormDescription>Podaj datę i godzinę przejazdu</FormDescription>

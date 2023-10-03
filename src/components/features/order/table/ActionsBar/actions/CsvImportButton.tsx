@@ -12,7 +12,7 @@ import { ActionsBarProps } from '@/components/ui/data-table/data-table';
 import { dateFormats } from '@/constant/date-formats';
 import { CollectionPoint } from '@/server/collection-points.ts/collectionPoint';
 import { Driver } from '@/server/drivers/driver';
-import { LocationFrom, Order } from '@/server/orders/order';
+import { LocationFrom, LocationVia, Order } from '@/server/orders/order';
 
 type CsvImportButtonProps = Pick<ActionsBarProps<Order[]>, 'selectedItems' | 'selectedAmount'>;
 
@@ -40,7 +40,7 @@ export const CsvImportButton = ({ selectedAmount, selectedItems }: CsvImportButt
                 typeof item[itemKey as keyof Order] === 'object'
               ) {
                 let val = '';
-                for (const via of item[itemKey as keyof Order] as unknown as LocationFrom[]) {
+                for (const via of item[itemKey as keyof Order] as unknown as LocationVia[]) {
                   const fullAddress = via?.address?.fullAddress || '';
 
                   val = val === '' ? val + fullAddress : val + ' + ' + fullAddress;

@@ -11,7 +11,11 @@ import { useCollectionPoints } from '@/lib/hooks/data/useCollectionPoints';
 import { useCreateOrder } from '@/lib/hooks/data/useCreateOrder';
 import { useDrivers } from '@/lib/hooks/data/useDrivers';
 import { UseIsClientRole } from '@/lib/hooks/useIsClientRole';
-import { CreateOrderParams, createOrderSchema } from '@/lib/server/api/endpoints';
+import {
+  createOrderByClientSchema,
+  CreateOrderParams,
+  createOrderSchema,
+} from '@/lib/server/api/endpoints';
 import { databaseErrorHandler } from '@/lib/server/utils/error';
 
 import { EstimatedKmField } from '@/components/features/order/new-order/EstimatedKmField';
@@ -39,7 +43,7 @@ import { Routes } from '@/constant/routes';
 export function NewOrderForm() {
   const { clientId, isClient } = UseIsClientRole();
   const form = useForm<CreateOrderParams>({
-    resolver: zodResolver(createOrderSchema),
+    resolver: zodResolver(isClient ? createOrderByClientSchema : createOrderSchema),
     defaultValues: {
       externalId: '',
       clientId: clientId || undefined,

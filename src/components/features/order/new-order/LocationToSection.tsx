@@ -93,7 +93,7 @@ export const LocationToSection = ({
                         {...field}
                         type='datetime-local'
                         disabled={isDateInputDisabled}
-                        min={todayWithoutTimeZone}
+                        min={isClient ? todayWithoutTimeZone : undefined}
                       />
                       <FormMessage />
                       <FormDescription> Podaj datę i godzinę zakończenia przejazdu</FormDescription>

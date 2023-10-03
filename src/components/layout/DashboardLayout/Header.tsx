@@ -1,8 +1,9 @@
 'use client';
 
 import { usePathname } from 'next/navigation';
-import { useSession } from 'next-auth/react';
 import * as React from 'react';
+
+import { UseUser } from '@/lib/hooks/useUser';
 
 import { LogoutButton } from '@/components/features/auth/LogoutButton';
 import SidebarIconLink from '@/components/layout/DashboardLayout/SidebarIconLink';
@@ -51,18 +52,20 @@ const isActiveRoute = (link: string, asPath: string) => {
 };
 
 export default function Header() {
-  const { data } = useSession();
+  const { user } = UseUser();
   const pathname = usePathname();
-  const user = data?.user;
 
   const login = user?.login;
   const role = user?.role;
 
-  const avatarName = user
-    ? `${user?.firstName ? user?.firstName[0].toUpperCase() : ''}${
-        user?.lastName ? user?.lastName[0].toUpperCase() : ''
-      }`
-    : '';
+  const avatarName =
+    user?.firstName || user?.lastName
+      ? `${user?.firstName ? user?.firstName[0].toUpperCase() : ''}${
+          user?.lastName ? user?.lastName[0].toUpperCase() : ''
+        }`
+      : user?.login
+      ? user.login[1].toUpperCase()
+      : '';
 
   return (
     <header className='flex h-full w-20 flex-col justify-between bg-gray-900 py-3.5 lg:fixed lg:left-0 lg:top-0 lg:z-50 lg:border-r lg:border-gray-100 xl:w-40'>

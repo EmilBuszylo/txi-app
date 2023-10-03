@@ -17,6 +17,8 @@ import {
   locationFromSchema,
   LocationTo,
   locationToSchema,
+  LocationVia,
+  locationViaPointSchema,
   Order,
   OrderStatus,
 } from '@/server/orders/order';
@@ -84,6 +86,23 @@ export function getOrders({
 }
 
 export const createOrderSchema = z.object({
+  locationFrom: locationFromSchema,
+  locationTo: locationToSchema,
+  locationVia: z.array(locationViaPointSchema),
+  externalId: z.string().nonempty(),
+  comment: z.string().optional(),
+  clientId: z.string(),
+  driverId: z.string().optional(),
+  collectionPointId: z.string().optional(),
+  collectionPointsGeoCodes: z
+    .object({
+      lng: z.string(),
+      lat: z.string(),
+    })
+    .optional(),
+});
+
+export const createOrderByClientSchema = createOrderSchema.extend({
   locationFrom: locationFromSchema.extend({
     date: z
       .string()
@@ -115,7 +134,7 @@ export const createOrderSchema = z.object({
       ),
   }),
   locationVia: z.array(
-    locationFromSchema.extend({
+    locationViaPointSchema.extend({
       date: z
         .string()
         .optional()
@@ -131,17 +150,6 @@ export const createOrderSchema = z.object({
         ),
     })
   ),
-  externalId: z.string().nonempty(),
-  comment: z.string().optional(),
-  clientId: z.string(),
-  driverId: z.string().optional(),
-  collectionPointId: z.string().optional(),
-  collectionPointsGeoCodes: z
-    .object({
-      lng: z.string(),
-      lat: z.string(),
-    })
-    .optional(),
 });
 
 export type CreateOrderParams = z.infer<typeof createOrderSchema>;
@@ -157,7 +165,7 @@ export const updateOrderSchema = z.object({
   clientId: z.string().optional(),
   locationFrom: locationFromSchema,
   locationTo: locationToSchema,
-  locationVia: z.array(locationFromSchema.optional()),
+  locationVia: z.array(locationViaPointSchema.optional()),
   externalId: z.string().optional(),
   status: z.string().optional(),
   comment: z.string().optional().nullable(),
@@ -192,7 +200,7 @@ export interface UpdateOrderParams extends Pick<CreateOrderParams, 'collectionPo
   kmForDriver?: number;
   externalId?: string;
   locationFrom?: LocationFrom;
-  locationVia?: LocationFrom[];
+  locationVia?: LocationVia[];
   locationTo?: LocationTo;
   highwaysCost?: string;
   isKmDifferenceAccepted?: boolean;
