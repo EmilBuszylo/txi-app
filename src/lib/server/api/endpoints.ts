@@ -251,7 +251,7 @@ export function removeOrder(id: string) {
 export const calculateLocationsDistanceSchema = z.object({
   locationFrom: locationFromSchema.optional(),
   locationTo: locationToSchema.optional(),
-  locationVia: z.array(locationFromSchema.optional()).optional(),
+  locationVia: z.array(locationViaPointSchema.optional()).optional(),
   collectionPointsGeoCodes: z
     .object({
       lng: z.string(),
