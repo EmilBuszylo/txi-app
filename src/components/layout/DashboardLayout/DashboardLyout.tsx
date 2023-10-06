@@ -2,7 +2,7 @@
 
 import * as React from 'react';
 
-import Header from '@/components/layout/DashboardLayout/Header';
+import Header from '@/components/layout/DashboardLayout/header/Header';
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
   return (

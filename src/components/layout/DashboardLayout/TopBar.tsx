@@ -2,10 +2,7 @@ import { motion } from 'framer-motion';
 import { MenuIcon, X } from 'lucide-react';
 import { ReactElement, useState } from 'react';
 
-import Header from '@/components/layout/DashboardLayout/Header';
-
-// import Header from '@/components/layout/Sidebar/Header';
-// import Logo from '@/components/UI/icons/Logo';
+import Header from '@/components/layout/DashboardLayout/header/Header';
 
 interface TopBarProps {
   leftContainer?: ReactElement;

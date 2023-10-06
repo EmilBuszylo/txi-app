@@ -6,6 +6,7 @@ import * as React from 'react';
 import { UseUser } from '@/lib/hooks/useUser';
 
 import { LogoutButton } from '@/components/features/auth/LogoutButton';
+import { CompanyAvatar } from '@/components/layout/DashboardLayout/header/CompanyAvatar';
 import SidebarIconLink from '@/components/layout/DashboardLayout/SidebarIconLink';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import UnstyledLink from '@/components/ui/link/UstyledLink';
@@ -64,7 +65,7 @@ export default function Header() {
           user?.lastName ? user?.lastName[0].toUpperCase() : ''
         }`
       : user?.login
-      ? user.login[1].toUpperCase()
+      ? user.login[0].toUpperCase() + user.login[1].toUpperCase()
       : '';
 
   return (
@@ -96,14 +97,18 @@ export default function Header() {
       <div className='flex flex-col items-center space-y-3'>
         <div className='flex items-center'>
           <TooltipProvider>
-            <Tooltip>
-              <TooltipTrigger>
-                <Avatar>
-                  <AvatarFallback>{avatarName}</AvatarFallback>
-                </Avatar>
-              </TooltipTrigger>
-              <TooltipContent>{login}</TooltipContent>
-            </Tooltip>
+            {typeof user?.clientId === 'string' ? (
+              <CompanyAvatar clientId={user.clientId} />
+            ) : (
+              <Tooltip>
+                <TooltipTrigger>
+                  <Avatar>
+                    <AvatarFallback>{avatarName}</AvatarFallback>
+                  </Avatar>
+                </TooltipTrigger>
+                <TooltipContent>{login}</TooltipContent>
+              </Tooltip>
+            )}
           </TooltipProvider>
         </div>
         <LogoutButton />

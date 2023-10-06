@@ -1,8 +1,29 @@
+import { logger } from '@/lib/logger';
 import { getPaginationMeta, PaginationMeta } from '@/lib/pagination';
 import { prisma } from '@/lib/prisma';
 import { GetCollectionPointsParams } from '@/lib/server/api/endpoints';
 
 import { Client } from '@/server/clients/clients';
+
+export type GetClientResponse = Pick<Client, 'id' | 'name' | 'fullName'>;
+
+export const getClient = async (id: string): Promise<GetClientResponse> => {
+  const client = await prisma.client.findUnique({
+    where: { id },
+    select: {
+      id: true,
+      name: true,
+      fullName: true,
+    },
+  });
+
+  if (!client) {
+    logger.error({ error: 'not found', stack: 'getClient' });
+    throw new Error('not found');
+  }
+
+  return client;
+};
 
 const PAGINATION_LIMIT = 20;
 

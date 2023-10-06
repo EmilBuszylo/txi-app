@@ -6,7 +6,7 @@ import z from '@/lib/helpers/zod/zod';
 import { SITE_URL } from '@/constant/env';
 import { ApiRoutes } from '@/constant/routes';
 import { ValidationPattern } from '@/constant/validation';
-import { GetClientsResponse } from '@/server/clients/clients.service';
+import { GetClientResponse, GetClientsResponse } from '@/server/clients/clients.service';
 import { GetCollectionPointsResponse } from '@/server/collection-points.ts/collection-points.service';
 import { CollectionPoint } from '@/server/collection-points.ts/collectionPoint';
 import { Driver } from '@/server/drivers/driver';
@@ -465,6 +465,11 @@ export function removeCollectionPoint(id: string) {
 }
 
 // Clients endpoints
+export function getClient(id: string) {
+  return fetchJson<GetClientResponse>(getNextApiPath(`${ApiRoutes.CLIENTS}/${id}`), {
+    method: 'GET',
+  });
+}
 
 export interface GetClientsParams {
   page: number;
