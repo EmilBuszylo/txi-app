@@ -3,6 +3,12 @@ const prisma = new PrismaClient();
 
 const clientsList = [
   {
+    name: 'Ecco',
+    fullName: 'ECCO RAIL sp. z o.o.',
+    login: 'ecco_rail',
+    password: '8bef[26K',
+  },
+  {
     name: 'Captrain',
     login: '',
     password: '',
@@ -48,23 +54,20 @@ const clientsList = [
     password: '',
   },
 ];
+
 async function main() {
   for await (const client of clientsList) {
-    await prisma.user.create({
-      data: {
-        login: client.login,
-        password: client.password,
-        role: 'CLIENT',
-        client: {
-          connectOrCreate: {
-            where: {
-              name: client.name,
-            },
-            create: {
-              name: client.name,
-            },
-          },
-        },
+    await prisma.client.upsert({
+      where: {
+        name: client.name,
+      },
+      create: {
+        name: client.name,
+        fullName: client.fullName,
+      },
+      update: {
+        name: client.name,
+        fullName: client.fullName,
       },
     });
   }
