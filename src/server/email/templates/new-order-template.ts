@@ -50,6 +50,10 @@ export const getNewOrderTemplate = (order: Order) => {
     dateFormats.dateWithTimeFull
   )}`;
 
+  const showCommentBlock = order.comment ? 'block' : 'none';
+  const showLocationViaPoints =
+    order.locationVia?.length && order.locationVia?.length > 0 ? 'block' : 'none';
+
   return `<!doctype html>
 <html>
 <head>
@@ -164,9 +168,9 @@ export const getNewOrderTemplate = (order: Order) => {
                     <p style="font-family: sans-serif; font-size: 14px; font-weight: normal; margin: 0; margin-bottom: 15px;">Nowe zlecenie o nr {{txi_id}} zostało dodane przez klienta {{client_name}}</p>
                         <p style="font-family: sans-serif; font-size: 14px; font-weight: normal;"><span style="font-weight: bold; margin-right: 4px;">Nr zlecenia:</span><span>{{txi_id}}</span></p>
                         <p style="font-family: sans-serif; font-size: 14px; font-weight: normal;"><span style="font-weight: bold; margin-right: 4px;">Miejsce odbioru:</span><span>{{locationFrom}}</span></p>   
-                        <p style="font-family: sans-serif; font-size: 14px; font-weight: normal;"><span style="font-weight: bold; margin-right: 4px;">Punkty pośrednie:</span><span>{{locationVia}}</span></p>   
+                        <p style="font-family: sans-serif; font-size: 14px; font-weight: normal; display: {{showLocationViaPoints}}" ><span style="font-weight: bold; margin-right: 4px;">Punkty pośrednie:</span><span>{{locationVia}}</span></p>   
                         <p style="font-family: sans-serif; font-size: 14px; font-weight: normal;"><span style="font-weight: bold; margin-right: 4px;">Miejsce docelowe:</span><span>{{locationTo}}</span></p>                        
-                        <p style="font-family: sans-serif; font-size: 14px; font-weight: normal;"><span style="font-weight: bold; margin-right: 4px;">Komentarz do zlecenia:</span><span>{{comment}}</span></p>
+                       <p style="font-family: sans-serif; font-size: 14px; font-weight: normal; display: {{showCommentBlock}}"><span style="font-weight: bold; margin-right: 4px;">Komentarz do zlecenia:</span><span>{{comment}}</span></p>
                       <a href="{{order_url}}" target="_blank" style="font-family: sans-serif; font-size: 14px; font-weight: normal; margin-bottom: 15px; text-decoration: none;">*KLIKNIJ ABY OTWORZYĆ ZLECENIE</a>
                   </td>
                 </tr>
@@ -189,5 +193,7 @@ export const getNewOrderTemplate = (order: Order) => {
     .replace('{{locationVia}}', viaPoints)
     .replace('{{locationTo}}', locationTo)
     .replace('{{order_url}}', orderUrl)
+    .replace('{{showCommentBlock}}', showCommentBlock)
+    .replace('{{showLocationViaPoints}}', showLocationViaPoints)
     .replaceAll('->', `<strong>--></strong>`);
 };
