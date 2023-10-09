@@ -51,7 +51,7 @@ const OrderMobileItem = ({ item, params }: { item: Order; params: GetOrdersParam
         <div className='flex flex-col gap-y-2'>
           <span className='text-sm text-muted-foreground'>Numer TXI</span>
           <StyledLink
-            href={`${Routes.ORDERS}/${item.internalId}`}
+            href={`${Routes.ORDERS}/${item.id}`}
             className={cn('font-semibold leading-none tracking-tight', {
               'text-destructive': isAlerted,
             })}
@@ -59,6 +59,11 @@ const OrderMobileItem = ({ item, params }: { item: Order; params: GetOrdersParam
             {item.internalId}
           </StyledLink>
           {diffBetweenDriverKmAndEstimated && <Badge variant='destructive'>Różnica w KM</Badge>}
+          {!item.actualKm && (
+            <Badge className='border-transparent bg-yellow-600 text-white hover:bg-yellow-600/80'>
+              NIEROZLICZONE
+            </Badge>
+          )}
         </div>
         <Badge className={statusOnBadgeStyle[item.status]}>
           {statusLabelPerStatus[item.status]}
