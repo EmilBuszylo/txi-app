@@ -158,6 +158,7 @@ enum UserRole {
   CLIENT
   DISPATCHER
   DRIVER
+  OPERATOR
 }
 
 enum OrderStatus {

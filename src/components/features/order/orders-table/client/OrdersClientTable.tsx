@@ -5,7 +5,7 @@ import { useMemo, useState } from 'react';
 
 import { useOrders } from '@/lib/hooks/data/useOrders';
 
-import { OrdersClientTableMobile } from '@/components/features/order/orders-table/OrdersClientTableMobile';
+import { OrdersClientTableMobile } from '@/components/features/order/orders-table/client/OrdersClientTableMobile';
 import { getClientColumns } from '@/components/features/order/table/getClientColumns';
 import { statusLabelPerStatus } from '@/components/features/order/utils';
 import { Button } from '@/components/ui/button';

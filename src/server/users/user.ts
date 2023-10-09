@@ -12,4 +12,5 @@ export enum UserRole {
   CLIENT = 'CLIENT',
   DISPATCHER = 'DISPATCHER',
   DRIVER = 'DRIVER',
+  OPERATOR = 'OPERATOR',
 }
