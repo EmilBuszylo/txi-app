@@ -7,6 +7,7 @@ import { UseUser } from '@/lib/hooks/useUser';
 
 import { LogoutButton } from '@/components/features/auth/LogoutButton';
 import { CompanyAvatar } from '@/components/layout/DashboardLayout/header/CompanyAvatar';
+import { OperatorAvatar } from '@/components/layout/DashboardLayout/header/OperatorAvatar';
 import SidebarIconLink from '@/components/layout/DashboardLayout/SidebarIconLink';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import UnstyledLink from '@/components/ui/link/UstyledLink';
@@ -97,9 +98,11 @@ export default function Header() {
       <div className='flex flex-col items-center space-y-3'>
         <div className='flex items-center'>
           <TooltipProvider>
-            {typeof user?.clientId === 'string' ? (
-              <CompanyAvatar clientId={user.clientId} />
-            ) : (
+            {typeof user?.clientId === 'string' && <CompanyAvatar clientId={user.clientId} />}
+            {typeof user?.operatorId === 'string' && (
+              <OperatorAvatar operatorId={user.operatorId} />
+            )}
+            {!user?.clientId && !user?.operatorId && (
               <Tooltip>
                 <TooltipTrigger>
                   <Avatar>

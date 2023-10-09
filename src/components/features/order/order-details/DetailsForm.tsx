@@ -401,7 +401,7 @@ export function OrderDetailsForm({
               <FormItem>
                 <FormLabel>Km dla kierowcy</FormLabel>
                 <FormControl>
-                  <Input placeholder='Podaj km dla kierwocy' {...field} type='number' />
+                  <Input placeholder='Podaj km dla kierowcy' {...field} type='number' />
                 </FormControl>
                 <FormMessage />
               </FormItem>

@@ -33,6 +33,7 @@ export const authOptions: NextAuthOptions = {
               password: true,
               role: true,
               clientId: true,
+              operatorId: true,
             },
           });
 
@@ -48,6 +49,7 @@ export const authOptions: NextAuthOptions = {
               lastName: user.lastName,
               role: user.role,
               clientId: user.clientId,
+              operatorId: user.operatorId,
             };
           } else {
             return null;

@@ -5,6 +5,7 @@ export interface User {
   firstName?: string | null;
   lastName?: string | null;
   clientId?: string | null;
+  operatorId?: string | null;
 }
 
 export enum UserRole {

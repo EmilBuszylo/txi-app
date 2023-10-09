@@ -47,7 +47,8 @@ export function useUpdateManyOrders(orderIds: string[], ordersListPrams: GetOrde
       }
 
       toast({
-        description: 'Zlecenia zostały zmienione.',
+        description:
+          orderIds.length > 1 ? 'Zlecenia zostały zmienione.' : 'Zlecenie zostały zmienione.',
         variant: 'success',
       });
     },

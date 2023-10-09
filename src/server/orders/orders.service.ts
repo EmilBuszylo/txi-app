@@ -321,6 +321,7 @@ export const getOrders = async (input: GetOrdersParams) => {
     column,
     sort,
     createdAtTo,
+    operatorId,
   } = input;
 
   const page = currentPage - 1;
@@ -337,6 +338,7 @@ export const getOrders = async (input: GetOrdersParams) => {
     hasClientInvoice,
     createdAtFrom,
     createdAtTo,
+    operatorId,
   });
 
   const data = await prisma.$transaction([
@@ -500,6 +502,7 @@ const _getWhereFilterByParams = ({
   hasClientInvoice,
   createdAtFrom,
   createdAtTo,
+  operatorId,
 }: ParamsFilter): WhereFilter => {
   return {
     ...(status && { status }),
@@ -525,6 +528,11 @@ const _getWhereFilterByParams = ({
           },
         }
       : undefined),
+    ...(operatorId && {
+      driver: {
+        operatorId: operatorId,
+      },
+    }),
   };
 };
 

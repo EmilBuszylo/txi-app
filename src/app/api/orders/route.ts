@@ -57,6 +57,7 @@ export async function GET(req: Request) {
         : undefined,
       createdAtTo: urlParams.searchParams.get('createdAtTo') || undefined,
       createdAtFrom: urlParams.searchParams.get('createdAtFrom') || undefined,
+      operatorId: urlParams.searchParams.get('operatorId') || undefined,
       column: urlParams.searchParams.get('column') || undefined,
       sort: (urlParams.searchParams.get('sort') as 'asc' | 'desc') || undefined,
     });

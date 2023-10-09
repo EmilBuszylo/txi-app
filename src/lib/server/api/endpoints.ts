@@ -11,7 +11,7 @@ import { GetCollectionPointsResponse } from '@/server/collection-points.ts/colle
 import { CollectionPoint } from '@/server/collection-points.ts/collectionPoint';
 import { Driver } from '@/server/drivers/driver';
 import { GetDriversResponse } from '@/server/drivers/drivers.service';
-import { GetOperatorsResponse } from '@/server/operators/operators.service';
+import { GetOperatorResponse, GetOperatorsResponse } from '@/server/operators/operators.service';
 import {
   LocationFrom,
   locationFromSchema,
@@ -41,6 +41,7 @@ export interface GetOrdersParams {
   hasClientInvoice?: boolean;
   createdAtFrom?: string;
   createdAtTo?: string;
+  operatorId?: string;
   column?: string;
   sort?: 'asc' | 'desc';
 }
@@ -58,6 +59,7 @@ export function getOrders({
   hasClientInvoice,
   createdAtFrom,
   createdAtTo,
+  operatorId,
   column,
   sort,
 }: GetOrdersParams) {
@@ -74,6 +76,7 @@ export function getOrders({
     hasClientInvoice: hasClientInvoice ? hasClientInvoice.toString() : '',
     createdAtFrom: createdAtFrom || '',
     createdAtTo: createdAtTo || '',
+    operatorId: operatorId || '',
     column: column || '',
     sort: sort || '',
   });
@@ -521,6 +524,12 @@ export function getOperators({ page, limit }: GetOperatorsParams) {
       method: 'GET',
     }
   );
+}
+
+export function getOperator(id: string) {
+  return fetchJson<GetOperatorResponse>(getNextApiPath(`${ApiRoutes.OPERATORS}/${id}`), {
+    method: 'GET',
+  });
 }
 
 // emails

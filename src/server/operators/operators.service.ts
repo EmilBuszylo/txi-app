@@ -55,6 +55,25 @@ export const getOperators = async (input: GetOrdersParams): Promise<GetOperators
   };
 };
 
+export type GetOperatorResponse = Pick<Operator, 'id' | 'name'>;
+
+export const getOperator = async (id: string): Promise<GetOperatorResponse> => {
+  const operator = await prisma.operator.findUnique({
+    where: { id },
+    select: {
+      id: true,
+      name: true,
+    },
+  });
+
+  if (!operator) {
+    logger.error({ error: 'not found', stack: 'getOperator' });
+    throw new Error('not found');
+  }
+
+  return operator;
+};
+
 const operatorSelectedFields = {
   id: true,
   name: true,
