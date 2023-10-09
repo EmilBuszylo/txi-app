@@ -62,7 +62,7 @@ model Operator {
 model Order {
   id            String      @id @default(uuid())
   internalId    String      @unique
-  externalId    String?     @unique
+  externalId    String?
   status        OrderStatus
   clientInvoice String?
   driverInvoice String?
