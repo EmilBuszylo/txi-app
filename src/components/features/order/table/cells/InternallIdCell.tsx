@@ -39,6 +39,11 @@ export const InternalIdCell = ({ row }: { row: Row<Order> }) => {
                 {diffBetweenDriverKmAndEstimated && (
                   <Badge variant='destructive'>Różnica w KM</Badge>
                 )}
+                {!row.original.actualKm && (
+                  <Badge className='border-transparent bg-yellow-600 text-white hover:bg-yellow-600/80'>
+                    NIEROZLICZONE
+                  </Badge>
+                )}
                 {/*{diffBetweenActualKmAndEstimated && (*/}
                 {/*  <Badge className='border-transparent bg-orange-600 text-white hover:bg-orange-600/80'>*/}
                 {/*    Różnica w KM*/}
