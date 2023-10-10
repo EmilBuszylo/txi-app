@@ -7,11 +7,23 @@ import { GetDriversParams } from '@/lib/server/api/endpoints';
 import { ActionCell } from '@/components/features/driver/table/cells/ActionCell';
 import { CarDetailsCell } from '@/components/features/driver/table/cells/CarDetailsCell';
 import { PhoneCell } from '@/components/features/driver/table/cells/PhoneCell';
+import { DataTableColumnSortHeader } from '@/components/ui/data-table/DataTableColumnHeader/DataTableColumnSortHeader';
+import { SortStateProps } from '@/components/ui/data-table/hooks/useSorts';
 import { RelativeDate } from '@/components/ui/date/RelativeDate';
 
 import { Driver } from '@/server/drivers/driver';
 
-export function getColumns(params: GetDriversParams): ColumnDef<Driver>[] {
+interface GetColumnsProps {
+  updateSort?: (name: string, sort: 'asc' | 'desc') => void;
+  sortParameters?: SortStateProps;
+  params: GetDriversParams;
+}
+
+export function getColumns({
+  updateSort,
+  sortParameters,
+  params,
+}: GetColumnsProps): ColumnDef<Driver>[] {
   return [
     {
       id: 'orderNumber',
@@ -24,7 +36,13 @@ export function getColumns(params: GetDriversParams): ColumnDef<Driver>[] {
     },
     {
       accessorKey: 'name',
-      header: 'Imię',
+      header: () => (
+        <DataTableColumnSortHeader
+          title='Imię'
+          sortParameters={sortParameters}
+          updateSort={(sort) => updateSort?.('firstName', sort)}
+        />
+      ),
       cell: ({ row }) => (
         <span>
           {row.original.firstName} {row.original.lastName}

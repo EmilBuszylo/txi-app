@@ -1,7 +1,11 @@
 import { logger } from '@/lib/logger';
 import { getPaginationMeta, PaginationMeta } from '@/lib/pagination';
 import { prisma } from '@/lib/prisma';
-import { CreateOperatorParams, GetOrdersParams } from '@/lib/server/api/endpoints';
+import {
+  CreateOperatorParams,
+  GetOperatorsParams,
+  GetOrdersParams,
+} from '@/lib/server/api/endpoints';
 
 import { Operator } from '@/server/operators/operator';
 
@@ -27,7 +31,7 @@ export interface GetOperatorsResponse {
 }
 
 export const getOperators = async (input: GetOrdersParams): Promise<GetOperatorsResponse> => {
-  const { limit, page: requestPage } = input;
+  const { limit, page: requestPage, column, sort } = input;
 
   const page = requestPage ? requestPage - 1 : 0;
   const take = limit || PAGINATION_LIMIT;
@@ -46,6 +50,9 @@ export const getOperators = async (input: GetOrdersParams): Promise<GetOperators
       skip,
       take,
       select: operatorSelectedFields,
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
+      orderBy: _getSortByParams({ column, sort }),
     }),
   ]);
 
@@ -72,6 +79,18 @@ export const getOperator = async (id: string): Promise<GetOperatorResponse> => {
   }
 
   return operator;
+};
+
+const _getSortByParams = ({ column, sort }: Pick<GetOperatorsParams, 'column' | 'sort'>) => {
+  if (!column || !sort) {
+    return {
+      createdAt: 'desc',
+    };
+  }
+
+  return {
+    [column]: sort,
+  };
 };
 
 const operatorSelectedFields = {

@@ -8,6 +8,7 @@ import { getColumns } from '@/components/features/driver/table/columns';
 import { DataTable } from '@/components/ui/data-table/data-table';
 import { DataTableToolbar } from '@/components/ui/data-table/DataTableToolbar/DataTableToolbar';
 import { useFilters } from '@/components/ui/data-table/hooks/useFilters';
+import { useSorts } from '@/components/ui/data-table/hooks/useSorts';
 import Pagination from '@/components/ui/pgination';
 
 const initialPaginationMeta = {
@@ -23,16 +24,22 @@ export const DriversTable = () => {
     useFilters();
   const [page, setPage] = useState(1);
   const [limit, setLimit] = useState(DEFAULT_LIMIT);
+  const { sortParameters, updateSort } = useSorts();
 
   const { data, isLoading, isFetching, error, isSuccess } = useDrivers({
     page,
     limit,
     ...filterParameters,
+    ...sortParameters,
   });
 
   const columns = useMemo(() => {
-    return getColumns({ page, limit, ...filterParameters });
-  }, [filterParameters, limit, page]);
+    return getColumns({
+      params: { page, limit, ...filterParameters, ...sortParameters },
+      updateSort,
+      sortParameters,
+    });
+  }, [filterParameters, limit, page, sortParameters, updateSort]);
 
   return (
     <div>

@@ -291,13 +291,17 @@ export interface GetDriversParams {
   page: number;
   limit: number;
   deletedAt?: boolean;
+  column?: string;
+  sort?: 'asc' | 'desc';
 }
 
-export function getDrivers({ page, limit, deletedAt }: GetDriversParams) {
+export function getDrivers({ page, limit, deletedAt, column, sort }: GetDriversParams) {
   const queryParams = new URLSearchParams({
     page: page.toString(),
     limit: limit.toString(),
     deletedAt: deletedAt ? deletedAt.toString() : '',
+    column: column || '',
+    sort: sort || '',
   });
   return fetchJson<GetDriversResponse>(
     getNextApiPath(ApiRoutes.DRIVERS + '?' + queryParams.toString()),
@@ -511,12 +515,16 @@ export function createOperator(params: CreateOperatorParams) {
 export interface GetOperatorsParams {
   page: number;
   limit: number;
+  column?: string;
+  sort?: 'asc' | 'desc';
 }
 
-export function getOperators({ page, limit }: GetOperatorsParams) {
+export function getOperators({ page, limit, column, sort }: GetOperatorsParams) {
   const queryParams = new URLSearchParams({
     page: page.toString(),
     limit: limit.toString(),
+    column: column || '',
+    sort: sort || '',
   });
   return fetchJson<GetOperatorsResponse>(
     getNextApiPath(ApiRoutes.OPERATORS + '?' + queryParams.toString()),

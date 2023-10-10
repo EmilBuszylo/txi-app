@@ -47,7 +47,7 @@ export const getOperatorColumns = ({
     },
     {
       accessorKey: 'kmForDriver',
-      header: 'Km dla kierowcy',
+      header: 'Przejechane km',
       cell: ({ row }) => (
         <KmDriverCell id={row.original.id} kmForDriver={row.original.kmForDriver} params={params} />
       ),

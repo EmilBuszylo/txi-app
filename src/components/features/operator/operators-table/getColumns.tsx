@@ -2,11 +2,17 @@
 
 import { ColumnDef } from '@tanstack/table-core';
 
+import { DataTableColumnSortHeader } from '@/components/ui/data-table/DataTableColumnHeader/DataTableColumnSortHeader';
+import { SortStateProps } from '@/components/ui/data-table/hooks/useSorts';
 import { RelativeDate } from '@/components/ui/date/RelativeDate';
 
 import { Operator } from '@/server/operators/operator';
 
-export function getColumns(): ColumnDef<Operator>[] {
+interface GetColumnsProps {
+  updateSort?: (name: string, sort: 'asc' | 'desc') => void;
+  sortParameters?: SortStateProps;
+}
+export function getColumns({ updateSort, sortParameters }: GetColumnsProps): ColumnDef<Operator>[] {
   return [
     {
       id: 'orderNumber',
@@ -15,11 +21,23 @@ export function getColumns(): ColumnDef<Operator>[] {
     },
     {
       accessorKey: 'name',
-      header: 'Nazwa',
+      header: () => (
+        <DataTableColumnSortHeader
+          title='Nazwa'
+          sortParameters={sortParameters}
+          updateSort={(sort) => updateSort?.('name', sort)}
+        />
+      ),
     },
     {
       accessorKey: 'createdAt',
-      header: 'Dodano',
+      header: () => (
+        <DataTableColumnSortHeader
+          title='Dodano'
+          sortParameters={sortParameters}
+          updateSort={(sort) => updateSort?.('createdAt', sort)}
+        />
+      ),
       cell: ({ row }) => <RelativeDate date={row.original.createdAt} />,
     },
   ];

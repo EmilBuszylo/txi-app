@@ -29,6 +29,8 @@ export async function GET(req: Request) {
       deletedAt: urlParams.searchParams.get('deletedAt')
         ? urlParams.searchParams.get('deletedAt') === 'true'
         : undefined,
+      column: urlParams.searchParams.get('column') || undefined,
+      sort: (urlParams.searchParams.get('sort') as 'asc' | 'desc') || undefined,
     });
 
     return NextResponse.json(drivers);

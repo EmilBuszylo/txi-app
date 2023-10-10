@@ -113,7 +113,7 @@ export interface GetDriversResponse {
 }
 
 export const getDrivers = async (input: GetDriversParams): Promise<GetDriversResponse> => {
-  const { limit, page: requestPage, deletedAt } = input;
+  const { limit, page: requestPage, deletedAt, column, sort } = input;
 
   const page = requestPage ? requestPage - 1 : 0;
   const take = limit || PAGINATION_LIMIT;
@@ -134,6 +134,9 @@ export const getDrivers = async (input: GetDriversParams): Promise<GetDriversRes
       skip,
       take,
       select: driverSelectedFields,
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
+      orderBy: _getSortByParams({ column, sort }),
     }),
   ]);
 
@@ -171,6 +174,18 @@ export const removeDriver = async (id: string): Promise<Driver> => {
     logger.error({ error, stack: 'removeDriver' });
     throw error;
   }
+};
+
+const _getSortByParams = ({ column, sort }: Pick<GetDriversParams, 'column' | 'sort'>) => {
+  if (!column || !sort) {
+    return {
+      createdAt: 'desc',
+    };
+  }
+
+  return {
+    [column]: sort,
+  };
 };
 
 const generateDriverLogin = (firstName: string, lastName: string) => {

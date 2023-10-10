@@ -1,11 +1,12 @@
 'use client';
 
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 
 import { useOperators } from '@/lib/hooks/data/useOperators';
 
 import { getColumns } from '@/components/features/operator/operators-table/getColumns';
 import { DataTable } from '@/components/ui/data-table/data-table';
+import { useSorts } from '@/components/ui/data-table/hooks/useSorts';
 import Pagination from '@/components/ui/pgination';
 
 const initialPaginationMeta = {
@@ -19,13 +20,17 @@ const DEFAULT_LIMIT = 25;
 export const OperatorsTable = () => {
   const [page, setPage] = useState(1);
   const [limit, setLimit] = useState(DEFAULT_LIMIT);
+  const { sortParameters, updateSort } = useSorts();
 
   const { data, isLoading, isFetching, error, isSuccess } = useOperators({
     page,
     limit,
+    ...sortParameters,
   });
 
-  const columns = getColumns();
+  const columns = useMemo(() => {
+    return getColumns({ sortParameters, updateSort });
+  }, [sortParameters, updateSort]);
 
   return (
     <div>

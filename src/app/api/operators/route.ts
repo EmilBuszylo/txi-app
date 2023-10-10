@@ -26,6 +26,8 @@ export async function GET(req: NextRequest) {
     const clients = await getOperators({
       page: Number(urlParams.searchParams.get('page')) || 1,
       limit: Number(urlParams.searchParams.get('limit')) || 1,
+      column: urlParams.searchParams.get('column') || undefined,
+      sort: (urlParams.searchParams.get('sort') as 'asc' | 'desc') || undefined,
     });
 
     return NextResponse.json(clients);

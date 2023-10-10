@@ -4,9 +4,9 @@ const prisma = new PrismaClient();
 
 const operatorsList = [
   {
-    name: 'Szymon Szczecin',
-    login: 'szymon-szczecin',
-    password: '!@Pituch23',
+    name: 'Szymon Warzycha',
+    login: 'testowy-operator',
+    password: '----',
   },
 ];
 async function main() {

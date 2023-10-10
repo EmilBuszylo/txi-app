@@ -6,7 +6,7 @@ import { ApiRoutes } from '@/constant/routes';
 
 export function useOperators(params: GetOperatorsParams) {
   return useQuery({
-    queryKey: [ApiRoutes.OPERATORS, params.page, params.limit],
+    queryKey: [ApiRoutes.OPERATORS, params],
     queryFn: () => getOperators(params),
   });
 }
