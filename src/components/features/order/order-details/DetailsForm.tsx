@@ -159,7 +159,7 @@ export function OrderDetailsForm({
   const collectionPointsData = collectionPoints
     ? collectionPoints.results.map((result) => ({
         value: result.id,
-        label: result.fullAddress,
+        label: `${result.name} - ${result.fullAddress}`,
       }))
     : [];
 
