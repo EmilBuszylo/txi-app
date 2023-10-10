@@ -18,13 +18,17 @@ export const KmDriverCell = ({
   kmForDriver: Order['kmForDriver'];
   params: GetOrdersParams;
 }) => {
-  const [value, setValue] = useState(kmForDriver);
+  const [value, setValue] = useState(kmForDriver || undefined);
 
   const { mutateAsync: updateOrders } = useUpdateManyOrders([id], params);
 
   const onChange = (e: ChangeEvent<HTMLInputElement>) => {
     const val = e.target.value;
-    setValue(Number(val));
+    if (val === '') {
+      return setValue(undefined);
+    }
+
+    return setValue(Number(val));
   };
 
   const onClickHandler = async () => {
@@ -37,7 +41,7 @@ export const KmDriverCell = ({
         id='kmForDriver'
         name='kmForDriver'
         type='number'
-        placeholder='Uzupełnij km dla kierowcy'
+        placeholder='Uzupełnij przejechane km'
         value={value}
         onChange={onChange}
         className={cn({
