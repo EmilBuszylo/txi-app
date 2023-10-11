@@ -2,6 +2,7 @@
 
 import { ColumnDef } from '@tanstack/table-core';
 
+import { ActionCell } from '@/components/features/operator/operators-table/cells/ActionCell';
 import { DataTableColumnSortHeader } from '@/components/ui/data-table/DataTableColumnHeader/DataTableColumnSortHeader';
 import { SortStateProps } from '@/components/ui/data-table/hooks/useSorts';
 import { RelativeDate } from '@/components/ui/date/RelativeDate';
@@ -28,6 +29,7 @@ export function getColumns({ updateSort, sortParameters }: GetColumnsProps): Col
           updateSort={(sort) => updateSort?.('name', sort)}
         />
       ),
+      cell: ({ row }) => <span>{row.original.operator?.name}</span>,
     },
     {
       accessorKey: 'createdAt',
@@ -39,6 +41,12 @@ export function getColumns({ updateSort, sortParameters }: GetColumnsProps): Col
         />
       ),
       cell: ({ row }) => <RelativeDate date={row.original.createdAt} />,
+    },
+    {
+      id: 'actions',
+      cell: ({ row }) => {
+        return <ActionCell row={row} />;
+      },
     },
   ];
 }

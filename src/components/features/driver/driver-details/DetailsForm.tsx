@@ -67,8 +67,8 @@ export function DetailForm({ defaultValues, id }: NewDriverProps) {
 
   const operatorsData = operators
     ? operators.results.map((result) => ({
-        value: result.id,
-        label: result.name,
+        value: result.operator?.id || '',
+        label: result.operator?.name || '',
       }))
     : [];
 

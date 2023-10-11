@@ -11,6 +11,7 @@ import { GetCollectionPointsResponse } from '@/server/collection-points.ts/colle
 import { CollectionPoint } from '@/server/collection-points.ts/collectionPoint';
 import { Driver } from '@/server/drivers/driver';
 import { GetDriversResponse } from '@/server/drivers/drivers.service';
+import { Operator } from '@/server/operators/operator';
 import { GetOperatorResponse, GetOperatorsResponse } from '@/server/operators/operators.service';
 import {
   LocationFrom,
@@ -501,6 +502,14 @@ export function getClients({ page, limit }: GetClientsParams) {
 
 export const createOperatorSchema = z.object({
   name: z.string(),
+  login: z.string(),
+  password: z
+    .string()
+    .regex(
+      new RegExp(ValidationPattern.PASSWORD_VALIDATION),
+      'Hasło musi zawierać przynajmniej 6 znaków, przynajmniej jedną wielką literę, jeden znak specjalny oraz jedną cyfrę'
+    )
+    .min(6, 'Hasło musi zawierać przynajmniej 6 znaków.'),
 });
 
 export type CreateOperatorParams = z.infer<typeof createOperatorSchema>;
@@ -508,6 +517,34 @@ export type CreateOperatorParams = z.infer<typeof createOperatorSchema>;
 export function createOperator(params: CreateOperatorParams) {
   return fetchJson<Driver>(getNextApiPath(ApiRoutes.OPERATORS), {
     method: 'POST',
+    body: JSON.stringify(params),
+  });
+}
+
+export const updateOperatorSchema = z.object({
+  name: z.string(),
+  login: z.string(),
+  password: z
+    .string()
+    .refine((data) => {
+      if (data === '' || !data) {
+        return true;
+      }
+
+      if (data.length < 6) return false;
+
+      const passwordRegexp = new RegExp(ValidationPattern.PASSWORD_VALIDATION);
+
+      return passwordRegexp.test(data);
+    }, 'Hasło musi zawierać 6 liter, przynajmniej jedną wielką literę, jeden znak specjalny oraz jedną cyfrę')
+    .optional(),
+});
+
+export type UpdateOperatorParams = z.infer<typeof updateOperatorSchema>;
+
+export function updateOperator(id: string, params: UpdateOperatorParams) {
+  return fetchJson<Operator>(getNextApiPath(`${ApiRoutes.OPERATORS}/${id}`), {
+    method: 'PATCH',
     body: JSON.stringify(params),
   });
 }

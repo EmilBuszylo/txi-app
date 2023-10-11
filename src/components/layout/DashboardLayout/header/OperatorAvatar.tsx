@@ -8,7 +8,7 @@ import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip
 export const OperatorAvatar = ({ operatorId }: { operatorId: string }) => {
   const { data } = useOperator(operatorId);
 
-  const name = data?.name || '';
+  const name = data?.operator?.name || '';
 
   const avatarName = name.length > 2 ? name[0].toUpperCase() + name[1]?.toUpperCase() : '';
 

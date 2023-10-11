@@ -67,8 +67,8 @@ export function NewDriverForm() {
 
   const operatorsData = operators
     ? operators.results.map((result) => ({
-        value: result.id,
-        label: result.name,
+        value: result.operator?.id || '',
+        label: result.operator?.name || '',
       }))
     : [];
 
@@ -135,7 +135,6 @@ export function NewDriverForm() {
               </FormItem>
             )}
           />
-
           <FormField
             control={form.control}
             name='phone'

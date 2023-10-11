@@ -1,5 +1,9 @@
 export interface Operator {
   id: string;
-  name: string;
+  login: string;
   createdAt: Date;
+  operator: {
+    id: string;
+    name: string;
+  } | null;
 }

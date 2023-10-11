@@ -2,13 +2,12 @@
 
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useRouter } from 'next/navigation';
-import React from 'react';
-import { FieldPath, useForm } from 'react-hook-form';
+import React, { useEffect, useState } from 'react';
+import { useForm } from 'react-hook-form';
+import { z } from 'zod';
 
-import { FetchError } from '@/lib/helpers/fetch-json';
-import { useCreateOperator } from '@/lib/hooks/data/useCreateOperator';
-import { CreateOperatorParams, createOperatorSchema } from '@/lib/server/api/endpoints';
-import { databaseErrorHandler } from '@/lib/server/utils/error';
+import { useUpdateOperator } from '@/lib/hooks/data/useUpdateOperator';
+import { UpdateOperatorParams, updateOperatorSchema } from '@/lib/server/api/endpoints';
 
 import { Button } from '@/components/ui/button';
 import {
@@ -24,39 +23,39 @@ import { Input } from '@/components/ui/input';
 
 import { Routes } from '@/constant/routes';
 
+interface NewOperatorProps {
+  defaultValues: UpdateOperatorParams;
+  id: string;
+}
+
 const initialFormData = {
-  name: '',
   login: '',
   password: '',
+  name: '',
 };
 
-export function NewOperatorForm() {
-  const form = useForm<CreateOperatorParams>({
-    resolver: zodResolver(createOperatorSchema),
-    defaultValues: initialFormData,
+export function DetailsForm({ defaultValues, id }: NewOperatorProps) {
+  const [isDefaultAdded, setIsDefaultAdded] = useState(false);
+  const form = useForm<z.infer<typeof updateOperatorSchema>>({
+    resolver: zodResolver(updateOperatorSchema),
+    defaultValues: { ...defaultValues, password: '' } || initialFormData,
   });
   const router = useRouter();
 
-  const { mutateAsync: createDriver, isLoading } = useCreateOperator();
+  const { mutateAsync: updateOperator, isLoading } = useUpdateOperator(id || '');
 
-  const onSubmit = async (values: CreateOperatorParams) => {
-    try {
-      await createDriver(values);
+  const onSubmit = async (values: z.infer<typeof updateOperatorSchema>) => {
+    await updateOperator(values);
 
-      router.push(Routes.OPERATORS);
-    } catch (error) {
-      const { isDbError, targets, message } = databaseErrorHandler(error as FetchError);
-
-      if (isDbError) {
-        for (const target of targets) {
-          form.setError(target as FieldPath<CreateOperatorParams>, {
-            type: 'custom',
-            message: message,
-          });
-        }
-      }
-    }
+    router.push(Routes.OPERATORS);
   };
+
+  useEffect(() => {
+    if (defaultValues && !isDefaultAdded) {
+      form.reset();
+      setIsDefaultAdded(true);
+    }
+  }, [defaultValues, form, isDefaultAdded]);
 
   return (
     <div className='lg:max-w-2xl'>
