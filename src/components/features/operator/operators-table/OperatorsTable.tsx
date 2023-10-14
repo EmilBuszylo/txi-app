@@ -29,8 +29,8 @@ export const OperatorsTable = () => {
   });
 
   const columns = useMemo(() => {
-    return getColumns({ sortParameters, updateSort });
-  }, [sortParameters, updateSort]);
+    return getColumns({ sortParameters, updateSort, params: { page, limit, ...sortParameters } });
+  }, [limit, page, sortParameters, updateSort]);
 
   return (
     <div>

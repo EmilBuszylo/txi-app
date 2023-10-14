@@ -128,6 +128,22 @@ export const getOperator = async (id: string): Promise<GetOperatorResponse> => {
   return operator;
 };
 
+//  soft delete
+export const removeOperator = async (id: string): Promise<Operator> => {
+  try {
+    return await prisma.user.update({
+      where: { id, role: 'OPERATOR' },
+      data: {
+        deletedAt: new Date(),
+      },
+      select: operatorSelectedFields,
+    });
+  } catch (error) {
+    logger.error({ error, stack: 'removeDriver' });
+    throw error;
+  }
+};
+
 const _getSortByParams = ({ column, sort }: Pick<GetOperatorsParams, 'column' | 'sort'>) => {
   if (!column || !sort) {
     return {
@@ -144,6 +160,7 @@ const operatorSelectedFields = {
   id: true,
   login: true,
   createdAt: true,
+  deletedAt: true,
   operator: {
     select: {
       id: true,

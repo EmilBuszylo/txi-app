@@ -24,6 +24,8 @@ import {
   OrderStatus,
 } from '@/server/orders/order';
 import { GetOrdersResponse } from '@/server/orders/orders.service';
+import { Passenger } from '@/server/passengers/passenger';
+import { GetPassengerResponse, GetPassengersResponse } from '@/server/passengers/passenger.service';
 
 function getNextApiPath(path: string): string {
   return SITE_URL + 'api' + path;
@@ -577,6 +579,12 @@ export function getOperator(id: string) {
   });
 }
 
+export function removeOperator(id: string) {
+  return fetchJson<Operator>(getNextApiPath(`${ApiRoutes.OPERATORS}/${id}`), {
+    method: 'DELETE',
+  });
+}
+
 // emails
 export interface SendEmailRequest {
   subject?: string;
@@ -591,5 +599,65 @@ export function sendNewOrderEmail(params: SendEmailRequest) {
   return fetchJson<{ success: boolean }>(getNextApiPath(ApiRoutes.EMAIL), {
     method: 'POST',
     body: JSON.stringify(params),
+  });
+}
+
+// Passenger endpoints
+
+export const createPassengerSchema = z.object({
+  name: z.string(),
+  phones: z.array(z.string()),
+  clients: z.array(z.string()),
+});
+
+export type CreatePassengerParams = z.infer<typeof createPassengerSchema>;
+
+export function createPassenger(params: CreatePassengerParams) {
+  return fetchJson<Passenger>(getNextApiPath(ApiRoutes.PASSENGERS), {
+    method: 'POST',
+    body: JSON.stringify(params),
+  });
+}
+
+export const updatePassengerSchema = z.object({
+  name: z.string(),
+  phones: z.array(z.string()),
+  clients: z.array(z.string()),
+});
+
+export type UpdatePassengerParams = z.infer<typeof updatePassengerSchema>;
+
+export function updatePassenger(id: string, params: UpdatePassengerParams) {
+  return fetchJson<Passenger>(getNextApiPath(`${ApiRoutes.PASSENGERS}/${id}`), {
+    method: 'PATCH',
+    body: JSON.stringify(params),
+  });
+}
+
+export interface GetPassengersParams {
+  page: number;
+  limit: number;
+  column?: string;
+  sort?: 'asc' | 'desc';
+}
+
+export function getPassengers({ page, limit, column, sort }: GetPassengersParams) {
+  const queryParams = new URLSearchParams({
+    page: page.toString(),
+    limit: limit.toString(),
+    column: column || '',
+    sort: sort || '',
+  });
+  return fetchJson<GetPassengersResponse>(
+    getNextApiPath(ApiRoutes.PASSENGERS + '?' + queryParams.toString()),
+    {
+      method: 'GET',
+    }
+  );
+}
+
+export function getPassenger(id: string) {
+  return fetchJson<GetPassengerResponse>(getNextApiPath(`${ApiRoutes.PASSENGERS}/${id}`), {
+    method: 'GET',
   });
 }

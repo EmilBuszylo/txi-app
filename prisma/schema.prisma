@@ -29,12 +29,13 @@ model CollectionPoint {
 }
 
 model Client {
-  id   String @id @default(uuid())
-  name String @unique
+  id       String  @id @default(uuid())
+  name     String  @unique
   fullName String?
 
-  orders Order[]
-  users User[]
+  orders     Order[]
+  users      User[]
+  passengers Passenger[]
 
   deletedAt DateTime?
   createdAt DateTime  @default(now())
@@ -48,7 +49,7 @@ model Operator {
   id   String @id @default(uuid())
   name String @unique
 
-  drivers User[]  @relation("driversOperator")
+  drivers User[] @relation("driversOperator")
 
   deletedAt     DateTime?
   createdAt     DateTime        @default(now())
@@ -72,16 +73,16 @@ model Order {
   locationVia   Json?
   locationTo    Json
 
-  withPassenger     Boolean?
-  estimatedDistance Int? // calculated distance between start point and end point with via points
-  wayBackDistance   Int? // calculated distance from end point to start point without via points
-  actualKm          Int? // final distance
-  kmForDriver       Int? // modified by user
-  intakeDistance    Int? // distance from collection point to location from
+  withPassenger          Boolean?
+  estimatedDistance      Int? // calculated distance between start point and end point with via points
+  wayBackDistance        Int? // calculated distance from end point to start point without via points
+  actualKm               Int? // final distance
+  kmForDriver            Int? // modified by user
+  intakeDistance         Int? // distance from collection point to location from
   isKmDifferenceAccepted Boolean? @default(false) // temp solution to accept the difference between distances
-  hasHighway Boolean?
-  highwaysCost String?
-  stopTime   Int? @default(0)
+  hasHighway             Boolean?
+  highwaysCost           String?
+  stopTime               Int?     @default(0)
 
   client     Client @relation(fields: [clientId, clientName], references: [id, name])
   clientId   String
@@ -124,6 +125,19 @@ model DriverDetails {
   @@map("driver_details")
 }
 
+model Passenger {
+  id      String   @id @default(uuid())
+  name    String
+  phones  String[]
+  clients Client[]
+
+  deletedAt DateTime?
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
+  @@map("passengers")
+}
+
 model User {
   id       String @id @default(uuid())
   login    String @unique
@@ -132,15 +146,15 @@ model User {
   firstName String?
   lastName  String?
   phone     String?
-  email    String?
+  email     String?
 
   role          UserRole
   driverDetails DriverDetails?
 
   driverOrders     Order[] @relation("driverOrders")
   lastEditedOrders Order[] @relation("lastEditorOrders")
-  client    Client? @relation(fields: [clientId], references: [id])
-  clientId  String?
+  client           Client? @relation(fields: [clientId], references: [id])
+  clientId         String?
 
   operator     Operator? @relation("driversOperator", fields: [operatorId, operatorName], references: [id, name])
   operatorId   String?

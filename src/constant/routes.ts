@@ -4,6 +4,7 @@ export enum Routes {
   DRIVERS = '/dashboard/drivers',
   OPERATORS = '/dashboard/operators',
   COLLECTION_POINTS = '/dashboard/collection-points',
+  PASSENGERS = '/dashboard/passengers',
 }
 
 export enum ApiRoutes {
@@ -13,4 +14,5 @@ export enum ApiRoutes {
   CLIENTS = '/clients',
   OPERATORS = '/operators',
   EMAIL = '/email',
+  PASSENGERS = '/passengers',
 }

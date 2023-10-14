@@ -2,6 +2,8 @@
 
 import { ColumnDef } from '@tanstack/table-core';
 
+import { GetOperatorsParams } from '@/lib/server/api/endpoints';
+
 import { ActionCell } from '@/components/features/operator/operators-table/cells/ActionCell';
 import { DataTableColumnSortHeader } from '@/components/ui/data-table/DataTableColumnHeader/DataTableColumnSortHeader';
 import { SortStateProps } from '@/components/ui/data-table/hooks/useSorts';
@@ -12,8 +14,13 @@ import { Operator } from '@/server/operators/operator';
 interface GetColumnsProps {
   updateSort?: (name: string, sort: 'asc' | 'desc') => void;
   sortParameters?: SortStateProps;
+  params: GetOperatorsParams;
 }
-export function getColumns({ updateSort, sortParameters }: GetColumnsProps): ColumnDef<Operator>[] {
+export function getColumns({
+  updateSort,
+  sortParameters,
+  params,
+}: GetColumnsProps): ColumnDef<Operator>[] {
   return [
     {
       id: 'orderNumber',
@@ -45,7 +52,7 @@ export function getColumns({ updateSort, sortParameters }: GetColumnsProps): Col
     {
       id: 'actions',
       cell: ({ row }) => {
-        return <ActionCell row={row} />;
+        return <ActionCell row={row} params={params} />;
       },
     },
   ];
