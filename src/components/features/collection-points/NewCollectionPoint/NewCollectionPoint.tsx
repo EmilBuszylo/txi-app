@@ -11,7 +11,6 @@ import { useUpdateCollectionPoint } from '@/lib/hooks/data/useUpdateCollectionPo
 import {
   CreateCollectionPointParams,
   createCollectionPointSchema,
-  CreateOperatorParams,
 } from '@/lib/server/api/endpoints';
 import { databaseErrorHandler } from '@/lib/server/utils/error';
 
@@ -64,7 +63,7 @@ export function NewCollectionPoint({ defaultValues, id }: NewCollectionPointProp
 
       if (isDbError) {
         for (const target of targets) {
-          form.setError(target as FieldPath<CreateOperatorParams>, {
+          form.setError(target as FieldPath<CreateCollectionPointParams>, {
             type: 'custom',
             message: message,
           });
