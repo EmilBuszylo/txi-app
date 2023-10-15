@@ -21,6 +21,7 @@ import DriversIcons from '~/svg/icons/car.svg';
 import OperatorsIcon from '~/svg/icons/glob.svg';
 import CollectionPointsIcon from '~/svg/icons/map-pin.svg';
 import OrdersIcon from '~/svg/icons/orders.svg';
+import PassengersIcon from '~/svg/icons/users.svg';
 
 const links = [
   {
@@ -45,6 +46,12 @@ const links = [
     href: Routes.OPERATORS,
     label: 'Operatorzy',
     icon: OperatorsIcon,
+    allowedRoles: [UserRole.ADMIN, UserRole.DISPATCHER],
+  },
+  {
+    href: Routes.PASSENGERS,
+    label: 'Pasażerowie',
+    icon: PassengersIcon,
     allowedRoles: [UserRole.ADMIN, UserRole.DISPATCHER],
   },
 ];
