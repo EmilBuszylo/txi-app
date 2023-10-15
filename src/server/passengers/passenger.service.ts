@@ -28,7 +28,7 @@ export const createPassenger = async (input: CreatePassengerParams): Promise<Pas
   }
 };
 
-export const updateOperator = async (
+export const updatePassenger = async (
   id: string,
   input: UpdatePassengerParams
 ): Promise<Passenger> => {
@@ -89,6 +89,8 @@ export const getPassengers = async (input: GetPassengersParams): Promise<GetPass
 
   return {
     meta: getPaginationMeta({ currentPage: requestPage, itemCount: data[0], take }),
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
     results: data[1],
   };
 };
@@ -109,6 +111,22 @@ export const getPassenger = async (id: string): Promise<GetPassengerResponse> =>
   return passenger;
 };
 
+//  soft delete
+export const removePassenger = async (id: string): Promise<Passenger> => {
+  try {
+    return await prisma.passenger.update({
+      where: { id },
+      data: {
+        deletedAt: new Date(),
+      },
+      select: passengerSelectedFields,
+    });
+  } catch (error) {
+    logger.error({ error, stack: 'removeDriver' });
+    throw error;
+  }
+};
+
 const _getSortByParams = ({ column, sort }: Pick<GetOperatorsParams, 'column' | 'sort'>) => {
   if (!column || !sort) {
     return {
@@ -125,5 +143,11 @@ const passengerSelectedFields = {
   id: true,
   name: true,
   phones: true,
+  clients: {
+    select: {
+      id: true,
+    },
+  },
   createdAt: true,
+  deletedAt: true,
 };

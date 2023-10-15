@@ -2,15 +2,12 @@
 
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useRouter } from 'next/navigation';
-import React from 'react';
-import { FieldPath, useForm } from 'react-hook-form';
+import React, { useEffect, useState } from 'react';
+import { useForm } from 'react-hook-form';
+import { z } from 'zod';
 
-import { FetchError } from '@/lib/helpers/fetch-json';
-import z from '@/lib/helpers/zod/zod';
 import { useClients } from '@/lib/hooks/data/useClients';
-import { useCreatePassenger } from '@/lib/hooks/data/useCreatePassenger';
-import { CreatePassengerParams } from '@/lib/server/api/endpoints';
-import { databaseErrorHandler } from '@/lib/server/utils/error';
+import { useUpdatePassenger } from '@/lib/hooks/data/useUpdatePassenger';
 
 import { PhoneNumbersField } from '@/components/features/passenger/new-passenger/PhoneNumbersField';
 import { Button } from '@/components/ui/button';
@@ -27,19 +24,18 @@ import { MultiCombobox } from '@/components/ui/multiCombobox';
 
 import { Routes } from '@/constant/routes';
 
+interface NewPassengerProps {
+  defaultValues: z.infer<typeof updatePassengerSchema>;
+  id: string;
+}
+
 const initialFormData = {
   name: '',
   clients: [],
   phones: [],
 };
 
-interface CreateNewPassengerFormParams extends Pick<CreatePassengerParams, 'name' | 'clients'> {
-  phones: {
-    value: string;
-  }[];
-}
-
-export const createPassengerSchema = z.object({
+export const updatePassengerSchema = z.object({
   name: z.string(),
   phones: z.array(
     z.object({
@@ -49,40 +45,35 @@ export const createPassengerSchema = z.object({
   clients: z.array(z.string()),
 });
 
-export function NewPassengerForm() {
-  const form = useForm<CreateNewPassengerFormParams>({
-    resolver: zodResolver(createPassengerSchema),
-    defaultValues: initialFormData,
+export function DetailsForm({ defaultValues, id }: NewPassengerProps) {
+  const [isDefaultAdded, setIsDefaultAdded] = useState(false);
+  const form = useForm<z.infer<typeof updatePassengerSchema>>({
+    resolver: zodResolver(updatePassengerSchema),
+    defaultValues: { ...defaultValues } || initialFormData,
   });
   const router = useRouter();
   const { data: clients } = useClients({ page: 1, limit: 1000 });
 
-  const { mutateAsync: createPassenger, isLoading } = useCreatePassenger();
+  const { mutateAsync: updatePassenger, isLoading } = useUpdatePassenger(id || '');
 
-  const onSubmit = async (values: CreateNewPassengerFormParams) => {
-    try {
-      const phones = values.phones.map((phone) => phone.value);
+  const onSubmit = async (values: z.infer<typeof updatePassengerSchema>) => {
+    const phones = values.phones.map((phone) => phone.value);
 
-      await createPassenger({
-        name: values.name,
-        clients: values.clients,
-        phones,
-      });
+    await updatePassenger({
+      name: values.name,
+      clients: values.clients,
+      phones,
+    });
 
-      router.push(Routes.PASSENGERS);
-    } catch (error) {
-      const { isDbError, targets, message } = databaseErrorHandler(error as FetchError);
-
-      if (isDbError) {
-        for (const target of targets) {
-          form.setError(target as FieldPath<CreatePassengerParams>, {
-            type: 'custom',
-            message: message,
-          });
-        }
-      }
-    }
+    router.push(Routes.PASSENGERS);
   };
+
+  useEffect(() => {
+    if (defaultValues && !isDefaultAdded) {
+      form.reset();
+      setIsDefaultAdded(true);
+    }
+  }, [defaultValues, form, isDefaultAdded]);
 
   const clientsData = clients
     ? clients.results.map((result) => ({

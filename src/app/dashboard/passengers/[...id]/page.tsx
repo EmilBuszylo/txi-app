@@ -1,11 +1,11 @@
 import { accessControl } from '@/lib/server/utils/access-control';
 
-import { NewPassengerForm } from '@/components/features/passenger/new-passenger/NewPassengerForm';
+import PassengerDetails from '@/components/features/passenger/passenger-details/PassengerDetails';
 
 import { UserRole } from '@/server/users/user';
 
-export default async function CreateNewPassenger() {
+export default async function OperatorDetailsPage() {
   await accessControl({ allowedRoles: [UserRole.ADMIN, UserRole.DISPATCHER] });
 
-  return <NewPassengerForm />;
+  return <PassengerDetails />;
 }

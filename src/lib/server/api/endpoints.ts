@@ -604,13 +604,11 @@ export function sendNewOrderEmail(params: SendEmailRequest) {
 
 // Passenger endpoints
 
-export const createPassengerSchema = z.object({
-  name: z.string(),
-  phones: z.array(z.string()),
-  clients: z.array(z.string()),
-});
-
-export type CreatePassengerParams = z.infer<typeof createPassengerSchema>;
+export interface CreatePassengerParams {
+  name: string;
+  phones: string[];
+  clients: string[];
+}
 
 export function createPassenger(params: CreatePassengerParams) {
   return fetchJson<Passenger>(getNextApiPath(ApiRoutes.PASSENGERS), {
@@ -619,13 +617,7 @@ export function createPassenger(params: CreatePassengerParams) {
   });
 }
 
-export const updatePassengerSchema = z.object({
-  name: z.string(),
-  phones: z.array(z.string()),
-  clients: z.array(z.string()),
-});
-
-export type UpdatePassengerParams = z.infer<typeof updatePassengerSchema>;
+export type UpdatePassengerParams = CreatePassengerParams;
 
 export function updatePassenger(id: string, params: UpdatePassengerParams) {
   return fetchJson<Passenger>(getNextApiPath(`${ApiRoutes.PASSENGERS}/${id}`), {
@@ -659,5 +651,11 @@ export function getPassengers({ page, limit, column, sort }: GetPassengersParams
 export function getPassenger(id: string) {
   return fetchJson<GetPassengerResponse>(getNextApiPath(`${ApiRoutes.PASSENGERS}/${id}`), {
     method: 'GET',
+  });
+}
+
+export function removePassenger(id: string) {
+  return fetchJson<Operator>(getNextApiPath(`${ApiRoutes.PASSENGERS}/${id}`), {
+    method: 'DELETE',
   });
 }

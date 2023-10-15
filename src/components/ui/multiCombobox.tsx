@@ -1,10 +1,13 @@
-import { Check, ChevronsUpDown } from 'lucide-react';
+import { Check, ChevronsUpDown, X } from 'lucide-react';
 import { useEffect, useState } from 'react';
+import * as React from 'react';
 import { useFormContext } from 'react-hook-form';
 
 import { cn } from '@/lib/utils';
 
+import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
+import { ComboboxProps } from '@/components/ui/combobox';
 import {
   Command,
   CommandEmpty,
@@ -22,19 +25,7 @@ import {
 } from '@/components/ui/form';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 
-export interface ComboboxProps {
-  label: string;
-  name: string;
-  items: { label: string; value: string }[];
-  placeholder?: string;
-  inputText?: string;
-  description?: string;
-  emptyStateMessage?: string;
-  isDisabled?: boolean;
-  isReadOnly?: boolean;
-}
-
-export const Combobox = ({
+export const MultiCombobox = ({
   label,
   name,
   items,
@@ -46,7 +37,7 @@ export const Combobox = ({
   isReadOnly,
 }: ComboboxProps) => {
   const [open, setOpen] = useState(false);
-  const { control, setValue } = useFormContext();
+  const { control, setValue, getValues } = useFormContext();
   const [options, setOptions] = useState(items);
 
   useEffect(() => {
@@ -61,7 +52,7 @@ export const Combobox = ({
         control={control}
         name={name}
         render={({ field }) => {
-          const displayValue = options.find((item) => item.value === field.value)?.label;
+          const displayValues = options.filter((opt) => field?.value?.includes(opt.value));
 
           return (
             <FormItem className='flex flex-col'>
@@ -73,14 +64,32 @@ export const Combobox = ({
                       variant='outline'
                       role='combobox'
                       aria-expanded={open}
-                      className={cn(
-                        'w-full justify-between',
-                        !displayValue && 'text-muted-foreground'
-                      )}
+                      className={cn('h-auto w-full justify-between', {
+                        'text-muted-foreground': !displayValues || !displayValues.length,
+                      })}
                       disabled={isDisabled}
                       aria-readonly={isReadOnly}
                     >
-                      {displayValue || inputText}
+                      <div className='flex flex-wrap items-center gap-x-2 gap-y-2'>
+                        {displayValues.length > 0
+                          ? displayValues.map((val) => (
+                              <Badge key={val.value}>
+                                {val.label}{' '}
+                                <X
+                                  className='h-4 w-4'
+                                  onClick={() => {
+                                    setValue(
+                                      name,
+                                      displayValues
+                                        .filter((v) => v.value !== val.value)
+                                        .map((el) => el.value)
+                                    );
+                                  }}
+                                />
+                              </Badge>
+                            ))
+                          : inputText}
+                      </div>
                       <ChevronsUpDown className='ml-2 h-4 w-4 shrink-0 opacity-50' />
                     </Button>
                   </FormControl>
@@ -116,14 +125,25 @@ export const Combobox = ({
                           value={item.value}
                           key={item.value}
                           onSelect={() => {
-                            setValue(name, item.value);
-                            setOpen(false);
+                            const values = getValues(name);
+                            if (values && values.length > 0) {
+                              if (values.includes(item.value)) {
+                                setValue(
+                                  name,
+                                  (values as string[]).filter((v) => v !== item.value)
+                                );
+                              } else {
+                                setValue(name, [...values, item.value]);
+                              }
+                            } else {
+                              setValue(name, [item.value]);
+                            }
                           }}
                         >
                           <Check
                             className={cn(
                               'mr-2 h-4 w-4',
-                              item.value === field.value ? 'opacity-100' : 'opacity-0'
+                              field.value?.includes(item.value) ? 'opacity-100' : 'opacity-0'
                             )}
                           />
                           {item.label}
