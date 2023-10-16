@@ -106,9 +106,7 @@ export default function Header() {
         <div className='flex items-center'>
           <TooltipProvider>
             {typeof user?.clientId === 'string' && <CompanyAvatar clientId={user.clientId} />}
-            {typeof user?.operatorId === 'string' && (
-              <OperatorAvatar operatorId={user.operatorId} />
-            )}
+            {typeof user?.operatorId === 'string' && <OperatorAvatar operatorId={user.id} />}
             {!user?.clientId && !user?.operatorId && (
               <Tooltip>
                 <TooltipTrigger>
