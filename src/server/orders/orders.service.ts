@@ -13,6 +13,7 @@ import {
   UpdateManyOrdersParams,
   UpdateOrderParams,
 } from '@/lib/server/api/endpoints';
+import { wLogger } from '@/lib/winstornLogger';
 
 import { sendEmail } from '@/server/email/email.service';
 import { getNewOrderTemplate } from '@/server/email/templates/new-order-template';
@@ -94,7 +95,7 @@ export const createOrder = async (input: CreateOrderParams) => {
       },
     });
 
-    logger.warn({
+    const logObj = {
       currentDayDate,
       currentDayAsDate: new Date(currentDayDate),
       currentDayDateIso: new Date(currentDayDate).toISOString(),
@@ -103,7 +104,13 @@ export const createOrder = async (input: CreateOrderParams) => {
       count,
       stack: 'createOrder',
       event: 'order id info',
-    });
+    };
+
+    wLogger.warn({ ...logObj, provider: 'winston' });
+
+    logger.warn({ ...logObj, provider: 'custom' });
+    // eslint-disable-next-line no-console
+    console.log({ ...logObj, provider: 'console' });
 
     const status = input.driverId ? OrderStatus.STARTED : OrderStatus.NEW;
 
