@@ -372,7 +372,19 @@ export function OrderDetailsForm({
               <FormItem>
                 <FormLabel>Czas oczekiwania</FormLabel>
                 <FormControl>
-                  <Input placeholder='Podaj łączny czas oczekiwania' {...field} type='number' />
+                  <Input
+                    placeholder='Podaj łączny czas oczekiwania'
+                    {...field}
+                    type='number'
+                    onChange={(e) => {
+                      const val = e.target.value;
+                      if (val === '') {
+                        field.onChange(undefined);
+                      } else {
+                        field.onChange(Number(val));
+                      }
+                    }}
+                  />
                 </FormControl>
                 <FormMessage />
                 <FormDescription>Czas oczekiwania wyrażony w pełnych godzinach</FormDescription>
@@ -387,7 +399,19 @@ export function OrderDetailsForm({
                 <FormItem>
                   <FormLabel>Km rzeczywiste</FormLabel>
                   <FormControl>
-                    <Input placeholder='Podaj rzeczywiste km' {...field} type='number' />
+                    <Input
+                      placeholder='Podaj rzeczywiste km'
+                      {...field}
+                      type='number'
+                      onChange={(e) => {
+                        const val = e.target.value;
+                        if (val === '') {
+                          field.onChange(undefined);
+                        } else {
+                          field.onChange(Number(val));
+                        }
+                      }}
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -401,7 +425,21 @@ export function OrderDetailsForm({
               <FormItem>
                 <FormLabel>Km dla kierowcy</FormLabel>
                 <FormControl>
-                  <Input placeholder='Podaj km dla kierowcy' {...field} type='number' />
+                  <Input
+                    placeholder='Podaj km dla kierowcy'
+                    {...field}
+                    type='number'
+                    onChange={(e) => {
+                      const val = e.target.value;
+                      if (val === '') {
+                        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                        //   @ts-ignore
+                        return field.onChange('');
+                      } else {
+                        return field.onChange(Number(val));
+                      }
+                    }}
+                  />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -491,6 +529,12 @@ export function OrderDetailsForm({
                       const newVal = e?.target?.value
                         ? e.target.value.replaceAll(',', '').replaceAll(' ', '')
                         : 0;
+
+                      if (newVal === 0) {
+                        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                        //   @ts-ignore
+                        return field.onChange('');
+                      }
 
                       field.onChange(Number(newVal).toLocaleString());
                     }}

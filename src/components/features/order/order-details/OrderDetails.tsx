@@ -27,7 +27,10 @@ export const OrderDetails = () => {
   }
 
   const estimatedKm = (data.estimatedDistance || 0) + (data.wayBackDistance || 0);
-  const kmForDriver = data?.kmForDriver || 0;
+  const kmForDriver = data?.kmForDriver || undefined;
+
+  const stopTime = data.stopTime == 0 ? undefined : data.stopTime;
+  const highwaysCost = data.highwaysCost == '0' ? undefined : data.highwaysCost;
 
   return (
     <OrderDetailsForm
@@ -36,17 +39,18 @@ export const OrderDetails = () => {
         collectionPointId: data.collectionPoint?.id,
         driverId: data.driver?.id,
         kmForDriver,
-        estimatedKm,
+        estimatedKm: estimatedKm == 0 ? undefined : estimatedKm,
         operatorName: data.driver?.operatorName,
         intakeDistance: data.intakeDistance || undefined,
         updatedAt: data.updatedAt as unknown as string,
-        distanceDifference: estimatedKm - kmForDriver,
+        distanceDifference: estimatedKm - (kmForDriver || 0),
         hasHighway: data.hasHighway,
-        highwaysCost: data.highwaysCost || '0',
+        highwaysCost: highwaysCost || undefined,
         clientInvoice: data.clientInvoice || undefined,
         driverInvoice: data.driverInvoice || undefined,
         comment: data.comment || undefined,
         actualKm: data.actualKm || undefined,
+        stopTime: stopTime || undefined,
       }}
       orderId={params?.id}
       collectionPoint={data.collectionPoint as CollectionPoint}

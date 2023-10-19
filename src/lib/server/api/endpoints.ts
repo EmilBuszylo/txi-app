@@ -190,6 +190,7 @@ export const updateOrderSchema = z.object({
     })
     .optional(),
   stopTime: z.any().optional().nullable(),
+  isKmDifferenceAccepted: z.boolean().nullable().optional(),
 });
 
 export interface UpdateOrderParams extends Pick<CreateOrderParams, 'collectionPointsGeoCodes'> {

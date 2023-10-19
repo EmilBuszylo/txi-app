@@ -4,7 +4,7 @@ import { cn } from '@/lib/utils';
 
 import { ActionCellOptions } from '@/components/features/order/table/cells/ActionCell';
 import { statusOnBadgeStyle } from '@/components/features/order/table/cells/StatusCell';
-import { statusLabelPerStatus } from '@/components/features/order/utils';
+import { clientStatusLabelPerStatus } from '@/components/features/order/utils';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import {
@@ -66,7 +66,7 @@ const OrderMobileItem = ({ item, params }: { item: Order; params: GetOrdersParam
           )}
         </div>
         <Badge className={statusOnBadgeStyle[item.status]}>
-          {statusLabelPerStatus[item.status]}
+          {clientStatusLabelPerStatus[item.status]}
         </Badge>
       </MobileItemHeader>
       <MobileItemBody

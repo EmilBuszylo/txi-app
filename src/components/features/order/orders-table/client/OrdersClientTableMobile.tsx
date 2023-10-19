@@ -3,7 +3,7 @@ import { GetOrdersParams } from '@/lib/server/api/endpoints';
 
 import { ActionCellOptions } from '@/components/features/order/table/cells/ActionCell';
 import { statusOnBadgeStyle } from '@/components/features/order/table/cells/StatusCell';
-import { statusLabelPerStatus } from '@/components/features/order/utils';
+import { clientStatusLabelPerStatus } from '@/components/features/order/utils';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import {
@@ -40,8 +40,6 @@ export const OrdersClientTableMobile = ({ items, params }: OrdersTableMobileProp
 const OrderClientMobileItem = ({ item, params }: { item: Order; params: GetOrdersParams }) => {
   const locationsVia = item.locationVia?.map((loc) => loc.address.fullAddress).join(',');
 
-  const status = item.status === 'STARTED' ? 'NEW' : item.status;
-
   return (
     <MobileItem>
       <MobileItemHeader>
@@ -49,7 +47,9 @@ const OrderClientMobileItem = ({ item, params }: { item: Order; params: GetOrder
           <span className='text-sm text-muted-foreground'>Nr zlecenia</span>
           {item.externalId}
         </div>
-        <Badge className={statusOnBadgeStyle[status]}>{statusLabelPerStatus[status]}</Badge>
+        <Badge className={statusOnBadgeStyle[item.status]}>
+          {clientStatusLabelPerStatus[item.status]}
+        </Badge>
       </MobileItemHeader>
       <MobileItemBody
         items={[

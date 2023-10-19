@@ -7,7 +7,7 @@ import { GetOrdersParams } from '@/lib/server/api/endpoints';
 
 import { ActionCell } from '@/components/features/order/table/cells/ActionCell';
 import { statusOnBadgeStyle } from '@/components/features/order/table/cells/StatusCell';
-import { statusLabelPerStatus } from '@/components/features/order/utils';
+import { clientStatusLabelPerStatus } from '@/components/features/order/utils';
 import { Badge } from '@/components/ui/badge';
 import { ColumnWithTooltip } from '@/components/ui/data-table/columns/ColumnWithTooltip';
 import { DataTableColumnSortHeader } from '@/components/ui/data-table/DataTableColumnHeader/DataTableColumnSortHeader';
@@ -37,17 +37,11 @@ export const getClientColumns = ({
       accessorKey: 'status',
       header: 'Status',
       cell: ({ row }) => {
-        const getStatusForClient = () => {
-          if (row.original.status === 'STARTED') {
-            return 'NEW';
-          }
-
-          return row.original.status;
-        };
-
-        const status = getStatusForClient();
-
-        return <Badge className={statusOnBadgeStyle[status]}>{statusLabelPerStatus[status]}</Badge>;
+        return (
+          <Badge className={statusOnBadgeStyle[row.original.status]}>
+            {clientStatusLabelPerStatus[row.original.status]}
+          </Badge>
+        );
       },
     },
     {

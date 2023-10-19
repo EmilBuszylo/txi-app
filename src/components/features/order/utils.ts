@@ -7,3 +7,11 @@ export const statusLabelPerStatus: Record<OrderStatus, string> = {
   COMPLETED: 'Zakończone',
   CANCELLED: 'Anulowane',
 };
+
+export const clientStatusLabelPerStatus: Record<OrderStatus, string> = {
+  NEW: 'Nowe',
+  STARTED: 'Przyjęto',
+  IN_PROGRESS: 'W toku',
+  COMPLETED: 'Zakończone',
+  CANCELLED: 'Anulowane',
+};
