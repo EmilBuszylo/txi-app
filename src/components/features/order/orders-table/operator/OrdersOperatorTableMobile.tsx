@@ -1,6 +1,7 @@
 import { formatDate } from '@/lib/helpers/date';
 import { GetOrdersParams } from '@/lib/server/api/endpoints';
 
+import { OrderLocationsModal } from '@/components/features/order/orders-table/OrderLocationsModal';
 import { ActionCellOptions } from '@/components/features/order/table/cells/ActionCell';
 import { KmDriverCell } from '@/components/features/order/table/cells/KmDriverCell';
 import { Button } from '@/components/ui/button';
@@ -9,7 +10,6 @@ import {
   MobileItemBody,
   MobileItemHeader,
 } from '@/components/ui/data-table/mobile-item/MobileItem';
-import { Dialog, DialogContent, DialogTrigger } from '@/components/ui/dialog';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -36,8 +36,6 @@ export const OrdersOperatorTableMobile = ({ items, params }: OrdersTableMobilePr
 };
 
 const OrderOperatorMobileItem = ({ item, params }: { item: Order; params: GetOrdersParams }) => {
-  const locationsVia = item.locationVia?.map((loc) => loc.address.fullAddress).join(',');
-
   return (
     <MobileItem>
       <MobileItemHeader>
@@ -50,11 +48,8 @@ const OrderOperatorMobileItem = ({ item, params }: { item: Order; params: GetOrd
         items={[
           {
             label: 'Przebieg trasy',
-            element: <OrderWayModal item={item} />,
-            value:
-              item.locationFrom?.address.fullAddress &&
-              `${item?.locationFrom?.address.fullAddress} -> ` + locationsVia &&
-              `${locationsVia} -> ` + item?.locationTo?.address.fullAddress,
+            element: <OrderLocationsModal item={item} />,
+            value: '',
           },
           {
             label: 'Km dla kierowcy',
@@ -84,24 +79,5 @@ const OrderOperatorMobileItem = ({ item, params }: { item: Order; params: GetOrd
         </DropdownMenu>
       </div>
     </MobileItem>
-  );
-};
-
-const OrderWayModal = ({ item }: { item: Order }) => {
-  const locationsVia = item.locationVia?.map((loc) => loc.address.fullAddress).join(',');
-
-  return (
-    <Dialog>
-      <DialogTrigger asChild>
-        <Button size='sm' className='w-fit'>
-          Podgląd
-        </Button>
-      </DialogTrigger>
-      <DialogContent>
-        {item.locationFrom?.address.fullAddress && `${item.locationFrom?.address.fullAddress} -> `}
-        {locationsVia && `${locationsVia} -> `}
-        {item.locationTo?.address.fullAddress}
-      </DialogContent>
-    </Dialog>
   );
 };

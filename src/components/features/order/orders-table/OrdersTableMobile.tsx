@@ -2,6 +2,7 @@ import { formatDate } from '@/lib/helpers/date';
 import { GetOrdersParams } from '@/lib/server/api/endpoints';
 import { cn } from '@/lib/utils';
 
+import { OrderLocationsModal } from '@/components/features/order/orders-table/OrderLocationsModal';
 import { ActionCellOptions } from '@/components/features/order/table/cells/ActionCell';
 import { statusOnBadgeStyle } from '@/components/features/order/table/cells/StatusCell';
 import { clientStatusLabelPerStatus } from '@/components/features/order/utils';
@@ -73,7 +74,7 @@ const OrderMobileItem = ({ item, params }: { item: Order; params: GetOrdersParam
         items={[
           {
             label: 'Operator',
-            value: item.driver?.operatorName || '',
+            value: item.driver?.operatorName || 'brak',
           },
           {
             label: 'Klient',
@@ -83,9 +84,15 @@ const OrderMobileItem = ({ item, params }: { item: Order; params: GetOrdersParam
             label: 'Data realizacji',
             value: formatDate(item.locationFrom?.date, dateFormats.dateWithTimeShort) || '',
           },
+
           {
             label: 'Dodano',
             value: formatDate(item.createdAt, dateFormats.dateWithTimeShort) || '',
+          },
+          {
+            label: 'Przebieg trasy',
+            element: <OrderLocationsModal item={item} />,
+            value: '',
           },
         ]}
       />

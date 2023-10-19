@@ -1,26 +1,12 @@
 import { formatDate } from '@/lib/helpers/date';
+import { removeCountriesFromLocationString } from '@/lib/helpers/locations';
 
 import { dateFormats } from '@/constant/date-formats';
 import { Order } from '@/server/orders/order';
 
-const _removeCountryFromString = (text: string) => {
-  const arrayOfTexts = [
-    ', Polska',
-    ', Czechy',
-    ', Niemcy',
-    ', Słowacja',
-    ', Litwa',
-    ', Białoruś',
-    ', Bialorus',
-  ].sort((a, b) => b.length - a.length);
-  const pattern = new RegExp(arrayOfTexts.join('|'), 'g');
-
-  return text.replaceAll(pattern, '');
-};
-
 export const getNewOrderTemplate = (order: Order) => {
   const orderUrl = `https://www.txi-zlecenia.pl/dashboard/orders/${order.id}/`;
-  let locationFrom = `${_removeCountryFromString(
+  let locationFrom = `${removeCountriesFromLocationString(
     order.locationFrom.address.fullAddress
   )}; ${formatDate(order.locationFrom.date, dateFormats.dateWithTime)}; ${
     order.locationFrom.passenger.name
@@ -41,7 +27,7 @@ export const getNewOrderTemplate = (order: Order) => {
       if (viaPoints !== '') {
         viaPoints += ' -> ';
       }
-      viaPoints += `${_removeCountryFromString(point.address.fullAddress)}; ${formatDate(
+      viaPoints += `${removeCountriesFromLocationString(point.address.fullAddress)}; ${formatDate(
         point.date,
         dateFormats.dateWithTime
       )};`;
@@ -61,7 +47,7 @@ export const getNewOrderTemplate = (order: Order) => {
     }
   }
 
-  const locationTo = `${_removeCountryFromString(
+  const locationTo = `${removeCountriesFromLocationString(
     order.locationTo.address.fullAddress
   )}; ${formatDate(order.locationTo.date, dateFormats.dateWithTime)};`;
 

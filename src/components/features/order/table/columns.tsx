@@ -8,6 +8,7 @@ import { GetOrdersParams } from '@/lib/server/api/endpoints';
 
 import { ActionCell } from '@/components/features/order/table/cells/ActionCell';
 import { InternalIdCell } from '@/components/features/order/table/cells/InternallIdCell';
+import { LocationsCell } from '@/components/features/order/table/cells/LocationsCell';
 import { StatusCell } from '@/components/features/order/table/cells/StatusCell';
 import { Checkbox } from '@/components/ui/checkbox';
 import { ColumnWithTooltip } from '@/components/ui/data-table/columns/ColumnWithTooltip';
@@ -140,19 +141,8 @@ export const getColumns = ({
     },
     {
       accessorKey: 'locationFrom',
-      header: 'Adres odbioru',
-      cell: ({ row }) => (
-        <ColumnWithTooltip
-          trigger={
-            <span className='text-ellipsis text-left line-clamp-1'>
-              {row.original?.locationFrom?.address.fullAddress}
-            </span>
-          }
-          content={
-            <div className='flex flex-wrap'>{row.original?.locationFrom?.address.fullAddress}</div>
-          }
-        />
-      ),
+      header: 'Przebieg trasy',
+      cell: ({ row }) => <LocationsCell row={row} />,
     },
     {
       accessorKey: 'locationFrom.date',

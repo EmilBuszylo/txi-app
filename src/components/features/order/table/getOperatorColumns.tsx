@@ -6,6 +6,7 @@ import { Phone } from 'lucide-react';
 import { GetOrdersParams } from '@/lib/server/api/endpoints';
 
 import { KmDriverCell } from '@/components/features/order/table/cells/KmDriverCell';
+import { LocationsCell } from '@/components/features/order/table/cells/LocationsCell';
 import { ColumnWithTooltip } from '@/components/ui/data-table/columns/ColumnWithTooltip';
 import { DataTableColumnSortHeader } from '@/components/ui/data-table/DataTableColumnHeader/DataTableColumnSortHeader';
 import { SortStateProps } from '@/components/ui/data-table/hooks/useSorts';
@@ -55,32 +56,7 @@ export const getOperatorColumns = ({
     {
       accessorKey: 'locationFrom',
       header: 'Przebieg trasy',
-      cell: ({ row }) => {
-        const locationsVia = row.original.locationVia
-          ?.map((loc) => loc.address.fullAddress)
-          .join(',');
-
-        return (
-          <ColumnWithTooltip
-            trigger={
-              <span className='text-ellipsis text-left line-clamp-1'>
-                {row.original?.locationFrom?.address.fullAddress &&
-                  `${row.original?.locationFrom?.address.fullAddress} -> `}
-                {locationsVia && `${locationsVia} -> `}
-                {row.original?.locationTo?.address.fullAddress}
-              </span>
-            }
-            content={
-              <div className='flex flex-wrap'>
-                {row.original?.locationFrom?.address.fullAddress &&
-                  `${row.original?.locationFrom?.address.fullAddress} -> `}
-                {locationsVia && `${locationsVia} -> `}
-                {row.original?.locationTo?.address.fullAddress}
-              </div>
-            }
-          />
-        );
-      },
+      cell: ({ row }) => <LocationsCell row={row} />,
     },
     {
       accessorKey: 'driver',
