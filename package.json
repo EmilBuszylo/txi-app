@@ -19,7 +19,11 @@
     "postinstall": "prisma generate"
   },
   "prisma": {
-    "seed": "ts-node --compiler-options {\"module\":\"CommonJS\"} prisma/seed-dispatchers.ts"
+    "seed": "ts-node --compiler-options {\"module\":\"CommonJS\"} prisma/seed-clients.ts",
+    "seed:operators": "ts-node --compiler-options {\"module\":\"CommonJS\"} prisma/seed-operators.ts",
+    "seed:passenger-name": "ts-node --compiler-options {\"module\":\"CommonJS\"} prisma/fix-passenger-data.ts",
+    "seed:dispatchers": "ts-node --compiler-options {\"module\":\"CommonJS\"} prisma/seed-dispatchers.ts",
+    "seed-order-passengers": "ts-node --compiler-options {\"module\":\"CommonJS\"} prisma/order-passengers-migration.ts"
   },
   "dependencies": {
     "@googlemaps/google-maps-services-js": "^3.3.34",

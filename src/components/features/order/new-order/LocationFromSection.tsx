@@ -1,11 +1,10 @@
 import { useState } from 'react';
 import { useFormContext } from 'react-hook-form';
-import { PatternFormat } from 'react-number-format';
 
 import { todayWithoutTimeZone } from '@/lib/helpers/date';
 
-import { AdditionalPassengersField } from '@/components/features/order/new-order/AdditionalPassengersField';
 import { useLocationsDateInfo } from '@/components/features/order/new-order/hooks/useLocationsDateInfo';
+import { PassengerField } from '@/components/features/order/new-order/passenger-field/PassengerField';
 import { PlaceDetails, PlacesAutocomplete } from '@/components/features/places/PlacesAutocomplete';
 import {
   Accordion,
@@ -13,14 +12,7 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from '@/components/ui/accordion';
-import {
-  FormControl,
-  FormDescription,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from '@/components/ui/form';
+import { FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 
@@ -113,48 +105,7 @@ export const LocationFromSection = ({
                 description='Celem wyszukania lokalizacji wprowadź kompletny adres lub jego część np. miasto lub ulicę.'
                 defaultMapUrl={defaultMapUrl}
               />
-              <FormField
-                control={control}
-                name='locationFrom.passenger.name'
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Nazwa pasażera</FormLabel>
-                    <FormControl>
-                      <Input placeholder='Wprowadź nazwę pasażera' {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={control}
-                name='locationFrom.passenger.phone'
-                render={({ field }) => {
-                  // eslint-disable-next-line unused-imports/no-unused-vars
-                  const { ref, ...rest } = field;
-                  return (
-                    <FormItem>
-                      <FormLabel>Numer kontaktowy</FormLabel>
-                      <FormControl>
-                        <div>
-                          <PatternFormat
-                            format='+48 ### ### ###'
-                            customInput={Input}
-                            {...rest}
-                            placeholder='Numer kontaktowy pasażera'
-                          />
-                        </div>
-                      </FormControl>
-                      <FormDescription>
-                        Podczas wprowadzania nr kontaktowego, numer zostanie sformatowany
-                        automatycznie.
-                      </FormDescription>
-                      <FormMessage />
-                    </FormItem>
-                  );
-                }}
-              />
-              <AdditionalPassengersField name='locationFrom.passenger.additionalPassengers' />
+              <PassengerField name='locationFrom.passenger.additionalPassengers' />
             </div>
           </AccordionContent>
         </AccordionItem>
