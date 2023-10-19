@@ -94,6 +94,15 @@ export const createOrder = async (input: CreateOrderParams) => {
       },
     });
 
+    logger.info({
+      currentDayDate,
+      nextDay,
+      nowDate: new Date().toISOString(),
+      count,
+      stack: 'createOrder',
+      event: 'order id info',
+    });
+
     const status = input.driverId ? OrderStatus.STARTED : OrderStatus.NEW;
 
     return await prisma.$transaction(async (tx) => {
