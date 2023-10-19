@@ -18,11 +18,17 @@ import {
 import { Input } from '@/components/ui/input';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 
+import { CollectionPoint } from '@/server/collection-points.ts/collectionPoint';
+
 interface EstimatedKmFieldProps {
   defaultCollectionPointsGeo?: Waypoint;
+  collectionPointsData: CollectionPoint[];
 }
 
-export const EstimatedKmField = ({ defaultCollectionPointsGeo }: EstimatedKmFieldProps) => {
+export const EstimatedKmField = ({
+  defaultCollectionPointsGeo,
+  collectionPointsData,
+}: EstimatedKmFieldProps) => {
   const { control, watch, getValues, setValue } = useFormContext<OrderDetailsFormDefaultValues>();
 
   const locationFrom = watch('locationFrom');
@@ -35,8 +41,9 @@ export const EstimatedKmField = ({ defaultCollectionPointsGeo }: EstimatedKmFiel
 
   const calculateEstimatedKm = useCallback(async () => {
     const data = getValues();
-    const collectionPointsGeoData = data?.collectionPointsGeoCodes
-      ? data?.collectionPointsGeoCodes
+
+    const collectionPointsGeoData = data?.collectionPointId
+      ? collectionPointsData.find((el) => el.id === data.collectionPointId)
       : defaultCollectionPointsGeo
       ? defaultCollectionPointsGeo
       : undefined;
@@ -44,10 +51,10 @@ export const EstimatedKmField = ({ defaultCollectionPointsGeo }: EstimatedKmFiel
     const viaPoints = locationVia && locationVia.length > 0 ? [...locationVia] : [];
     try {
       const { estimatedDistance, wayBackDistance } = await calculateDistance({
-        locationFrom,
-        locationTo,
-        locationVia: viaPoints,
         collectionPointsGeoCodes: collectionPointsGeoData,
+        locationFrom,
+        locationVia: viaPoints,
+        locationTo,
       });
 
       setValue(
@@ -60,6 +67,7 @@ export const EstimatedKmField = ({ defaultCollectionPointsGeo }: EstimatedKmFiel
     }
   }, [
     calculateDistance,
+    collectionPointsData,
     defaultCollectionPointsGeo,
     getValues,
     locationFrom,

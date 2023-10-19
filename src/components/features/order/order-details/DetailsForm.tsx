@@ -359,6 +359,7 @@ export function OrderDetailsForm({
           />
           <ShowRouteButton />
           <EstimatedKmField
+            collectionPointsData={collectionPoints?.results || []}
             defaultCollectionPointsGeo={
               collectionPoint?.lat && collectionPoint.lng
                 ? { lat: collectionPoint.lat, lng: collectionPoint.lng }

@@ -198,7 +198,7 @@ export function NewOrderForm() {
           <LocationToSection isClient={isClient} />
           <ShowRouteButton />
           <HideForClientRoleWrapper>
-            <EstimatedKmField />
+            <EstimatedKmField collectionPointsData={collectionPoints?.results || []} />
           </HideForClientRoleWrapper>
           <FormField
             control={form.control}

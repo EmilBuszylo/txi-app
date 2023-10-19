@@ -83,7 +83,7 @@ export const createOrder = async (input: CreateOrderParams) => {
 
     const currentDayDate = new Date().setHours(0, 0, 0, 0);
 
-    const nextDay = subMinutes(addDays(currentDayDate, 1), 1);
+    const nextDay = subMinutes(addDays(currentDayDate, 1), 0);
 
     const count = await prisma.order.count({
       where: {
@@ -94,8 +94,10 @@ export const createOrder = async (input: CreateOrderParams) => {
       },
     });
 
-    logger.info({
+    logger.warn({
       currentDayDate,
+      currentDayAsDate: new Date(currentDayDate),
+      currentDayDateIso: new Date(currentDayDate).toISOString(),
       nextDay,
       nowDate: new Date().toISOString(),
       count,
