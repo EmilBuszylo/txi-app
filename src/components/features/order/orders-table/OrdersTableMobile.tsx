@@ -3,6 +3,7 @@ import { GetOrdersParams } from '@/lib/server/api/endpoints';
 import { cn } from '@/lib/utils';
 
 import { OrderLocationsModal } from '@/components/features/order/orders-table/OrderLocationsModal';
+import { getRealizationDate } from '@/components/features/order/orders-table/utils/getRealizationDate';
 import { ActionCellOptions } from '@/components/features/order/table/cells/ActionCell';
 import { statusOnBadgeStyle } from '@/components/features/order/table/cells/StatusCell';
 import { clientStatusLabelPerStatus } from '@/components/features/order/utils';
@@ -82,7 +83,7 @@ const OrderMobileItem = ({ item, params }: { item: Order; params: GetOrdersParam
           },
           {
             label: 'Data realizacji',
-            value: formatDate(item.locationFrom?.date, dateFormats.dateWithTimeShort) || '',
+            value: getRealizationDate(item),
           },
 
           {

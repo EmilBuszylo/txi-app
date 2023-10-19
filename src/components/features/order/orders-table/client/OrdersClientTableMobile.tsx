@@ -1,6 +1,8 @@
 import { formatDate } from '@/lib/helpers/date';
 import { GetOrdersParams } from '@/lib/server/api/endpoints';
 
+import { OrderLocationsModal } from '@/components/features/order/orders-table/OrderLocationsModal';
+import { getRealizationDate } from '@/components/features/order/orders-table/utils/getRealizationDate';
 import { ActionCellOptions } from '@/components/features/order/table/cells/ActionCell';
 import { statusOnBadgeStyle } from '@/components/features/order/table/cells/StatusCell';
 import { clientStatusLabelPerStatus } from '@/components/features/order/utils';
@@ -11,7 +13,6 @@ import {
   MobileItemBody,
   MobileItemHeader,
 } from '@/components/ui/data-table/mobile-item/MobileItem';
-import { Dialog, DialogContent, DialogTrigger } from '@/components/ui/dialog';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -38,8 +39,6 @@ export const OrdersClientTableMobile = ({ items, params }: OrdersTableMobileProp
 };
 
 const OrderClientMobileItem = ({ item, params }: { item: Order; params: GetOrdersParams }) => {
-  const locationsVia = item.locationVia?.map((loc) => loc.address.fullAddress).join(',');
-
   return (
     <MobileItem>
       <MobileItemHeader>
@@ -55,11 +54,8 @@ const OrderClientMobileItem = ({ item, params }: { item: Order; params: GetOrder
         items={[
           {
             label: 'Przebieg trasy',
-            element: <OrderWayModal item={item} />,
-            value:
-              item.locationFrom?.address.fullAddress &&
-              `${item?.locationFrom?.address.fullAddress} -> ` + locationsVia &&
-              `${locationsVia} -> ` + item?.locationTo?.address.fullAddress,
+            element: <OrderLocationsModal item={item} />,
+            value: '',
           },
           {
             label: 'Nr faktury',
@@ -67,7 +63,7 @@ const OrderClientMobileItem = ({ item, params }: { item: Order; params: GetOrder
           },
           {
             label: 'Data realizacji',
-            value: formatDate(item.locationFrom?.date, dateFormats.dateWithTimeShort) || '',
+            value: getRealizationDate(item),
           },
           {
             label: 'Dodano',
@@ -88,24 +84,5 @@ const OrderClientMobileItem = ({ item, params }: { item: Order; params: GetOrder
         </DropdownMenu>
       </div>
     </MobileItem>
-  );
-};
-
-const OrderWayModal = ({ item }: { item: Order }) => {
-  const locationsVia = item.locationVia?.map((loc) => loc.address.fullAddress).join(',');
-
-  return (
-    <Dialog>
-      <DialogTrigger asChild>
-        <Button size='sm' className='w-fit'>
-          Podgląd
-        </Button>
-      </DialogTrigger>
-      <DialogContent>
-        {item.locationFrom?.address.fullAddress && `${item.locationFrom?.address.fullAddress} -> `}
-        {locationsVia && `${locationsVia} -> `}
-        {item.locationTo?.address.fullAddress}
-      </DialogContent>
-    </Dialog>
   );
 };

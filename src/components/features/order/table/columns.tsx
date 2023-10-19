@@ -3,9 +3,9 @@
 import { ColumnDef } from '@tanstack/table-core';
 import { Phone } from 'lucide-react';
 
-import { formatDate } from '@/lib/helpers/date';
 import { GetOrdersParams } from '@/lib/server/api/endpoints';
 
+import { getRealizationDate } from '@/components/features/order/orders-table/utils/getRealizationDate';
 import { ActionCell } from '@/components/features/order/table/cells/ActionCell';
 import { InternalIdCell } from '@/components/features/order/table/cells/InternallIdCell';
 import { LocationsCell } from '@/components/features/order/table/cells/LocationsCell';
@@ -16,7 +16,6 @@ import { DataTableColumnSortHeader } from '@/components/ui/data-table/DataTableC
 import { SortStateProps } from '@/components/ui/data-table/hooks/useSorts';
 import { RelativeDate } from '@/components/ui/date/RelativeDate';
 
-import { dateFormats } from '@/constant/date-formats';
 import { Order } from '@/server/orders/order';
 
 interface GetColumnsProps {
@@ -147,18 +146,20 @@ export const getColumns = ({
     {
       accessorKey: 'locationFrom.date',
       header: 'Data realizacji',
-      cell: ({ row }) => (
-        <ColumnWithTooltip
-          trigger={
-            <span className='min-w-[150px] text-ellipsis text-left line-clamp-1'>
-              {formatDate(row.original.locationFrom?.date, dateFormats.dateWithTimeFull)}
-            </span>
-          }
-          content={
-            <div>{formatDate(row.original.locationFrom?.date, dateFormats.dateWithTimeFull)}</div>
-          }
-        />
-      ),
+      cell: ({ row }) => {
+        const realizationDate = getRealizationDate(row.original);
+
+        return (
+          <ColumnWithTooltip
+            trigger={
+              <span className='min-w-[150px] text-ellipsis text-left line-clamp-1'>
+                {realizationDate}
+              </span>
+            }
+            content={<div>{realizationDate}</div>}
+          />
+        );
+      },
     },
     {
       accessorKey: 'clientInvoice',
