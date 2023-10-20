@@ -13,7 +13,6 @@ import {
   UpdateManyOrdersParams,
   UpdateOrderParams,
 } from '@/lib/server/api/endpoints';
-import { wLogger } from '@/lib/winstornLogger';
 
 import { sendEmail } from '@/server/email/email.service';
 import { getNewOrderTemplate } from '@/server/email/templates/new-order-template';
@@ -105,8 +104,6 @@ export const createOrder = async (input: CreateOrderParams) => {
       stack: 'createOrder',
       event: 'order id info',
     };
-
-    wLogger.warn({ ...logObj, provider: 'winston' });
 
     logger.warn({ ...logObj, provider: 'custom' });
     // eslint-disable-next-line no-console
