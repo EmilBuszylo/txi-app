@@ -1,6 +1,7 @@
 'use client';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useRouter } from 'next/navigation';
+import { useSearchParams } from 'next/navigation';
 import React, { useEffect, useMemo, useState } from 'react';
 import { FieldPath, useForm } from 'react-hook-form';
 
@@ -80,6 +81,8 @@ export function OrderDetailsForm({
     defaultValues: defaultValues,
   });
   const router = useRouter();
+  const searchParams = useSearchParams();
+
   //  responsible for locations date field validation
   const { setLocationDateError } = useValidateLocationDate(form, false);
 
@@ -132,7 +135,10 @@ export function OrderDetailsForm({
             : undefined,
       });
 
-      router.push(Routes.ORDERS);
+      const currentQueryParams =
+        '?' + new URLSearchParams(Array.from(searchParams.entries())).toString();
+
+      router.push(`${Routes.ORDERS}${currentQueryParams}`);
     } catch (error) {
       const { isDbError, targets, message } = databaseErrorHandler(error as FetchError);
 

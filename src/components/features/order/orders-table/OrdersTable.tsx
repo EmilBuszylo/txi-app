@@ -1,6 +1,7 @@
 'use client';
 
 import { ArrowDownIcon, ArrowUpDown, ArrowUpIcon } from 'lucide-react';
+import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { useMemo, useState } from 'react';
 
 import { useClients } from '@/lib/hooks/data/useClients';
@@ -31,11 +32,15 @@ const initialPaginationMeta = {
 const DEFAULT_LIMIT = 25;
 
 export default function OrdersTable() {
+  const searchParams = useSearchParams();
+  const router = useRouter();
+  const pathname = usePathname();
+
   const { columnFilters, clearFilters, updateFilter, deleteFilter, filterParameters } =
     useFilters();
   const { isDispatcher } = UseIsDispatcherRole();
   const { sortParameters, updateSort } = useSorts();
-  const [page, setPage] = useState(1);
+  const [page, setPage] = useState(Number(searchParams.get('page')) || 1);
   const [limit, setLimit] = useState(DEFAULT_LIMIT);
   const [noLimit, setNoLimit] = useState(false);
   const { data, isLoading, isFetching, error, isSuccess } = useOrders({
@@ -70,6 +75,14 @@ export default function OrdersTable() {
     );
   }, [drivers?.results]);
 
+  // TODO refactor - make this solution more flexible and ready to take other query prams
+  const setPageHandler = (p?: number | null) => {
+    if (p) {
+      router.push(`${pathname}?page=${p}`);
+    }
+    setPage((prev) => p || prev);
+  };
+
   return (
     <div>
       {error ? (
@@ -95,9 +108,9 @@ export default function OrdersTable() {
                   <Pagination
                     currentPage={page}
                     pagesCount={data?.meta.pageCount || initialPaginationMeta.pageCount}
-                    changePage={(page) => setPage(page)}
-                    nextPage={() => setPage((prev) => data?.meta.nextPage || prev)}
-                    previousPage={() => setPage((prev) => data?.meta.prevPage || prev)}
+                    changePage={(page) => setPageHandler(page)}
+                    nextPage={() => setPageHandler(data?.meta.nextPage)}
+                    previousPage={() => setPageHandler(data?.meta.prevPage)}
                     limit={limit}
                     setLimit={setLimit}
                     isNoLimit={noLimit}
@@ -178,9 +191,9 @@ export default function OrdersTable() {
                 <Pagination
                   currentPage={page}
                   pagesCount={data?.meta.pageCount || initialPaginationMeta.pageCount}
-                  changePage={(page) => setPage(page)}
-                  nextPage={() => setPage((prev) => data?.meta.nextPage || prev)}
-                  previousPage={() => setPage((prev) => data?.meta.prevPage || prev)}
+                  changePage={(page) => setPageHandler(page)}
+                  nextPage={() => setPageHandler(data?.meta.nextPage)}
+                  previousPage={() => setPageHandler(data?.meta.prevPage)}
                   limit={limit}
                   setLimit={setLimit}
                   isNoLimit={noLimit}

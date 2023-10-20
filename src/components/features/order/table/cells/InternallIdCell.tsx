@@ -1,5 +1,6 @@
 import { Row } from '@tanstack/table-core';
 
+import { GetOrdersParams } from '@/lib/server/api/endpoints';
 import { cn } from '@/lib/utils';
 
 import { Badge } from '@/components/ui/badge';
@@ -9,7 +10,7 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/comp
 import { Routes } from '@/constant/routes';
 import { Order } from '@/server/orders/order';
 
-export const InternalIdCell = ({ row }: { row: Row<Order> }) => {
+export const InternalIdCell = ({ row, params }: { row: Row<Order>; params: GetOrdersParams }) => {
   const estimatedKm = (row.original.estimatedDistance || 0) + (row.original.wayBackDistance || 0);
   const diffBetweenDriverKmAndEstimated =
     (row.original.kmForDriver || 0) - estimatedKm > 20 ||
@@ -24,7 +25,12 @@ export const InternalIdCell = ({ row }: { row: Row<Order> }) => {
   return (
     <div className='flex flex-col gap-y-1'>
       <StyledLink
-        href={`${Routes.ORDERS}/${row.original.id}`}
+        href={{
+          pathname: `${Routes.ORDERS}/${row.original.id}`,
+          query: {
+            page: params.page || 1,
+          },
+        }}
         className={cn({
           'text-destructive': isAlerted,
         })}

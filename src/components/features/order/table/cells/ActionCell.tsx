@@ -34,7 +34,7 @@ export const ActionCellOptions = ({ id, params }: { id: string; params: GetOrder
   return (
     <>
       {allowDetailsView && (
-        <DropdownMenuItem onClick={() => router.push(`${Routes.ORDERS}/${id}`)}>
+        <DropdownMenuItem onClick={() => router.push(`${Routes.ORDERS}/${id}?page=${params.page}`)}>
           Szczegóły/edycja
         </DropdownMenuItem>
       )}

@@ -61,7 +61,7 @@ export const getColumns = ({
     {
       accessorKey: 'internalId',
       header: 'Nr TXI',
-      cell: ({ row }) => <InternalIdCell row={row} />,
+      cell: ({ row }) => <InternalIdCell row={row} params={params} />,
     },
     {
       accessorKey: 'clientName',
