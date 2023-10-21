@@ -9,6 +9,7 @@ import { getRealizationDate } from '@/components/features/order/orders-table/uti
 import { ActionCell } from '@/components/features/order/table/cells/ActionCell';
 import { InternalIdCell } from '@/components/features/order/table/cells/InternallIdCell';
 import { LocationsCell } from '@/components/features/order/table/cells/LocationsCell';
+import { PassengersListCell } from '@/components/features/order/table/cells/PassengersListCell';
 import { StatusCell } from '@/components/features/order/table/cells/StatusCell';
 import { Checkbox } from '@/components/ui/checkbox';
 import { ColumnWithTooltip } from '@/components/ui/data-table/columns/ColumnWithTooltip';
@@ -119,24 +120,8 @@ export const getColumns = ({
     },
     {
       accessorKey: 'collectionPoint',
-      header: 'Punkt zborny',
-      cell: ({ row }) => (
-        <ColumnWithTooltip
-          trigger={
-            <span className='text-ellipsis text-left line-clamp-1'>
-              {row.original?.collectionPoint?.name}
-            </span>
-          }
-          content={
-            <div className='flex flex-col'>
-              <span className='flex flex-wrap gap-x-1'>{row.original?.collectionPoint?.name}</span>
-              <span className='flex flex-wrap gap-x-1'>
-                {row.original.collectionPoint?.fullAddress}
-              </span>
-            </div>
-          }
-        />
-      ),
+      header: 'Pasażerowie',
+      cell: ({ row }) => <PassengersListCell row={row} />,
     },
     {
       accessorKey: 'locationFrom',

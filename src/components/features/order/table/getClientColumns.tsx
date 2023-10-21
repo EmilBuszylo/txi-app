@@ -7,6 +7,7 @@ import { GetOrdersParams } from '@/lib/server/api/endpoints';
 import { getRealizationDate } from '@/components/features/order/orders-table/utils/getRealizationDate';
 import { ActionCell } from '@/components/features/order/table/cells/ActionCell';
 import { LocationsCell } from '@/components/features/order/table/cells/LocationsCell';
+import { PassengersListCell } from '@/components/features/order/table/cells/PassengersListCell';
 import { statusOnBadgeStyle } from '@/components/features/order/table/cells/StatusCell';
 import { clientStatusLabelPerStatus } from '@/components/features/order/utils';
 import { Badge } from '@/components/ui/badge';
@@ -70,6 +71,11 @@ export const getClientColumns = ({
           />
         );
       },
+    },
+    {
+      accessorKey: 'collectionPoint',
+      header: 'Pasażerowie',
+      cell: ({ row }) => <PassengersListCell row={row} />,
     },
     {
       accessorKey: 'clientInvoice',

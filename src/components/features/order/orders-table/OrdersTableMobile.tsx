@@ -3,6 +3,7 @@ import { GetOrdersParams } from '@/lib/server/api/endpoints';
 import { cn } from '@/lib/utils';
 
 import { OrderLocationsModal } from '@/components/features/order/orders-table/OrderLocationsModal';
+import { OrderPassengersModal } from '@/components/features/order/orders-table/OrderPassengersModal';
 import { getRealizationDate } from '@/components/features/order/orders-table/utils/getRealizationDate';
 import { ActionCellOptions } from '@/components/features/order/table/cells/ActionCell';
 import { statusOnBadgeStyle } from '@/components/features/order/table/cells/StatusCell';
@@ -93,6 +94,11 @@ const OrderMobileItem = ({ item, params }: { item: Order; params: GetOrdersParam
           {
             label: 'Przebieg trasy',
             element: <OrderLocationsModal item={item} />,
+            value: '',
+          },
+          {
+            label: 'Pasażerowie',
+            element: <OrderPassengersModal item={item} />,
             value: '',
           },
         ]}
