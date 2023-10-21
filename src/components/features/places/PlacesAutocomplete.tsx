@@ -40,6 +40,7 @@ export interface PlaceDetails {
   };
   url: string;
   formatted_address: string;
+  name: string;
 }
 
 export interface PlacePredictionItem {
@@ -72,6 +73,16 @@ export const PlacesAutocomplete = ({
       componentRestrictions: { country: ['de', 'pl', 'cz', 'ua', 'by'] },
     },
   });
+
+  const handleFullAddress = (d: PlaceDetails) => {
+    if (d.formatted_address.includes('Unnamed Road')) {
+      return `${d.name}, ${
+        d.address_components.find((place) => place.types.includes('postal_code'))?.short_name
+      }`;
+    }
+
+    return d.formatted_address;
+  };
 
   return (
     <div className='relative'>
@@ -118,7 +129,7 @@ export const PlacesAutocomplete = ({
                             { placeId: place.place_id },
                             (details: PlaceDetails) => {
                               onSelect(details);
-                              setValue(name, details.formatted_address);
+                              setValue(name, handleFullAddress(details));
                               setMapUrl(details.url);
                             }
                           );
