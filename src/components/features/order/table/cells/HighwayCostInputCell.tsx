@@ -8,37 +8,48 @@ import { Input } from '@/components/ui/input';
 
 import { Order } from '@/server/orders/order';
 
-export const KmDriverCell = ({
+export const HighwayCostInputCell = ({
   id,
-  kmForDriver,
+  highwaysCost,
 }: {
   id: Order['id'];
-  kmForDriver: Order['kmForDriver'];
+  highwaysCost: Order['highwaysCost'];
 }) => {
-  const [value, setValue] = useState(kmForDriver || undefined);
+  const [value, setValue] = useState(highwaysCost || undefined);
 
   const { mutateAsync: updateOrders, isLoading } = useUpdateManyOrdersWithoutCache([id]);
 
   const onChange = (e: ChangeEvent<HTMLInputElement>) => {
-    const val = e.target.value;
-    if (val === '') {
-      return setValue(undefined);
+    const newVal = e?.target?.value ? e.target.value.replaceAll(',', '').replaceAll(' ', '') : 0;
+
+    if (newVal === 0) {
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      //   @ts-ignore
+      return setValue('');
     }
 
-    return setValue(Number(val));
+    return setValue(Number(newVal).toLocaleString());
   };
 
   const onClickHandler = async () => {
-    await updateOrders({ kmForDriver: value });
+    await updateOrders({ highwaysCost: value });
   };
 
   return (
     <div className='flex min-w-[215px] items-center justify-center gap-x-1'>
       <Input
-        id='kmForDriver'
-        name='kmForDriver'
-        type='number'
-        placeholder='Uzupełnij przejechane km'
+        id='highwaysCost'
+        name='highwaysCost'
+        type='text'
+        onKeyDown={(event) => {
+          if (
+            !/[0-9]/.test(event.key) &&
+            !['ArrowLeft', 'ArrowRight', 'Backspace'].includes(event.key)
+          ) {
+            event.preventDefault();
+          }
+        }}
+        placeholder='Podaj koszt płatnych odcinków'
         value={value}
         onChange={onChange}
         className={cn({

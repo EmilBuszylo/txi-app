@@ -8,14 +8,14 @@ import { Input } from '@/components/ui/input';
 
 import { Order } from '@/server/orders/order';
 
-export const KmDriverCell = ({
+export const StopTimeInputCell = ({
   id,
-  kmForDriver,
+  stopTime,
 }: {
   id: Order['id'];
-  kmForDriver: Order['kmForDriver'];
+  stopTime: Order['stopTime'];
 }) => {
-  const [value, setValue] = useState(kmForDriver || undefined);
+  const [value, setValue] = useState(stopTime || undefined);
 
   const { mutateAsync: updateOrders, isLoading } = useUpdateManyOrdersWithoutCache([id]);
 
@@ -29,16 +29,16 @@ export const KmDriverCell = ({
   };
 
   const onClickHandler = async () => {
-    await updateOrders({ kmForDriver: value });
+    await updateOrders({ stopTime: value });
   };
 
   return (
     <div className='flex min-w-[215px] items-center justify-center gap-x-1'>
       <Input
-        id='kmForDriver'
-        name='kmForDriver'
+        id='stopTime'
+        name='stopTime'
         type='number'
-        placeholder='Uzupełnij przejechane km'
+        placeholder='Podaj łączny czas oczekiwania'
         value={value}
         onChange={onChange}
         className={cn({

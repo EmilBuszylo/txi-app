@@ -231,8 +231,6 @@ export interface UpdateManyOrdersParams
     | 'collectionPointsGeoCodes'
     | 'clientId'
     | 'externalId'
-    | 'highwaysCost'
-    | 'stopTime'
   > {
   ids: string[];
 }

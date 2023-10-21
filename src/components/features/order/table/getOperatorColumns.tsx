@@ -5,8 +5,10 @@ import { Phone } from 'lucide-react';
 
 import { GetOrdersParams } from '@/lib/server/api/endpoints';
 
+import { HighwayCostInputCell } from '@/components/features/order/table/cells/HighwayCostInputCell';
 import { KmDriverCell } from '@/components/features/order/table/cells/KmDriverCell';
 import { LocationsCell } from '@/components/features/order/table/cells/LocationsCell';
+import { StopTimeInputCell } from '@/components/features/order/table/cells/StopTimeInputCell';
 import { ColumnWithTooltip } from '@/components/ui/data-table/columns/ColumnWithTooltip';
 import { DataTableColumnSortHeader } from '@/components/ui/data-table/DataTableColumnHeader/DataTableColumnSortHeader';
 import { SortStateProps } from '@/components/ui/data-table/hooks/useSorts';
@@ -20,7 +22,6 @@ interface GetColumnsProps {
   sortParameters?: SortStateProps;
 }
 export const getOperatorColumns = ({
-  params,
   sortParameters,
   updateSort,
 }: GetColumnsProps): ColumnDef<Order>[] => {
@@ -50,7 +51,21 @@ export const getOperatorColumns = ({
       accessorKey: 'kmForDriver',
       header: 'Przejechane km',
       cell: ({ row }) => (
-        <KmDriverCell id={row.original.id} kmForDriver={row.original.kmForDriver} params={params} />
+        <KmDriverCell id={row.original.id} kmForDriver={row.original.kmForDriver} />
+      ),
+    },
+    {
+      accessorKey: 'stopTime',
+      header: 'Czas oczekiwania',
+      cell: ({ row }) => (
+        <StopTimeInputCell id={row.original.id} stopTime={row.original.stopTime} />
+      ),
+    },
+    {
+      accessorKey: 'highwaysCost',
+      header: 'Koszt autostrad',
+      cell: ({ row }) => (
+        <HighwayCostInputCell id={row.original.id} highwaysCost={row.original.highwaysCost} />
       ),
     },
     {

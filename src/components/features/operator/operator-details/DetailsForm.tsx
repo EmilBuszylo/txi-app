@@ -94,7 +94,7 @@ export function DetailsForm({ defaultValues, id }: NewOperatorProps) {
               <FormItem>
                 <FormLabel>Hasło</FormLabel>
                 <FormControl>
-                  <Input placeholder='Hasło kierwocy' {...field} type='password' />
+                  <Input placeholder='Hasło operatora' {...field} type='password' />
                 </FormControl>
                 <FormDescription>
                   Hasło umożliwi bezpieczne zalogowanie się kierowcy do systemu.
