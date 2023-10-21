@@ -53,7 +53,7 @@ const OrderOperatorMobileItem = ({ item, params }: { item: Order; params: GetOrd
           },
           {
             label: 'Km dla kierowcy',
-            element: <KmDriverCell id={item.id} kmForDriver={item.kmForDriver} params={params} />,
+            element: <KmDriverCell id={item.id} kmForDriver={item.kmForDriver} />,
             value: item.kmForDriver || 0,
           },
           {
