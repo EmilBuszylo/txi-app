@@ -13,6 +13,7 @@ async function main() {
     const locationFromAdditionals = locationFrom?.passenger?.additionalPassengers?.length
       ? locationFrom.passenger.additionalPassengers.map((el) => ({
           name: el.name,
+          type: 'custom',
         }))
       : [];
 
@@ -24,6 +25,7 @@ async function main() {
               {
                 name: locationFrom.passenger.name,
                 phone: locationFrom.passenger.phone,
+                type: 'custom',
               },
               ...locationFromAdditionals,
             ],
@@ -36,6 +38,7 @@ async function main() {
           const locationViaAdditionals = el?.passenger?.additionalPassengers?.length
             ? el.passenger.additionalPassengers.map((el) => ({
                 name: el.name,
+                type: 'custom',
               }))
             : [];
 
@@ -43,6 +46,7 @@ async function main() {
             ? {
                 name: el.passenger.name,
                 phone: el.passenger?.phone,
+                type: 'custom',
               }
             : {};
 

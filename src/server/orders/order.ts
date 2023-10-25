@@ -59,6 +59,8 @@ export const locationFromSchema = z.object({
     url: z.string(),
   }),
   passenger: z.object({
+    name: z.any().optional().nullable(),
+    phone: z.any().optional().nullable(),
     additionalPassengers: z
       .array(
         z.object({
@@ -77,6 +79,8 @@ export const locationFromSchema = z.object({
 export const locationViaPointSchema = locationFromSchema.extend({
   passenger: z
     .object({
+      name: z.any().optional().nullable(),
+      phone: z.any().optional().nullable(),
       additionalPassengers: z
         .array(
           z.object({
