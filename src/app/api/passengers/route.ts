@@ -28,6 +28,7 @@ export async function GET(req: NextRequest) {
       limit: Number(urlParams.searchParams.get('limit')) || 1,
       column: urlParams.searchParams.get('column') || undefined,
       sort: (urlParams.searchParams.get('sort') as 'asc' | 'desc') || undefined,
+      clientId: urlParams.searchParams.get('clientId') || undefined,
     });
 
     return NextResponse.json(clients);

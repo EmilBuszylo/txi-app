@@ -2,7 +2,7 @@
 
 import { useMemo, useState } from 'react';
 
-import { usePassangers } from '@/lib/hooks/data/usePassangers';
+import { usePassengers } from '@/lib/hooks/data/usePassengers';
 
 import { getColumns } from '@/components/features/passenger/passengers-table/getColumns';
 import { DataTable } from '@/components/ui/data-table/data-table';
@@ -22,7 +22,7 @@ export const PassengersTable = () => {
   const [limit, setLimit] = useState(DEFAULT_LIMIT);
   const { sortParameters, updateSort } = useSorts();
 
-  const { data, isLoading, isFetching, error, isSuccess } = usePassangers({
+  const { data, isLoading, isFetching, error, isSuccess } = usePassengers({
     page,
     limit,
     ...sortParameters,

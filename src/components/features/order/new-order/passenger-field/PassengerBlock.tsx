@@ -2,7 +2,6 @@ import { Trash2 } from 'lucide-react';
 import { UseFieldArrayRemove, useFormContext } from 'react-hook-form';
 import { PatternFormat } from 'react-number-format';
 
-import { usePassangers } from '@/lib/hooks/data/usePassangers';
 import { cn } from '@/lib/utils';
 
 import { PassengerCombobox } from '@/components/features/order/new-order/passenger-field/PassengerCombobox';
@@ -21,20 +20,11 @@ interface AutoPassengerBlockProps {
   i: number;
   name: string;
   remove: UseFieldArrayRemove;
+  passengers: { value: string; label: string; phones: string[] }[];
 }
 
-export const PassengerBlock = ({ i, name, remove }: AutoPassengerBlockProps) => {
+export const PassengerBlock = ({ i, name, remove, passengers }: AutoPassengerBlockProps) => {
   const { control, setValue, getValues } = useFormContext();
-
-  const { data: passengers } = usePassangers({ page: 1, limit: 1000 });
-
-  const passengersData = passengers?.results
-    ? passengers.results.map((el) => ({
-        value: el.id,
-        label: el.name,
-        phones: el.phones,
-      }))
-    : [];
 
   const passengerType = getValues(`${name}.${i}.type`) || 'custom';
 
@@ -61,7 +51,7 @@ export const PassengerBlock = ({ i, name, remove }: AutoPassengerBlockProps) => 
                       placeholder='Wprowadź nazwę pasażera'
                       {...field}
                       label={`Pasażer ${i + 1}`}
-                      items={passengersData}
+                      items={passengers}
                       setPhones={setPhones}
                     />
                     <Button variant='ghost' onClick={() => remove(i)}>
