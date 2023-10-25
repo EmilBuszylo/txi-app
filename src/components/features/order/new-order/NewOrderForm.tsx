@@ -53,7 +53,6 @@ export function NewOrderForm() {
       locationFrom: {
         date: '',
         passenger: {
-          name: undefined,
           additionalPassengers: [],
         },
       },

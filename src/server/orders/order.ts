@@ -59,13 +59,12 @@ export const locationFromSchema = z.object({
     url: z.string(),
   }),
   passenger: z.object({
-    name: z.string(),
-    phone: z.string().min(1, 'Numer kontaktowy jest wymagany').optional(),
     additionalPassengers: z
       .array(
         z.object({
           name: z.string().optional(),
           phone: z.string().min(1, 'Numer kontaktowy jest wymagany').optional(),
+          type: z.string().optional(),
         })
       )
       .min(1)
@@ -78,13 +77,12 @@ export const locationFromSchema = z.object({
 export const locationViaPointSchema = locationFromSchema.extend({
   passenger: z
     .object({
-      name: z.string().optional(),
-      phone: z.string().min(1, 'Numer kontaktowy jest wymagany').optional(),
       additionalPassengers: z
         .array(
           z.object({
             name: z.string().optional(),
             phone: z.string().min(1, 'Numer kontaktowy jest wymagany').optional(),
+            type: z.string().optional(),
           })
         )
         .max(3)

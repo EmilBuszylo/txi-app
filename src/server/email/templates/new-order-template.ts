@@ -8,15 +8,19 @@ export const getNewOrderTemplate = (order: Order) => {
   const orderUrl = `https://www.txi-zlecenia.pl/dashboard/orders/${order.id}/`;
   let locationFrom = `${removeCountriesFromLocationString(
     order.locationFrom.address.fullAddress
-  )}; ${formatDate(order.locationFrom.date, dateFormats.dateWithTime)}; ${
-    order.locationFrom.passenger.name
-  } ${order.locationFrom.passenger.phone};`;
+  )};`;
+
+  if (order.locationFrom?.date) {
+    locationFrom += ` ${formatDate(order.locationFrom.date, dateFormats.dateWithTime)};`;
+  }
+
   if (
     order.locationFrom.passenger?.additionalPassengers &&
     order.locationFrom.passenger.additionalPassengers.length > 0
   ) {
     for (const p of order.locationFrom.passenger.additionalPassengers) {
       locationFrom += ` ${p.name};`;
+      locationFrom += p.phone ? ` ${p.phone}` : '';
     }
   }
 
@@ -27,13 +31,10 @@ export const getNewOrderTemplate = (order: Order) => {
       if (viaPoints !== '') {
         viaPoints += ' -> ';
       }
-      viaPoints += `${removeCountriesFromLocationString(point.address.fullAddress)}; ${formatDate(
-        point.date,
-        dateFormats.dateWithTime
-      )};`;
+      viaPoints += `${removeCountriesFromLocationString(point.address.fullAddress)};`;
 
-      if (point?.passenger?.name) {
-        viaPoints += ` ${point?.passenger.name} ${point?.passenger?.phone || ''};`;
+      if (point.date) {
+        viaPoints += ` ${formatDate(point.date, dateFormats.dateWithTime)};`;
       }
 
       if (
@@ -42,14 +43,17 @@ export const getNewOrderTemplate = (order: Order) => {
       ) {
         for (const p of point.passenger.additionalPassengers) {
           viaPoints += ` ${p.name};`;
+          viaPoints += p.phone ? ` ${p.phone}` : '';
         }
       }
     }
   }
 
-  const locationTo = `${removeCountriesFromLocationString(
-    order.locationTo.address.fullAddress
-  )}; ${formatDate(order.locationTo.date, dateFormats.dateWithTime)};`;
+  let locationTo = `${removeCountriesFromLocationString(order.locationTo.address.fullAddress)};`;
+
+  if (order.locationTo.date) {
+    locationTo += ` ${formatDate(order.locationTo.date, dateFormats.dateWithTime)};`;
+  }
 
   const showCommentBlock = order.comment ? 'block' : 'none';
   const showLocationViaPoints =

@@ -21,11 +21,10 @@ interface AutoPassengerBlockProps {
   i: number;
   name: string;
   remove: UseFieldArrayRemove;
-  autoBlock: boolean;
 }
 
-export const PassengerBlock = ({ i, name, remove, autoBlock }: AutoPassengerBlockProps) => {
-  const { control, setValue } = useFormContext();
+export const PassengerBlock = ({ i, name, remove }: AutoPassengerBlockProps) => {
+  const { control, setValue, getValues } = useFormContext();
 
   const { data: passengers } = usePassangers({ page: 1, limit: 1000 });
 
@@ -37,7 +36,9 @@ export const PassengerBlock = ({ i, name, remove, autoBlock }: AutoPassengerBloc
       }))
     : [];
 
-  if (autoBlock) {
+  const passengerType = getValues(`${name}.${i}.type`) || 'custom';
+
+  if (passengerType === 'list') {
     return (
       <div className='flex flex-col gap-y-2'>
         <FormField
@@ -55,7 +56,7 @@ export const PassengerBlock = ({ i, name, remove, autoBlock }: AutoPassengerBloc
                   dane pasażera ręcznie.
                 </FormDescription>
                 <FormControl>
-                  <div className='flex items-center justify-between gap-x-2'>
+                  <div className='flex items-end justify-between gap-x-2'>
                     <PassengerCombobox
                       placeholder='Wprowadź nazwę pasażera'
                       {...field}
@@ -99,6 +100,20 @@ export const PassengerBlock = ({ i, name, remove, autoBlock }: AutoPassengerBloc
             );
           }}
         />
+        <FormField
+          control={control}
+          name={`${name}.${i}.type`}
+          render={({ field }) => {
+            return (
+              <FormItem hidden>
+                <FormControl>
+                  <input {...field} hidden />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            );
+          }}
+        />
       </div>
     );
   }
@@ -116,7 +131,7 @@ export const PassengerBlock = ({ i, name, remove, autoBlock }: AutoPassengerBloc
               pasażera ręcznie.
             </FormDescription>
             <FormControl>
-              <div className='flex items-center justify-between gap-x-2'>
+              <div className='flex items-end justify-between gap-x-2'>
                 <FormItem className='w-full'>
                   <FormLabel>{`Pasażer ${i + 1}`}</FormLabel>
                   <Input {...field} className='flex-1' />
@@ -148,6 +163,20 @@ export const PassengerBlock = ({ i, name, remove, autoBlock }: AutoPassengerBloc
                     placeholder='Numer kontaktowy pasażera'
                   />
                 </div>
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          );
+        }}
+      />
+      <FormField
+        control={control}
+        name={`${name}.${i}.type`}
+        render={({ field }) => {
+          return (
+            <FormItem hidden>
+              <FormControl>
+                <input {...field} hidden />
               </FormControl>
               <FormMessage />
             </FormItem>

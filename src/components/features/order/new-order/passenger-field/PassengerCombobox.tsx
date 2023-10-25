@@ -64,7 +64,7 @@ export const PassengerCombobox = ({
         control={control}
         name={name}
         render={({ field }) => {
-          const displayValue = options.find((item) => item.value === field.value)?.label || '';
+          const displayValue = options.find((item) => item.label === field.value)?.label || '';
 
           return (
             <FormItem className='flex flex-col'>
@@ -120,7 +120,7 @@ export const PassengerCombobox = ({
                           value={item.value}
                           key={item.value}
                           onSelect={() => {
-                            setValue(name, item.value);
+                            setValue(name, item.label);
                             setPhones(item.phones);
                             setOpen(false);
                           }}

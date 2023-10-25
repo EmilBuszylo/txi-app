@@ -6,13 +6,11 @@ import { Order } from '@/server/orders/order';
 
 export const OrderPassengersModal = ({ item }: { item: Order }) => {
   const locationFromPassengers = [
-    item.locationFrom.passenger.name,
     ...getFromAdditionalPassengers(item.locationFrom.passenger.additionalPassengers),
   ];
 
   const locationViaPassengers = item.locationVia?.length
     ? item.locationVia?.map((l) => [
-        l.passenger?.name,
         ...getFromAdditionalPassengers(l.passenger?.additionalPassengers),
       ])
     : [];
