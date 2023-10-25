@@ -111,68 +111,74 @@ export const createOrder = async (input: CreateOrderParams) => {
 
     const status = input.driverId ? OrderStatus.STARTED : OrderStatus.NEW;
 
-    return await prisma.$transaction(async (tx) => {
-      const order = await tx.order.create({
-        data: {
-          internalId: _createInternalId(count + 1),
-          ...rest,
-          locationFrom,
-          locationTo,
-          intakeDistance: intakeDistance,
-          estimatedDistance: estimatedDistance?.distance,
-          hasHighway: estimatedDistance?.hasHighway,
-          locationVia: locationVia as unknown as string,
-          wayBackDistance: wayBackDistance?.distance,
-          status,
-          client: {
-            connect: {
-              id: clientId,
-            },
-          },
-          driver: {
-            connect: driverId
-              ? {
-                  id: driverId,
-                }
-              : undefined,
-          },
-          collectionPoint: {
-            connect: collectionPointId
-              ? {
-                  id: collectionPointId,
-                }
-              : undefined,
+    const order = await prisma.order.create({
+      data: {
+        internalId: _createInternalId(count + 1),
+        ...rest,
+        locationFrom,
+        locationTo,
+        intakeDistance: intakeDistance,
+        estimatedDistance: estimatedDistance?.distance,
+        hasHighway: estimatedDistance?.hasHighway,
+        locationVia: locationVia as unknown as string,
+        wayBackDistance: wayBackDistance?.distance,
+        status,
+        client: {
+          connect: {
+            id: clientId,
           },
         },
-      });
-
-      if (order) {
-        const dispatchers = await tx.user.findMany({
-          where: {
-            role: 'DISPATCHER',
-            email: {
-              not: null,
-            },
-          },
-          select: {
-            email: true,
-          },
-        });
-
-        await sendEmail({
-          subject: `Nowe zlecenie ${order.internalId} ${order.clientName}`,
-          orderData: {
-            id: order.id,
-            internalId: order.internalId,
-            clientName: order.clientName,
-          },
-          to: dispatchers.map((d) => d.email) as string[],
-          template: getNewOrderTemplate(order as unknown as Order),
-        });
-      }
-
-      return order;
+        driver: {
+          connect: driverId
+            ? {
+                id: driverId,
+              }
+            : undefined,
+        },
+        collectionPoint: {
+          connect: collectionPointId
+            ? {
+                id: collectionPointId,
+              }
+            : undefined,
+        },
+      },
     });
+
+    const dispatchers = await prisma.user.findMany({
+      where: {
+        role: 'DISPATCHER',
+        email: {
+          not: null,
+        },
+      },
+      select: {
+        email: true,
+      },
+    });
+
+    if (order && dispatchers) {
+      await sendEmail({
+        subject: `Nowe zlecenie ${order.internalId} ${order.clientName}`,
+        orderData: {
+          id: order.id,
+          internalId: order.internalId,
+          clientName: order.clientName,
+        },
+        to: dispatchers.map((d) => d.email) as string[],
+        template: getNewOrderTemplate(order as unknown as Order),
+      });
+    } else {
+      logger.warn({
+        order,
+        dispatchers,
+        stack: 'createOrder',
+        event: 'email error',
+        provider: 'custom',
+      });
+    }
+
+    return order;
   } catch (error) {
     logger.error({ error, stack: 'createOrder' });
     throw error;
