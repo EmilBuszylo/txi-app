@@ -71,6 +71,12 @@ export const locationFromSchema = z.object({
       )
       .min(1)
       .max(3)
+      // .refine(
+      //   (elements) => {
+      //     return elements.some((el) => el.phone);
+      //   },
+      //   { message: 'Musisz podać n kontaktowy jest wymagany' }
+      // )
       .optional()
       .nullable(),
   }),
@@ -90,7 +96,6 @@ export const locationViaPointSchema = locationFromSchema.extend({
           })
         )
         .max(3)
-        .min(1)
         .optional()
         .nullable(),
     })

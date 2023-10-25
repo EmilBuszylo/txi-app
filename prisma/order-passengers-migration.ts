@@ -10,64 +10,66 @@ async function main() {
     const locationFrom = order.locationFrom as LocationFrom;
     const locationVia = order.locationVia as LocationVia[];
 
-    const locationFromAdditionals = locationFrom?.passenger?.additionalPassengers?.length
-      ? locationFrom.passenger.additionalPassengers.map((el) => ({
-          name: el.name,
-          type: 'custom',
-        }))
-      : [];
+    if (locationFrom?.passenger.name) {
+      const locationFromAdditionals = locationFrom?.passenger?.additionalPassengers?.length
+        ? locationFrom.passenger.additionalPassengers.map((el) => ({
+            name: el.name,
+            type: 'custom',
+          }))
+        : [];
 
-    const locationFromUpdated = locationFrom
-      ? {
-          ...locationFrom,
-          passenger: {
-            additionalPassengers: [
-              {
-                name: locationFrom.passenger.name,
-                phone: locationFrom.passenger.phone,
-                type: 'custom',
-              },
-              ...locationFromAdditionals,
-            ],
-          },
-        }
-      : undefined;
-
-    const locationViaUpdated = locationVia
-      ? locationVia.map((el) => {
-          const locationViaAdditionals = el?.passenger?.additionalPassengers?.length
-            ? el.passenger.additionalPassengers.map((el) => ({
-                name: el.name,
-                type: 'custom',
-              }))
-            : [];
-
-          const firstPassenger = el.passenger?.name
-            ? {
-                name: el.passenger.name,
-                phone: el.passenger?.phone,
-                type: 'custom',
-              }
-            : {};
-
-          return {
-            ...el,
+      const locationFromUpdated = locationFrom
+        ? {
+            ...locationFrom,
             passenger: {
-              additionalPassengers: [firstPassenger, ...locationViaAdditionals],
+              additionalPassengers: [
+                {
+                  name: locationFrom.passenger.name,
+                  phone: locationFrom.passenger.phone,
+                  type: 'custom',
+                },
+                ...locationFromAdditionals,
+              ],
             },
-          };
-        })
-      : undefined;
+          }
+        : undefined;
 
-    await prisma.order.update({
-      where: {
-        id: order.id,
-      },
-      data: {
-        locationFrom: locationFromUpdated,
-        locationVia: locationViaUpdated,
-      },
-    });
+      const locationViaUpdated = locationVia
+        ? locationVia.map((el) => {
+            const locationViaAdditionals = el?.passenger?.additionalPassengers?.length
+              ? el.passenger.additionalPassengers.map((el) => ({
+                  name: el.name,
+                  type: 'custom',
+                }))
+              : [];
+
+            const firstPassenger = el.passenger?.name
+              ? {
+                  name: el.passenger.name,
+                  phone: el.passenger?.phone,
+                  type: 'custom',
+                }
+              : {};
+
+            return {
+              ...el,
+              passenger: {
+                additionalPassengers: [firstPassenger, ...locationViaAdditionals],
+              },
+            };
+          })
+        : undefined;
+
+      await prisma.order.update({
+        where: {
+          id: order.id,
+        },
+        data: {
+          locationFrom: locationFromUpdated,
+          locationVia: locationViaUpdated,
+        },
+      });
+    }
   }
 }
 main()
