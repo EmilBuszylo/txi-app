@@ -7,16 +7,12 @@ import { Order } from '@/server/orders/order';
 
 export const PassengersListCell = ({ row }: { row: Row<Order> }) => {
   const locationFromPassengers = [
-    row.original.locationFrom.passenger.name,
     ...getFromAdditionalPassengers(row.original.locationFrom.passenger.additionalPassengers),
   ];
 
   const locationViaPassengers = row.original.locationVia?.length
     ? row.original.locationVia
-        ?.map((l) => [
-          l.passenger?.name,
-          ...getFromAdditionalPassengers(l.passenger?.additionalPassengers),
-        ])
+        ?.map((l) => [...getFromAdditionalPassengers(l.passenger?.additionalPassengers)])
         .flat(1)
     : [];
 

@@ -61,22 +61,47 @@ export interface GetPassengersResponse {
   results: Passenger[];
 }
 
+const _getWhereFilterByParams = ({ clientId }: ParamsFilter): WhereFilter => {
+  return {
+    ...(clientId && {
+      clients: {
+        some: {
+          id: clientId,
+        },
+      },
+    }),
+  };
+};
+
+type ParamsFilter = {
+  [key: string]: string | boolean | undefined | null;
+};
+
+type WhereFilter = {
+  // @-ts-ignore
+  [key: string]: unknown;
+};
+
 export const getPassengers = async (input: GetPassengersParams): Promise<GetPassengersResponse> => {
-  const { limit, page: requestPage, column, sort } = input;
+  const { limit, page: requestPage, column, sort, clientId } = input;
 
   const page = requestPage ? requestPage - 1 : 0;
   const take = limit || PAGINATION_LIMIT;
   const skip = page * take;
 
+  const filters = _getWhereFilterByParams({ clientId });
+
   const data = await prisma.$transaction([
     prisma.passenger.count({
       where: {
         deletedAt: null,
+        ...filters,
       },
     }),
     prisma.passenger.findMany({
       where: {
         deletedAt: null,
+        ...filters,
       },
       skip,
       take,

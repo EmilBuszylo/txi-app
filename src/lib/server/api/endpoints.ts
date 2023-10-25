@@ -630,14 +630,16 @@ export interface GetPassengersParams {
   limit: number;
   column?: string;
   sort?: 'asc' | 'desc';
+  clientId?: string | null;
 }
 
-export function getPassengers({ page, limit, column, sort }: GetPassengersParams) {
+export function getPassengers({ page, limit, column, sort, clientId }: GetPassengersParams) {
   const queryParams = new URLSearchParams({
     page: page.toString(),
     limit: limit.toString(),
     column: column || '',
     sort: sort || '',
+    clientId: clientId || '',
   });
   return fetchJson<GetPassengersResponse>(
     getNextApiPath(ApiRoutes.PASSENGERS + '?' + queryParams.toString()),
