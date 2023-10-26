@@ -2,18 +2,9 @@ import { Trash2 } from 'lucide-react';
 import { UseFieldArrayRemove, useFormContext } from 'react-hook-form';
 import { PatternFormat } from 'react-number-format';
 
-import { cn } from '@/lib/utils';
-
 import { PassengerCombobox } from '@/components/features/order/new-order/passenger-field/PassengerCombobox';
 import { Button } from '@/components/ui/button';
-import {
-  FormControl,
-  FormDescription,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from '@/components/ui/form';
+import { FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 
 interface AutoPassengerBlockProps {
@@ -40,11 +31,6 @@ export const PassengerBlock = ({ i, name, remove, passengers }: AutoPassengerBlo
             };
             return (
               <FormItem>
-                <FormLabel className={cn(i !== 0 && 'sr-only')}>Pasażerowie</FormLabel>
-                <FormDescription className={cn(i !== 0 && 'sr-only')}>
-                  Dodaj dodatkowych pasażerów (nie więcej niż troje). Wybierz z listy lub wprowadź
-                  dane pasażera ręcznie.
-                </FormDescription>
                 <FormControl>
                   <div className='flex items-end justify-between gap-x-2'>
                     <PassengerCombobox
@@ -115,11 +101,6 @@ export const PassengerBlock = ({ i, name, remove, passengers }: AutoPassengerBlo
         name={`${name}.${i}.name`}
         render={({ field }) => (
           <FormItem>
-            <FormLabel className={cn(i !== 0 && 'sr-only')}>Pasażerowie</FormLabel>
-            <FormDescription className={cn(i !== 0 && 'sr-only')}>
-              Dodaj dodatkowych pasażerów (nie więcej niż troje). Wybierz z listy lub wprowadź dane
-              pasażera ręcznie.
-            </FormDescription>
             <FormControl>
               <div className='flex items-end justify-between gap-x-2'>
                 <FormItem className='w-full'>

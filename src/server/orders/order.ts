@@ -65,18 +65,18 @@ export const locationFromSchema = z.object({
       .array(
         z.object({
           name: z.string().optional(),
-          phone: z.string().min(1, 'Numer kontaktowy jest wymagany').optional(),
+          phone: z.string().optional(),
           type: z.string().optional(),
         })
       )
-      .min(1)
+      .min(1, 'Musisz dodać przynajmniej jednego pasażera do miejsca odbioru')
       .max(3)
-      // .refine(
-      //   (elements) => {
-      //     return elements.some((el) => el.phone);
-      //   },
-      //   { message: 'Musisz podać n kontaktowy jest wymagany' }
-      // )
+      .refine(
+        (elements) => {
+          return elements.some((el) => el.phone);
+        },
+        { message: 'Numer kontaktowy pierwszego pasażera jest wymagany' }
+      )
       .optional()
       .nullable(),
   }),
@@ -91,7 +91,7 @@ export const locationViaPointSchema = locationFromSchema.extend({
         .array(
           z.object({
             name: z.string().optional(),
-            phone: z.string().min(1, 'Numer kontaktowy jest wymagany').optional(),
+            phone: z.string().optional(),
             type: z.string().optional(),
           })
         )

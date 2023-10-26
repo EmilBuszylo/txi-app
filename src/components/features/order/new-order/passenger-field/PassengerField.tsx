@@ -1,16 +1,26 @@
 import { PlusCircleIcon } from 'lucide-react';
-import { useFieldArray, useFormContext } from 'react-hook-form';
+import { useEffect, useState } from 'react';
+import { useFieldArray, useFormContext, useWatch } from 'react-hook-form';
 
 import { usePassengers } from '@/lib/hooks/data/usePassengers';
 import { UseIsClientRole } from '@/lib/hooks/useIsClientRole';
 
 import { PassengerBlock } from '@/components/features/order/new-order/passenger-field/PassengerBlock';
 import { Button } from '@/components/ui/button';
+import { FormDescription, FormLabel } from '@/components/ui/form';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 
 export const PassengerField = ({ name }: { name: string }) => {
-  const { control } = useFormContext();
+  const { control, formState, setError } = useFormContext();
   const { clientId } = UseIsClientRole();
+  const [isTooSmallErr, setTooSmallErr] = useState('');
+
+  const clientFieldValue = useWatch({
+    control,
+    name: 'clientId',
+  });
+
+  const currentClient = clientId || clientFieldValue;
 
   const { fields, append, remove } = useFieldArray({
     name,
@@ -21,7 +31,7 @@ export const PassengerField = ({ name }: { name: string }) => {
   const { data: passengers } = usePassengers({
     page: 1,
     limit: 1000,
-    clientId,
+    clientId: currentClient,
   });
 
   const passengersData = passengers?.results
@@ -32,8 +42,39 @@ export const PassengerField = ({ name }: { name: string }) => {
       }))
     : [];
 
+  useEffect(() => {
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
+    const passengersErr = formState.errors?.locationFrom?.passenger?.additionalPassengers;
+    if (passengersErr?.type === 'too_small' && !isTooSmallErr && passengersErr.message) {
+      setTooSmallErr(passengersErr.message);
+    }
+
+    if (passengersErr?.type !== 'too_small' && isTooSmallErr) {
+      setTooSmallErr('');
+    }
+
+    if (passengersErr?.type === 'custom' && passengersErr.message) {
+      setError(`${name}.${0}.phone`, {
+        type: passengersErr.type,
+        message: passengersErr.message,
+      });
+    }
+  }, [
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
+    formState.errors?.locationFrom?.passenger?.additionalPassengers,
+    isTooSmallErr,
+    name,
+    setError,
+  ]);
+
   return (
     <div className='flex flex-col gap-y-2'>
+      <FormLabel>Pasażerowie</FormLabel>
+      <FormDescription>
+        Dodaj pasażerów (nie więcej niż troje). Wybierz z listy lub wprowadź dane pasażera ręcznie.
+      </FormDescription>
       {fields.map((field, i) => (
         <div key={field.id}>
           <PassengerBlock i={i} name={name} remove={remove} passengers={passengersData} />
@@ -43,50 +84,54 @@ export const PassengerField = ({ name }: { name: string }) => {
         </div>
       ))}
       {fields.length <= 2 && (
-        <div className='flex items-center gap-x-2'>
-          <TooltipProvider>
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <Button
-                  type='button'
-                  variant='outline'
-                  size='sm'
-                  className='mt-2 w-fit'
-                  onClick={() => {
-                    append({ name: '', phone: '', type: 'list' });
-                  }}
-                >
-                  Dodaj pasażera z listy
-                  <PlusCircleIcon className='ml-1 h-4 w-4' />
-                </Button>
-              </TooltipTrigger>
-              <TooltipContent>
-                Dodaj pasażera poprzez listę wyboru, która zawiera zapisanych w systemie pasażerów.
-              </TooltipContent>
-            </Tooltip>
-          </TooltipProvider>
-          <TooltipProvider>
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <Button
-                  type='button'
-                  variant='outline'
-                  size='sm'
-                  className='mt-2 w-fit'
-                  onClick={() => {
-                    append({ name: '', phone: '', type: 'custom' });
-                  }}
-                >
-                  Dodaj własnego pasażera
-                  <PlusCircleIcon className='ml-1 h-4 w-4' />
-                </Button>
-              </TooltipTrigger>
-              <TooltipContent>
-                Dodaj pasażera poprzez ręczne wprowadzenie jego danych takich jak imię bądź nr
-                telefonu kontaktowego
-              </TooltipContent>
-            </Tooltip>
-          </TooltipProvider>
+        <div>
+          <div className='flex items-center gap-x-2'>
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button
+                    type='button'
+                    variant='outline'
+                    size='sm'
+                    className='mt-2 w-fit'
+                    onClick={() => {
+                      append({ name: '', phone: '', type: 'list' });
+                    }}
+                  >
+                    Dodaj pasażera z listy
+                    <PlusCircleIcon className='ml-1 h-4 w-4' />
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent>
+                  Dodaj pasażera poprzez listę wyboru, która zawiera zapisanych w systemie
+                  pasażerów.
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button
+                    type='button'
+                    variant='outline'
+                    size='sm'
+                    className='mt-2 w-fit'
+                    onClick={() => {
+                      append({ name: '', phone: '', type: 'custom' });
+                    }}
+                  >
+                    Dodaj własnego pasażera
+                    <PlusCircleIcon className='ml-1 h-4 w-4' />
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent>
+                  Dodaj pasażera poprzez ręczne wprowadzenie jego danych takich jak imię bądź nr
+                  telefonu kontaktowego
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+          </div>
+          <p className='mt-2 text-sm font-medium text-destructive'>{isTooSmallErr}</p>
         </div>
       )}
     </div>
