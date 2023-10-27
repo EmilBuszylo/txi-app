@@ -29,9 +29,10 @@ const initialPaginationMeta = {
 const DEFAULT_LIMIT = 25;
 
 export default function OrdersClientTable({ clientId }: { clientId: string }) {
-  const { columnFilters, clearFilters, updateFilter, deleteFilter, filterParameters } =
-    useFilters();
-  const { sortParameters, updateSort } = useSorts();
+  const { columnFilters, clearFilters, updateFilter, deleteFilter, filterParameters } = useFilters(
+    {}
+  );
+  const { sortParameters, updateSort } = useSorts({});
   const [page, setPage] = useState(1);
   const [limit, setLimit] = useState(DEFAULT_LIMIT);
   const { data, isLoading, isFetching, error, isSuccess } = useOrders({

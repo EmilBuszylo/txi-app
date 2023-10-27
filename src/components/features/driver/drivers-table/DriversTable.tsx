@@ -20,11 +20,12 @@ const initialPaginationMeta = {
 
 const DEFAULT_LIMIT = 25;
 export const DriversTable = () => {
-  const { columnFilters, clearFilters, updateFilter, deleteFilter, filterParameters } =
-    useFilters();
+  const { columnFilters, clearFilters, updateFilter, deleteFilter, filterParameters } = useFilters(
+    {}
+  );
   const [page, setPage] = useState(1);
   const [limit, setLimit] = useState(DEFAULT_LIMIT);
-  const { sortParameters, updateSort } = useSorts();
+  const { sortParameters, updateSort } = useSorts({});
 
   const { data, isLoading, isFetching, error, isSuccess } = useDrivers({
     page,

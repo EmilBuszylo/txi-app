@@ -1,5 +1,8 @@
 import { ChevronLeft, ChevronRight } from 'lucide-react';
+import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import React from 'react';
+
+import { getCurrentQueryParams } from '@/lib/queryParams';
 
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
@@ -22,6 +25,8 @@ export interface PaginationProps {
   setLimit?: (limit: number) => void;
   isNoLimit?: boolean;
   setNoLimit?: (noLimit: boolean) => void;
+  withQueryParams?: boolean;
+  resetPage?: () => void;
 }
 
 const LIMITS = [10, 25, 50];
@@ -36,7 +41,32 @@ export function Pagination({
   setLimit,
   isNoLimit,
   setNoLimit,
+  withQueryParams,
+  resetPage,
 }: PaginationProps) {
+  const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+
+  const handleChangeLimit = (limit: string) => {
+    if (withQueryParams) {
+      const params = getCurrentQueryParams(searchParams, ['limit'], { limit: limit });
+      router.push(`${pathname}?${params}`);
+    }
+    resetPage?.();
+    setLimit?.(Number(limit));
+  };
+
+  const handleNoLimit = () => {
+    const newVal = !isNoLimit;
+    if (withQueryParams) {
+      const params = getCurrentQueryParams(searchParams, ['noLimit'], { noLimit: `${newVal}` });
+      router.push(`${pathname}?${params}`);
+    }
+    resetPage?.();
+    setNoLimit?.(newVal);
+  };
+
   return (
     <TooltipProvider>
       <div className='flex flex-col gap-x-6 gap-y-4 md:flex-row md:items-center'>
@@ -45,9 +75,7 @@ export function Pagination({
             <p className='text-sm font-medium'>Liczba wierszy</p>
             <Select
               value={limit.toString()}
-              onValueChange={(value) => {
-                setLimit(Number(value));
-              }}
+              onValueChange={(value) => handleChangeLimit(value)}
               disabled={isNoLimit}
             >
               <SelectTrigger className='h-8 w-[70px]'>
@@ -65,12 +93,7 @@ export function Pagination({
         )}
         {typeof isNoLimit === 'boolean' && setNoLimit && (
           <div className='flex items-center space-x-3 space-y-0 text-sm'>
-            <Checkbox
-              checked={isNoLimit}
-              onCheckedChange={() => {
-                setNoLimit(!isNoLimit);
-              }}
-            />
+            <Checkbox checked={isNoLimit} onCheckedChange={handleNoLimit} />
             <p className='leading-none'>Wyświetl wszystko</p>
           </div>
         )}

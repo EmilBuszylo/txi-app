@@ -20,7 +20,7 @@ const DEFAULT_LIMIT = 25;
 export const OperatorsTable = () => {
   const [page, setPage] = useState(1);
   const [limit, setLimit] = useState(DEFAULT_LIMIT);
-  const { sortParameters, updateSort } = useSorts();
+  const { sortParameters, updateSort } = useSorts({});
 
   const { data, isLoading, isFetching, error, isSuccess } = useOperators({
     page,
