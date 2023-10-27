@@ -28,7 +28,7 @@ export const InternalIdCell = ({ row, params }: { row: Row<Order>; params: GetOr
         href={{
           pathname: `${Routes.ORDERS}/${row.original.id}`,
           query: {
-            page: params.page || 1,
+            ...params,
           },
         }}
         className={cn({

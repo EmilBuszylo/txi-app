@@ -8,7 +8,9 @@ import { useClients } from '@/lib/hooks/data/useClients';
 import { useDrivers } from '@/lib/hooks/data/useDrivers';
 import { useOrders } from '@/lib/hooks/data/useOrders';
 import { UseIsDispatcherRole } from '@/lib/hooks/useIsDispatcherRole';
+import { getCurrentQueryParams } from '@/lib/queryParams';
 
+import { clientTableAllowedFilters } from '@/components/features/order/orders-table/consts';
 import { createFiltersConfig } from '@/components/features/order/orders-table/createFiltersConfig';
 import { OrdersTableMobile } from '@/components/features/order/orders-table/OrdersTableMobile';
 import { ActionsBar } from '@/components/features/order/table/ActionsBar/ActionsBar';
@@ -36,12 +38,18 @@ export default function OrdersTable() {
   const router = useRouter();
   const pathname = usePathname();
 
-  const { columnFilters, clearFilters, updateFilter, deleteFilter, filterParameters } =
-    useFilters();
   const { isDispatcher } = UseIsDispatcherRole();
-  const { sortParameters, updateSort } = useSorts();
+  const { sortParameters, updateSort } = useSorts({
+    withQueryParams: true,
+    resetPage: () => setPage(1),
+  });
   const [page, setPage] = useState(Number(searchParams.get('page')) || 1);
-  const [limit, setLimit] = useState(DEFAULT_LIMIT);
+  const [limit, setLimit] = useState(Number(searchParams.get('limit')) || DEFAULT_LIMIT);
+  const { columnFilters, clearFilters, updateFilter, deleteFilter, filterParameters } = useFilters({
+    withQueryParams: true,
+    allowedParameters: clientTableAllowedFilters,
+    resetPage: () => setPage(1),
+  });
   const [noLimit, setNoLimit] = useState(false);
   const { data, isLoading, isFetching, error, isSuccess } = useOrders({
     page,
@@ -78,7 +86,8 @@ export default function OrdersTable() {
   // TODO refactor - make this solution more flexible and ready to take other query prams
   const setPageHandler = (p?: number | null) => {
     if (p) {
-      router.push(`${pathname}?page=${p}`);
+      const params = getCurrentQueryParams(searchParams, ['page'], { page: p.toString() });
+      router.push(`${pathname}?${params}`);
     }
     setPage((prev) => p || prev);
   };
@@ -115,6 +124,8 @@ export default function OrdersTable() {
                     setLimit={setLimit}
                     isNoLimit={noLimit}
                     setNoLimit={setNoLimit}
+                    withQueryParams={true}
+                    resetPage={() => setPage(1)}
                   />
                 }
                 toolbar={

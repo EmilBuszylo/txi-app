@@ -19,8 +19,9 @@ const initialPaginationMeta = {
 
 const DEFAULT_LIMIT = 25;
 export const CollectionPointsTable = () => {
-  const { columnFilters, clearFilters, updateFilter, deleteFilter, filterParameters } =
-    useFilters();
+  const { columnFilters, clearFilters, updateFilter, deleteFilter, filterParameters } = useFilters(
+    {}
+  );
   const [page, setPage] = useState(1);
   const [limit, setLimit] = useState(DEFAULT_LIMIT);
 
