@@ -6,10 +6,34 @@ import { logger } from '@/lib/logger';
 export const errorResponseHandler = (error: Error) => {
   logger.error(error);
 
-  if (error?.message === 'unauthorizedError') {
-    return new NextResponse(JSON.stringify({ status: 'error', message: 'You are not logged in' }), {
-      status: 401,
-    });
+  if ((error as unknown as Record<string, unknown>)?.type === 'invalidCredentialsException') {
+    return new NextResponse(
+      JSON.stringify({ statusCode: 401, status: 'error', message: error.message, error }),
+      {
+        status: 401,
+      }
+    );
+  }
+
+  if (error?.message === 'forbiddenError') {
+    return new NextResponse(
+      JSON.stringify({
+        status: 'error',
+        message: "you don't have permission to access this resource",
+      }),
+      {
+        status: 403,
+      }
+    );
+  }
+
+  if ((error as unknown as Record<string, unknown>)?.type === 'notFoundException') {
+    return new NextResponse(
+      JSON.stringify({ statusCode: 404, status: 'error', message: error.message, error }),
+      {
+        status: 404,
+      }
+    );
   }
 
   if (

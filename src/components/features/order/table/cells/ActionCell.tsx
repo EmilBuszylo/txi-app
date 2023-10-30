@@ -1,6 +1,7 @@
 import { Row } from '@tanstack/table-core';
 import { useRouter } from 'next/navigation';
 
+import { useCancelOrderByClient } from '@/lib/hooks/data/useCancelOrderByClient';
 import { useUpdateManyOrders } from '@/lib/hooks/data/useUpdateManyOrders';
 import { UseUser } from '@/lib/hooks/useUser';
 import { GetOrdersParams } from '@/lib/server/api/endpoints';
@@ -26,10 +27,11 @@ export const ActionCellOptions = ({ id, params }: { id: string; params: GetOrder
   const { mutateAsync: updateOrder } = useUpdateManyOrders([id], params);
   const router = useRouter();
 
-  const { mutateAsync: updateOrders } = useUpdateManyOrders([id], params);
+  const { mutateAsync: cancelByClient } = useCancelOrderByClient(id, params);
 
   const allowDetailsView = user?.role && [UserRole.DISPATCHER, UserRole.ADMIN].includes(user.role);
   const allowKmDifference = user?.role && [UserRole.ADMIN].includes(user.role);
+  const isClient = user?.role === 'CLIENT';
 
   return (
     <>
@@ -40,13 +42,18 @@ export const ActionCellOptions = ({ id, params }: { id: string; params: GetOrder
       )}
 
       {allowKmDifference && (
-        <DropdownMenuItem onClick={() => updateOrders({ isKmDifferenceAccepted: true })}>
+        <DropdownMenuItem onClick={() => updateOrder({ isKmDifferenceAccepted: true })}>
           Zaakceptuj różnice w km
         </DropdownMenuItem>
       )}
       <DropdownMenuSeparator />
       <DropdownMenuItem
-        onClick={() => updateOrder({ status: OrderStatus.CANCELLED })}
+        onClick={async () => {
+          if (isClient) {
+            return await cancelByClient({ isClient });
+          }
+          return await updateOrder({ status: OrderStatus.CANCELLED });
+        }}
         className='text-destructive'
       >
         Anuluj zlecenie

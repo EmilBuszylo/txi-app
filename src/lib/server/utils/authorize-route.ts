@@ -6,6 +6,6 @@ export const authorizeRoute = async () => {
   const session = await getServerSession(authOptions);
 
   if (!session) {
-    throw new Error('unauthorizedError');
+    throw new Error('forbiddenError');
   }
 };

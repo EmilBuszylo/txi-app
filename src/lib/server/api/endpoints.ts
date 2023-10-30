@@ -26,6 +26,7 @@ import {
 import { GetOrdersResponse } from '@/server/orders/orders.service';
 import { Passenger } from '@/server/passengers/passenger';
 import { GetPassengerResponse, GetPassengersResponse } from '@/server/passengers/passenger.service';
+import { UserRole } from '@/server/users/user';
 
 function getNextApiPath(path: string): string {
   return SITE_URL + 'api' + path;
@@ -212,6 +213,10 @@ export interface UpdateOrderParams extends Pick<CreateOrderParams, 'collectionPo
   highwaysCost?: string;
   isKmDifferenceAccepted?: boolean;
   stopTime?: number;
+  editedBy?: {
+    role?: UserRole;
+    id?: string;
+  };
 }
 
 export function updateOrder(id: string, params: UpdateOrderParams) {
@@ -236,6 +241,18 @@ export interface UpdateManyOrdersParams
 }
 export function updateManyOrders(params: UpdateManyOrdersParams) {
   return fetchJson<Order[]>(getNextApiPath(`${ApiRoutes.ORDERS}`), {
+    method: 'PATCH',
+    body: JSON.stringify(params),
+  });
+}
+
+export interface CancelOrderByClientParams {
+  id: string;
+  isClient: boolean;
+}
+
+export function cancelOrderByClient(params: CancelOrderByClientParams) {
+  return fetchJson<Order>(getNextApiPath(`${ApiRoutes.ORDERS}/clients/${params.id}`), {
     method: 'PATCH',
     body: JSON.stringify(params),
   });

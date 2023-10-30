@@ -1,4 +1,4 @@
-import { addDays, format, subMinutes } from 'date-fns';
+import { endOfDay, format, startOfDay } from 'date-fns';
 import { z } from 'zod';
 
 import { calculateDistance, Waypoint } from '@/lib/helpers/distance';
@@ -8,6 +8,7 @@ import { prisma } from '@/lib/prisma';
 import {
   CalculateLocationsDistanceParams,
   CalculateLocationsDistanceResponse,
+  CancelOrderByClientParams,
   CreateOrderParams,
   GetOrdersParams,
   UpdateManyOrdersParams,
@@ -15,6 +16,7 @@ import {
 } from '@/lib/server/api/endpoints';
 
 import { sendEmail } from '@/server/email/email.service';
+import { getCancelOrderTemplate } from '@/server/email/templates/cancel-order-template';
 import { getNewOrderTemplate } from '@/server/email/templates/new-order-template';
 import {
   LocationFrom,
@@ -81,9 +83,8 @@ export const createOrder = async (input: CreateOrderParams) => {
         viaWaypoints: viaWaypoints as Waypoint[],
       });
 
-    const currentDayDate = new Date().setHours(0, 0, 0, 0);
-
-    const nextDay = subMinutes(addDays(currentDayDate, 1), 0);
+    const currentDayDate = startOfDay(new Date());
+    const nextDay = endOfDay(new Date());
 
     const count = await prisma.order.count({
       where: {
@@ -219,6 +220,44 @@ export const updateManyOrders = async (input: UpdateManyOrdersParams) => {
     logger.error({ error, stack: 'UpdateManyOrders' });
     throw error;
   }
+};
+
+export const cancelOrderByClient = async (input: CancelOrderByClientParams) => {
+  if (!input.isClient) {
+    throw new Error('forbiddenError');
+  }
+
+  const order = await prisma.order.update({
+    where: { id: input.id },
+    data: { status: 'CANCELLED' },
+  });
+
+  if (order) {
+    const dispatchers = await prisma.user.findMany({
+      where: {
+        role: 'DISPATCHER',
+        email: {
+          not: null,
+        },
+      },
+      select: {
+        email: true,
+      },
+    });
+
+    await sendEmail({
+      subject: `Zlecenie ${order.internalId} zostało anulowane przez ${order.clientName}`,
+      orderData: {
+        id: order.id,
+        internalId: order.internalId,
+        clientName: order.clientName,
+      },
+      to: dispatchers.map((d) => d.email) as string[],
+      template: getCancelOrderTemplate(order as unknown as Order),
+    });
+  }
+
+  return order;
 };
 
 export const updateOrder = async (id: string, input: UpdateOrderParams) => {

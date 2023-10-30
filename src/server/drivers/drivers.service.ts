@@ -1,6 +1,6 @@
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const PhoneNumber = require('awesome-phonenumber');
-import { hash } from 'bcrypt';
+import { compare, hash } from 'bcrypt';
 import { customAlphabet } from 'nanoid';
 import slugify from 'slugify';
 
@@ -14,6 +14,50 @@ import {
 } from '@/lib/server/api/endpoints';
 
 import { Driver } from '@/server/drivers/driver';
+
+interface LoginRequest {
+  login: string;
+  password: string;
+}
+export const loginDriver = async (input: LoginRequest) => {
+  const user = await prisma.user.findUnique({
+    where: {
+      login: input.login,
+      role: 'DRIVER',
+    },
+    select: {
+      id: true,
+      login: true,
+      firstName: true,
+      lastName: true,
+      password: true,
+      driverDetails: true,
+    },
+  });
+
+  if (!user) {
+    const notFoundException = JSON.stringify({
+      code: 404,
+      message: 'Not found',
+      type: 'notFoundException',
+    });
+    throw new Error(notFoundException);
+  }
+
+  if (!user || !(await compare(input.password, user.password))) {
+    const invalidCredentialsException = JSON.stringify({
+      code: 401,
+      message: 'Invalid credentials',
+      type: 'invalidCredentialsException',
+    });
+    throw new Error(invalidCredentialsException);
+  }
+
+  return {
+    ...user,
+    password: undefined,
+  };
+};
 
 export const createDriver = async (input: CreateDriverParams): Promise<Driver> => {
   const { operatorId, password, phone } = input;

@@ -10,7 +10,7 @@ import { useClients } from '@/lib/hooks/data/useClients';
 import { useCollectionPoints } from '@/lib/hooks/data/useCollectionPoints';
 import { useDrivers } from '@/lib/hooks/data/useDrivers';
 import { useUpdateOrder } from '@/lib/hooks/data/useUpdateOrder';
-import { UseIsDispatcherRole } from '@/lib/hooks/useIsDispatcherRole';
+import { UseUser } from '@/lib/hooks/useUser';
 import {
   CreateOrderParams,
   UpdateOrderParams,
@@ -75,13 +75,15 @@ export function OrderDetailsForm({
   collectionPoint,
 }: OrderDetailsFormProps) {
   const [isDefaultAdded, setIsDefaultAdded] = useState(false);
-  const { isDispatcher } = UseIsDispatcherRole();
+  const { user } = UseUser();
   const form = useForm<OrderDetailsFormDefaultValues>({
     resolver: zodResolver(updateOrderSchema),
     defaultValues: defaultValues,
   });
   const router = useRouter();
   const searchParams = useSearchParams();
+
+  const isDispatcher = user && user.role === 'DISPATCHER';
 
   //  responsible for locations date field validation
   const { setLocationDateError } = useValidateLocationDate(form, false);
