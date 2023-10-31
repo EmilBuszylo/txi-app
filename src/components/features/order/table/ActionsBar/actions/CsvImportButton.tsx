@@ -77,6 +77,9 @@ const parseOrdersData = (selectedItems: CsvImportButtonProps['selectedItems']) =
           newItems[translateOrderItemKeys[itemKey as keyof typeof translateOrderItemKeys]] = `${
             (item[itemKey as keyof Order] as unknown as Driver)?.firstName || ''
           } ${(item[itemKey as keyof Order] as unknown as Driver)?.lastName || ''}`;
+        } else if (itemKey === 'estimatedDistance') {
+          newItems[translateOrderItemKeys[itemKey as keyof typeof translateOrderItemKeys]] =
+            (item.estimatedDistance || 0) + (item.wayBackDistance || 0);
         } else {
           newItems[translateOrderItemKeys[itemKey as keyof typeof translateOrderItemKeys]] =
             parseCsvValue(item[itemKey as keyof Order], itemKey);

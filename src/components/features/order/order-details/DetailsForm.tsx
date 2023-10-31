@@ -374,32 +374,7 @@ export function OrderDetailsForm({
                 : undefined
             }
           />
-          <FormField
-            control={form.control}
-            name='stopTime'
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Czas oczekiwania</FormLabel>
-                <FormControl>
-                  <Input
-                    placeholder='Podaj łączny czas oczekiwania'
-                    {...field}
-                    type='number'
-                    onChange={(e) => {
-                      const val = e.target.value;
-                      if (val === '') {
-                        field.onChange(undefined);
-                      } else {
-                        field.onChange(Number(val));
-                      }
-                    }}
-                  />
-                </FormControl>
-                <FormMessage />
-                <FormDescription>Czas oczekiwania wyrażony w pełnych godzinach</FormDescription>
-              </FormItem>
-            )}
-          />
+
           {!isDispatcher && (
             <FormField
               control={form.control}
@@ -451,6 +426,22 @@ export function OrderDetailsForm({
                   />
                 </FormControl>
                 <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name='operatorNote'
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Notatka operatora</FormLabel>
+                <Textarea
+                  placeholder='Brak notatki'
+                  className='min-h-[180px] resize-none'
+                  disabled
+                  readOnly
+                  {...field}
+                />
               </FormItem>
             )}
           />
@@ -555,6 +546,32 @@ export function OrderDetailsForm({
           />
           <FormField
             control={form.control}
+            name='stopTime'
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Czas oczekiwania</FormLabel>
+                <FormControl>
+                  <Input
+                    placeholder='Podaj łączny czas oczekiwania'
+                    {...field}
+                    type='number'
+                    onChange={(e) => {
+                      const val = e.target.value;
+                      if (val === '') {
+                        field.onChange(undefined);
+                      } else {
+                        field.onChange(Number(val));
+                      }
+                    }}
+                  />
+                </FormControl>
+                <FormMessage />
+                <FormDescription>Czas oczekiwania wyrażony w pełnych godzinach</FormDescription>
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
             name='intakeDistance'
             render={({ field }) => (
               <FormItem>
@@ -593,22 +610,7 @@ export function OrderDetailsForm({
               );
             }}
           />
-          <FormField
-            control={form.control}
-            name='operatorNote'
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Notatka operatora</FormLabel>
-                <Textarea
-                  placeholder='Brak notatki'
-                  className='min-h-[180px] resize-none'
-                  disabled
-                  readOnly
-                  {...field}
-                />
-              </FormItem>
-            )}
-          />
+
           <div className='flex w-full items-center justify-end'>
             <Button className='w-full md:w-auto' type='submit' isLoading={isLoading}>
               Zapisz
