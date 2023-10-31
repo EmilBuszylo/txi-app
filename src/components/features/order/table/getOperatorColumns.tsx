@@ -8,6 +8,7 @@ import { GetOrdersParams } from '@/lib/server/api/endpoints';
 import { HighwayCostInputCell } from '@/components/features/order/table/cells/HighwayCostInputCell';
 import { KmDriverCell } from '@/components/features/order/table/cells/KmDriverCell';
 import { LocationsCell } from '@/components/features/order/table/cells/LocationsCell';
+import { OperatorNoteCell } from '@/components/features/order/table/cells/OperatorNoteCell';
 import { StopTimeInputCell } from '@/components/features/order/table/cells/StopTimeInputCell';
 import { ColumnWithTooltip } from '@/components/ui/data-table/columns/ColumnWithTooltip';
 import { DataTableColumnSortHeader } from '@/components/ui/data-table/DataTableColumnHeader/DataTableColumnSortHeader';
@@ -24,6 +25,7 @@ interface GetColumnsProps {
 export const getOperatorColumns = ({
   sortParameters,
   updateSort,
+  params,
 }: GetColumnsProps): ColumnDef<Order>[] => {
   return [
     {
@@ -96,6 +98,11 @@ export const getOperatorColumns = ({
           }
         />
       ),
+    },
+    {
+      accessorKey: 'operatorNote',
+      header: 'Notatka',
+      cell: ({ row }) => <OperatorNoteCell order={row.original} params={params} />,
     },
   ];
 };

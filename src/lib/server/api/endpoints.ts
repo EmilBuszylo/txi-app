@@ -213,6 +213,7 @@ export interface UpdateOrderParams extends Pick<CreateOrderParams, 'collectionPo
   highwaysCost?: string;
   isKmDifferenceAccepted?: boolean;
   stopTime?: number;
+  operatorNote?: string;
   editedBy?: {
     role?: UserRole;
     id?: string;

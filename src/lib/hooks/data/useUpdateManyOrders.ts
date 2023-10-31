@@ -12,7 +12,16 @@ import { ApiRoutes } from '@/constant/routes';
 import { Order } from '@/server/orders/order';
 import { GetOrdersResponse } from '@/server/orders/orders.service';
 
-export function useUpdateManyOrders(orderIds: string[], ordersListPrams: GetOrdersParams) {
+interface UseUpdateManyOrdersOptions {
+  disableCacheUpdate?: boolean;
+  disableCustomToast?: boolean;
+}
+
+export function useUpdateManyOrders(
+  orderIds: string[],
+  ordersListPrams: GetOrdersParams,
+  options?: UseUpdateManyOrdersOptions
+) {
   const queryClient = useQueryClient();
   const ordersQueryKey = [ApiRoutes.ORDERS, ordersListPrams];
 
@@ -38,22 +47,29 @@ export function useUpdateManyOrders(orderIds: string[], ordersListPrams: GetOrde
     mutationFn: (params: Omit<UpdateManyOrdersParams, 'ids'>) =>
       updateManyOrders({ ids: orderIds, ...params }),
     onSuccess: async (data) => {
-      await queryClient.cancelQueries({ queryKey: ordersQueryKey });
+      if (!options?.disableCacheUpdate) {
+        await queryClient.cancelQueries({ queryKey: ordersQueryKey });
 
-      const previousOrders = queryClient.getQueryData<GetOrdersResponse>(ordersQueryKey);
+        const previousOrders = queryClient.getQueryData<GetOrdersResponse>(ordersQueryKey);
 
-      if (previousOrders) {
-        updateOrdersQueryData(data);
+        if (previousOrders) {
+          updateOrdersQueryData(data);
+        }
       }
 
-      toast({
-        description:
-          orderIds.length > 1 ? 'Zlecenia zostały zmienione.' : 'Zlecenie zostały zmienione.',
-        variant: 'success',
-      });
+      if (!options?.disableCustomToast) {
+        toast({
+          description:
+            orderIds.length > 1 ? 'Zlecenia zostały zmienione.' : 'Zlecenie zostały zmienione.',
+          variant: 'success',
+        });
+      }
     },
+    //  TODO read documentation maybe there is a better (more smooth) way to cache invalidation
     onSettled: async () => {
-      await queryClient.invalidateQueries({ queryKey: ordersQueryKey });
+      if (!options?.disableCacheUpdate) {
+        await queryClient.invalidateQueries({ queryKey: ordersQueryKey });
+      }
     },
   });
 }

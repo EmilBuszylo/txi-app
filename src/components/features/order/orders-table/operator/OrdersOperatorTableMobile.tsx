@@ -4,6 +4,7 @@ import { GetOrdersParams } from '@/lib/server/api/endpoints';
 import { OrderLocationsModal } from '@/components/features/order/orders-table/OrderLocationsModal';
 import { ActionCellOptions } from '@/components/features/order/table/cells/ActionCell';
 import { KmDriverCell } from '@/components/features/order/table/cells/KmDriverCell';
+import { OperatorNoteCell } from '@/components/features/order/table/cells/OperatorNoteCell';
 import { Button } from '@/components/ui/button';
 import {
   MobileItem,
@@ -63,6 +64,11 @@ const OrderOperatorMobileItem = ({ item, params }: { item: Order; params: GetOrd
           {
             label: 'Kierowca',
             value: `${item?.driver?.firstName} ${item?.driver?.lastName}`,
+          },
+          {
+            label: 'Notatka',
+            value: '',
+            element: <OperatorNoteCell order={item} params={params} />,
           },
         ]}
       />

@@ -37,6 +37,7 @@ export interface Order {
     lng: string;
   };
   comment?: string;
+  operatorNote?: string | null;
   updatedAt: Date;
   createdAt: Date;
 }

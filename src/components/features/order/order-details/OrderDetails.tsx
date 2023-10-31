@@ -51,6 +51,7 @@ export const OrderDetails = () => {
         comment: data.comment || undefined,
         actualKm: data.actualKm || undefined,
         stopTime: stopTime || undefined,
+        operatorNote: data.operatorNote || '',
       }}
       orderId={params?.id}
       collectionPoint={data.collectionPoint as CollectionPoint}

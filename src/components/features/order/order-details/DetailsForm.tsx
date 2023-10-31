@@ -593,6 +593,22 @@ export function OrderDetailsForm({
               );
             }}
           />
+          <FormField
+            control={form.control}
+            name='operatorNote'
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Notatka operatora</FormLabel>
+                <Textarea
+                  placeholder='Brak notatki'
+                  className='min-h-[180px] resize-none'
+                  disabled
+                  readOnly
+                  {...field}
+                />
+              </FormItem>
+            )}
+          />
           <div className='flex w-full items-center justify-end'>
             <Button className='w-full md:w-auto' type='submit' isLoading={isLoading}>
               Zapisz
