@@ -69,6 +69,8 @@ model Order {
   driverInvoice String?
   isPayed       Boolean     @default(false)
   comment       String?
+  operatorNote  String?
+
   locationFrom  Json
   locationVia   Json?
   locationTo    Json
