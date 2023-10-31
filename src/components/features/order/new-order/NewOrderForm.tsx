@@ -37,11 +37,13 @@ import {
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
+import { useToast } from '@/components/ui/use-toast';
 
 import { Routes } from '@/constant/routes';
 
 export function NewOrderForm() {
   const { clientId, isClient } = UseIsClientRole();
+  const { toast } = useToast();
   const form = useForm<CreateOrderParams>({
     resolver: zodResolver(isClient ? createOrderByClientSchema : createOrderSchema),
     defaultValues: {
@@ -68,7 +70,7 @@ export function NewOrderForm() {
   const { data: collectionPoints } = useCollectionPoints({ page: 1, limit: 1000 });
   const { data: clients } = useClients({ page: 1, limit: 1000 });
 
-  const { mutateAsync: createOrder, isLoading } = useCreateOrder();
+  const { mutateAsync: createOrder, isLoading, isSuccess } = useCreateOrder();
 
   //  responsible for locations date field validation
   const { setLocationDateError } = useValidateLocationDate(form, isClient);
@@ -101,7 +103,7 @@ export function NewOrderForm() {
             : undefined,
       });
 
-      router.push(Routes.ORDERS);
+      return router.push(Routes.ORDERS);
     } catch (error) {
       const { isDbError, targets, message } = databaseErrorHandler(error as FetchError);
 
@@ -112,6 +114,11 @@ export function NewOrderForm() {
             message: message,
           });
         }
+      } else {
+        toast({
+          description: 'Wystąpił nieoczekiwany błąd serwera, prosimy spróbować ponownie później',
+          variant: 'destructive',
+        });
       }
     }
   };
@@ -217,7 +224,7 @@ export function NewOrderForm() {
             )}
           />
           <div className='flex w-full items-center justify-end'>
-            <Button className='w-full md:w-auto' type='submit' isLoading={isLoading}>
+            <Button className='w-full md:w-auto' type='submit' isLoading={isLoading || isSuccess}>
               Zapisz
             </Button>
           </div>
