@@ -83,7 +83,6 @@ export default function OrdersTable() {
     );
   }, [drivers?.results]);
 
-  // TODO refactor - make this solution more flexible and ready to take other query prams
   const setPageHandler = (p?: number | null) => {
     if (p) {
       const params = getCurrentQueryParams(searchParams, ['page'], { page: p.toString() });
@@ -91,6 +90,16 @@ export default function OrdersTable() {
     }
     setPage((prev) => p || prev);
   };
+
+  const hiddenColumns = useMemo(() => {
+    const state = localStorage.getItem('ordersColumnsSettings');
+
+    if (state) {
+      return JSON.parse(state)?.hiddenColumns || {};
+    }
+
+    return {};
+  }, []);
 
   return (
     <div>
@@ -101,6 +110,7 @@ export default function OrdersTable() {
           <div className='hidden md:block'>
             <TooltipProvider>
               <DataTable
+                defaultHiddenColumns={hiddenColumns}
                 data={data?.results || []}
                 isLoading={isLoading}
                 isFetching={isFetching}

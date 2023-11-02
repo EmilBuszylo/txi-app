@@ -1,4 +1,5 @@
-import { Table } from '@tanstack/table-core';
+import { VisibilityState } from '@tanstack/react-table';
+import { Column, Table } from '@tanstack/table-core';
 
 import { Button } from '@/components/ui/button';
 import {
@@ -8,7 +9,38 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 
-export function ColumnVisibilityDropdown<TData>({ table }: { table: Table<TData> }) {
+export function ColumnVisibilityDropdown<TData>({
+  table,
+  columnVisibility,
+}: {
+  table: Table<TData>;
+  columnVisibility: VisibilityState;
+}) {
+  const handleOnCheckedChange = (column: Column<TData, unknown>, isChecked: boolean) => {
+    column.toggleVisibility(isChecked);
+    let hiddenColumns = {};
+
+    if (isChecked) {
+      delete columnVisibility[column.id];
+      hiddenColumns = {
+        ...columnVisibility,
+      };
+    } else {
+      hiddenColumns = {
+        ...columnVisibility,
+        [column.id]: false,
+      };
+    }
+
+    localStorage.setItem(
+      'ordersColumnsSettings',
+      JSON.stringify({
+        hiddenColumns,
+      })
+    );
+    return;
+  };
+
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -26,7 +58,7 @@ export function ColumnVisibilityDropdown<TData>({ table }: { table: Table<TData>
                 key={column.id}
                 className='capitalize'
                 checked={column.getIsVisible()}
-                onCheckedChange={(value) => column.toggleVisibility(value)}
+                onCheckedChange={(value) => handleOnCheckedChange(column, value)}
               >
                 {typeof column.columnDef.header === 'string' ? column.columnDef.header : column.id}
               </DropdownMenuCheckboxItem>

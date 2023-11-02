@@ -41,6 +41,7 @@ interface DataTableProps<TData, TValue> {
   pagination?: ReactElement;
   ActionsBar?: FC<ActionsBarProps<TData[]>>;
   toolbar?: ReactElement;
+  defaultHiddenColumns?: Record<string, boolean>;
 }
 
 export function DataTable<TData, TValue>({
@@ -54,9 +55,10 @@ export function DataTable<TData, TValue>({
   params,
   ActionsBar,
   toolbar,
+  defaultHiddenColumns = {},
 }: DataTableProps<TData, TValue>) {
   const [rowSelection, setRowSelection] = useState({});
-  const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
+  const [columnVisibility, setColumnVisibility] = useState<VisibilityState>(defaultHiddenColumns);
 
   const table = useReactTable({
     data,
@@ -94,7 +96,7 @@ export function DataTable<TData, TValue>({
             allItemsAmount={table.getFilteredRowModel().rows.length}
           />
         ) : null}
-        <ColumnVisibilityDropdown table={table} />
+        <ColumnVisibilityDropdown table={table} columnVisibility={columnVisibility} />
       </div>
       <div className='rounded-md border'>
         <Table>
@@ -142,7 +144,7 @@ export function DataTable<TData, TValue>({
           )}
         </Table>
       </div>
-      <div className='flex w-full flex-col justify-center justify-between gap-y-4 pb-4 pt-4 md:flex-row'>
+      <div className='flex w-full flex-col justify-between gap-y-4 pb-4 pt-4 md:flex-row'>
         <div className='flex-1 text-sm text-muted-foreground'>
           wybranych {table.getFilteredSelectedRowModel().rows.length} z{' '}
           {table.getFilteredRowModel().rows.length}
