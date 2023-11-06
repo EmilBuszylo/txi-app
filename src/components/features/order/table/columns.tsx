@@ -7,10 +7,14 @@ import { GetOrdersParams } from '@/lib/server/api/endpoints';
 
 import { getRealizationDate } from '@/components/features/order/orders-table/utils/getRealizationDate';
 import { ActionCell } from '@/components/features/order/table/cells/ActionCell';
+import { ActualKmCell } from '@/components/features/order/table/cells/ActualKmCell';
+import { HighwayCostInputCell } from '@/components/features/order/table/cells/HighwayCostInputCell';
 import { InternalIdCell } from '@/components/features/order/table/cells/InternallIdCell';
+import { KmDriverCell } from '@/components/features/order/table/cells/KmDriverCell';
 import { LocationsCell } from '@/components/features/order/table/cells/LocationsCell';
 import { PassengersListCell } from '@/components/features/order/table/cells/PassengersListCell';
 import { StatusCell } from '@/components/features/order/table/cells/StatusCell';
+import { StopTimeInputCell } from '@/components/features/order/table/cells/StopTimeInputCell';
 import { Checkbox } from '@/components/ui/checkbox';
 import { ColumnWithTooltip } from '@/components/ui/data-table/columns/ColumnWithTooltip';
 import { DataTableColumnSortHeader } from '@/components/ui/data-table/DataTableColumnHeader/DataTableColumnSortHeader';
@@ -157,6 +161,44 @@ export const getColumns = ({
     {
       accessorKey: 'driverInvoice',
       header: 'Nr faktury kierowcy',
+    },
+    {
+      accessorKey: 'estimatedKm',
+      header: 'Km szacowane',
+    },
+    {
+      accessorKey: 'kmForDriver',
+      header: 'Km dla kierowcy',
+      cell: ({ row }) => (
+        <KmDriverCell id={row.original.id} kmForDriver={row.original.kmForDriver} />
+      ),
+    },
+    {
+      accessorKey: 'actualKm',
+      header: 'Km rzeczywiste',
+      cell: ({ row }) => <ActualKmCell id={row.original.id} actualKm={row.original.actualKm} />,
+    },
+    {
+      accessorKey: 'stopTime',
+      header: 'Czas oczekiwania',
+      cell: ({ row }) => (
+        <StopTimeInputCell
+          id={row.original.id}
+          stopTime={row.original.stopTime}
+          disableValidation={true}
+        />
+      ),
+    },
+    {
+      accessorKey: 'highwaysCost',
+      header: 'Koszt autostrad',
+      cell: ({ row }) => (
+        <HighwayCostInputCell
+          id={row.original.id}
+          highwaysCost={row.original.highwaysCost}
+          disableValidation={true}
+        />
+      ),
     },
     {
       accessorKey: 'comment',

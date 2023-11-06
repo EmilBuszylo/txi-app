@@ -11,9 +11,11 @@ import { Order } from '@/server/orders/order';
 export const StopTimeInputCell = ({
   id,
   stopTime,
+  disableValidation,
 }: {
   id: Order['id'];
   stopTime: Order['stopTime'];
+  disableValidation?: boolean;
 }) => {
   const [value, setValue] = useState(stopTime || undefined);
 
@@ -42,7 +44,7 @@ export const StopTimeInputCell = ({
         value={value}
         onChange={onChange}
         className={cn({
-          'border-destructive bg-destructive/10': !value,
+          'border-destructive bg-destructive/10': !value && !disableValidation,
         })}
       />
       <Button type='button' onClick={onClickHandler} size='sm' isLoading={isLoading}>

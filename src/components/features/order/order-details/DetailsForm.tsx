@@ -519,7 +519,9 @@ export function OrderDetailsForm({
                     onKeyDown={(event) => {
                       if (
                         !/[0-9]/.test(event.key) &&
-                        !['ArrowLeft', 'ArrowRight', 'Backspace'].includes(event.key)
+                        !['ArrowLeft', 'ArrowRight', 'Backspace', 'Tab', 'Shift'].includes(
+                          event.key
+                        )
                       ) {
                         event.preventDefault();
                       }

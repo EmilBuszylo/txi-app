@@ -8,40 +8,35 @@ import { Input } from '@/components/ui/input';
 
 import { Order } from '@/server/orders/order';
 
-export const HighwayCostInputCell = ({
+export const ActualKmCell = ({
   id,
-  highwaysCost,
-  disableValidation,
+  actualKm,
 }: {
   id: Order['id'];
-  highwaysCost: Order['highwaysCost'];
-  disableValidation?: boolean;
+  actualKm: Order['actualKm'];
 }) => {
-  const [value, setValue] = useState(highwaysCost || undefined);
+  const [value, setValue] = useState(actualKm || undefined);
 
   const { mutateAsync: updateOrders, isLoading } = useUpdateManyOrdersWithoutCache([id]);
 
   const onChange = (e: ChangeEvent<HTMLInputElement>) => {
-    const newVal = e?.target?.value ? e.target.value.replaceAll(',', '').replaceAll(' ', '') : 0;
-
-    if (newVal === 0) {
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      //   @ts-ignore
-      return setValue('');
+    const val = e.target.value;
+    if (val === '') {
+      return setValue(undefined);
     }
 
-    return setValue(Number(newVal).toLocaleString());
+    return setValue(Number(val));
   };
 
   const onClickHandler = async () => {
-    await updateOrders({ highwaysCost: value });
+    await updateOrders({ actualKm: value });
   };
 
   return (
     <div className='flex min-w-[215px] items-center justify-center gap-x-1'>
       <Input
-        id='highwaysCost'
-        name='highwaysCost'
+        id='actualKm'
+        name='actualKm'
         type='text'
         onKeyDown={(event) => {
           if (
@@ -51,11 +46,11 @@ export const HighwayCostInputCell = ({
             event.preventDefault();
           }
         }}
-        placeholder='Podaj koszt płatnych odcinków'
+        placeholder='Uzupełnij rzeczywiste km'
         value={value}
         onChange={onChange}
         className={cn({
-          'border-destructive bg-destructive/10': !value && !disableValidation,
+          'border-destructive bg-destructive/10': !value,
         })}
       />
       <Button type='button' onClick={onClickHandler} size='sm' isLoading={isLoading}>
