@@ -48,6 +48,8 @@ export enum OrderStatus {
   IN_PROGRESS = 'IN_PROGRESS',
   COMPLETED = 'COMPLETED',
   CANCELLED = 'CANCELLED',
+  VERIFIED = 'VERIFIED',
+  SETTLED = 'SETTLED',
 }
 
 export const locationFromSchema = z.object({
