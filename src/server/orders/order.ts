@@ -9,14 +9,14 @@ export interface Order {
   locationTo: LocationTo;
   estimatedDistance?: number;
   wayBackDistance?: number;
-  actualKm?: number;
+  actualKm?: number | null;
   hasHighway?: boolean;
   highwaysCost?: string;
   status: OrderStatus;
   driverInvoice?: string;
   clientInvoice?: string;
   isPayed?: boolean;
-  kmForDriver?: number;
+  kmForDriver?: number | null;
   clientId: string;
   clientName: string;
   intakeDistance?: number;
@@ -48,6 +48,8 @@ export enum OrderStatus {
   IN_PROGRESS = 'IN_PROGRESS',
   COMPLETED = 'COMPLETED',
   CANCELLED = 'CANCELLED',
+  VERIFIED = 'VERIFIED',
+  SETTLED = 'SETTLED',
 }
 
 export const locationFromSchema = z.object({
@@ -118,3 +120,29 @@ export const locationToSchema = z.object({
 export type LocationFrom = z.infer<typeof locationFromSchema>;
 export type LocationVia = z.infer<typeof locationViaPointSchema>;
 export type LocationTo = z.infer<typeof locationToSchema>;
+
+export const checkIfStatusChangeIsForbidden = ({
+  currentStatus = OrderStatus.NEW,
+  providedStatus,
+  kmForDriver,
+  actualKm,
+}: {
+  currentStatus?: OrderStatus;
+  providedStatus: OrderStatus;
+  kmForDriver: Order['kmForDriver'];
+  actualKm: Order['actualKm'];
+}) => {
+  if (providedStatus === OrderStatus.VERIFIED) {
+    if (!kmForDriver || currentStatus === 'NEW') {
+      return true;
+    }
+  }
+
+  if (providedStatus === OrderStatus.SETTLED) {
+    if (!actualKm || currentStatus === 'NEW') {
+      return true;
+    }
+  }
+
+  return false;
+};

@@ -183,4 +183,6 @@ enum OrderStatus {
   IN_PROGRESS
   COMPLETED
   CANCELLED
+  VERIFIED
+  SETTLED
 }

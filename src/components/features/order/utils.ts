@@ -6,6 +6,8 @@ export const statusLabelPerStatus: Record<OrderStatus, string> = {
   IN_PROGRESS: 'W toku',
   COMPLETED: 'Zakończone',
   CANCELLED: 'Anulowane',
+  VERIFIED: 'Zweryfikowane',
+  SETTLED: 'Rozliczone',
 };
 
 export const clientStatusLabelPerStatus: Record<OrderStatus, string> = {
@@ -14,4 +16,6 @@ export const clientStatusLabelPerStatus: Record<OrderStatus, string> = {
   IN_PROGRESS: 'W toku',
   COMPLETED: 'Zakończone',
   CANCELLED: 'Anulowane',
+  VERIFIED: 'Zakończone',
+  SETTLED: 'Zakończone',
 };

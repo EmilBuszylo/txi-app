@@ -19,6 +19,7 @@ import { sendEmail } from '@/server/email/email.service';
 import { getCancelOrderTemplate } from '@/server/email/templates/cancel-order-template';
 import { getNewOrderTemplate } from '@/server/email/templates/new-order-template';
 import {
+  checkIfStatusChangeIsForbidden,
   LocationFrom,
   locationFromSchema,
   LocationTo,
@@ -27,6 +28,7 @@ import {
   Order,
   OrderStatus,
 } from '@/server/orders/order';
+import { UserRole } from '@/server/users/user';
 
 export const calculateLocationsDistance = async (
   input: CalculateLocationsDistanceParams
@@ -186,8 +188,55 @@ export const createOrder = async (input: CreateOrderParams) => {
   }
 };
 
+const _changeRoleToSettled = async ({
+  kmForDriver,
+  actualKm,
+  id,
+  editedBy,
+  status,
+}: {
+  kmForDriver?: Order['kmForDriver'];
+  id: string;
+  editedBy?: UpdateOrderParams['editedBy'];
+  status: Order['status'];
+  actualKm?: Order['actualKm'];
+}) => {
+  if (!status && editedBy?.role && [UserRole.ADMIN].includes(editedBy.role)) {
+    if (kmForDriver || actualKm) {
+      const oldOrder = await prisma.order.findUnique({
+        where: { id },
+        select: { status: true, kmForDriver: true, actualKm: true },
+      });
+      if (
+        oldOrder?.status &&
+        ![OrderStatus.NEW, OrderStatus.CANCELLED, OrderStatus.SETTLED].includes(
+          oldOrder.status as OrderStatus
+        ) &&
+        (kmForDriver || oldOrder.kmForDriver) &&
+        (actualKm || oldOrder.actualKm)
+      ) {
+        return OrderStatus.SETTLED;
+      }
+    }
+  }
+
+  return status;
+};
+
+//  TODO move some action like listing input data saving to the separate method
 export const updateManyOrders = async (input: UpdateManyOrdersParams) => {
-  const { driverId, ids, ...rest } = input;
+  const { driverId, editedBy, ids, ...rest } = input;
+
+  const status =
+    ids.length === 1
+      ? await _changeRoleToSettled({
+          id: ids[0],
+          kmForDriver: input.kmForDriver,
+          actualKm: input.actualKm,
+          editedBy: editedBy,
+          status: input.status as OrderStatus,
+        })
+      : undefined;
 
   try {
     for (const id of ids) {
@@ -197,6 +246,7 @@ export const updateManyOrders = async (input: UpdateManyOrdersParams) => {
         },
         data: {
           ...rest,
+          status,
           driver: driverId
             ? {
                 connect: {
@@ -269,6 +319,8 @@ export const updateOrder = async (id: string, input: UpdateOrderParams) => {
     locationFrom,
     locationTo,
     locationVia,
+    //  editedBy is passed only to _changeRoleToSettled, we don't save it to database
+    editedBy,
     ...rest
   } = input;
 
@@ -306,7 +358,21 @@ export const updateOrder = async (id: string, input: UpdateOrderParams) => {
       });
 
     const status =
-      input.driverId && input.status === OrderStatus.NEW ? OrderStatus.STARTED : input.status;
+      input.driverId && input.status === OrderStatus.NEW
+        ? OrderStatus.STARTED
+        : await _changeRoleToSettled({
+            id,
+            kmForDriver: input.kmForDriver,
+            actualKm: input.actualKm,
+            editedBy,
+            status: input.status as OrderStatus,
+          });
+
+    await _checkIfStatusChangeIsForbidden(id, {
+      status,
+      kmForDriver: input.kmForDriver,
+      actualKm: input.actualKm,
+    });
 
     return prisma.order.update({
       where: {
@@ -594,6 +660,47 @@ const _getWhereFilterByParams = ({
       },
     }),
   };
+};
+
+const _checkIfStatusChangeIsForbidden = async (
+  id: string,
+  params: { status?: OrderStatus; kmForDriver?: Order['kmForDriver']; actualKm?: Order['actualKm'] }
+) => {
+  if (!params.status) {
+    return;
+  }
+
+  const order = await prisma.order.findUnique({
+    where: { id },
+    select: { status: true, actualKm: true, kmForDriver: true },
+  });
+
+  if (!order) {
+    const notFoundException = JSON.stringify({
+      code: 404,
+      message: 'Not found',
+      type: 'notFoundException',
+    });
+    throw new Error(notFoundException);
+  }
+
+  const isStatusChangeForbidden = checkIfStatusChangeIsForbidden({
+    providedStatus: params.status,
+    currentStatus: order.status as OrderStatus,
+    kmForDriver: order.kmForDriver || params?.kmForDriver,
+    actualKm: order.actualKm || params?.actualKm,
+  });
+
+  if (isStatusChangeForbidden) {
+    const methodNotAllowedException = JSON.stringify({
+      code: 405,
+      message: 'Operation is not allowed',
+      type: 'methodNotAllowedException',
+    });
+    throw new Error(methodNotAllowedException);
+  }
+
+  return;
 };
 
 const orderSelectedFields = {
