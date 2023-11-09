@@ -36,6 +36,15 @@ export const errorResponseHandler = (error: Error) => {
     );
   }
 
+  if ((error as unknown as Record<string, unknown>)?.type === 'methodNotAllowedException') {
+    return new NextResponse(
+      JSON.stringify({ statusCode: 405, status: 'error', message: error.message, error }),
+      {
+        status: 405,
+      }
+    );
+  }
+
   if (
     (error as unknown as Record<string, unknown>)?.code &&
     (error as unknown as Record<string, unknown>).code === 'P2002'

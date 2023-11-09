@@ -1,6 +1,7 @@
 import { ChangeEvent, useState } from 'react';
 
 import { useUpdateManyOrdersWithoutCache } from '@/lib/hooks/data/useUpdateManyOrdersWithoutCache';
+import { UseUser } from '@/lib/hooks/useUser';
 import { cn } from '@/lib/utils';
 
 import { Button } from '@/components/ui/button';
@@ -15,7 +16,9 @@ export const ActualKmCell = ({
   id: Order['id'];
   actualKm: Order['actualKm'];
 }) => {
-  const [value, setValue] = useState(actualKm || undefined);
+  const { user } = UseUser();
+
+  const [value, setValue] = useState<number | undefined>(actualKm || undefined);
 
   const { mutateAsync: updateOrders, isLoading } = useUpdateManyOrdersWithoutCache([id]);
 
@@ -29,7 +32,7 @@ export const ActualKmCell = ({
   };
 
   const onClickHandler = async () => {
-    await updateOrders({ actualKm: value });
+    await updateOrders({ actualKm: value, editedBy: user });
   };
 
   return (
@@ -47,7 +50,7 @@ export const ActualKmCell = ({
           }
         }}
         placeholder='Uzupełnij rzeczywiste km'
-        value={value}
+        value={value || ''}
         onChange={onChange}
         className={cn({
           'border-destructive bg-destructive/10': !value,

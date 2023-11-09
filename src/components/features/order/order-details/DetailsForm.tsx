@@ -25,7 +25,7 @@ import { LocationFromSection } from '@/components/features/order/new-order/Locat
 import { LocationToSection } from '@/components/features/order/new-order/LocationToSection';
 import { LocationViaSection } from '@/components/features/order/new-order/LocationViaSection/LocationViaSection';
 import { ShowRouteButton } from '@/components/features/order/new-order/ShowRouteButton';
-import { statusLabelPerStatus } from '@/components/features/order/utils';
+import { StatusField } from '@/components/features/order/order-details/StatusField';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Combobox } from '@/components/ui/combobox';
@@ -39,18 +39,11 @@ import {
   FormMessage,
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
+import { useToast } from '@/components/ui/use-toast';
 
 import { Routes } from '@/constant/routes';
 import { CollectionPoint } from '@/server/collection-points.ts/collectionPoint';
-import { OrderStatus } from '@/server/orders/order';
 
 interface OrderDetailsFormProps {
   defaultValues: OrderDetailsFormDefaultValues;
@@ -75,6 +68,7 @@ export function OrderDetailsForm({
   collectionPoint,
 }: OrderDetailsFormProps) {
   const [isDefaultAdded, setIsDefaultAdded] = useState(false);
+  const { toast } = useToast();
   const { user } = UseUser();
   const form = useForm<OrderDetailsFormDefaultValues>({
     resolver: zodResolver(updateOrderSchema),
@@ -135,6 +129,7 @@ export function OrderDetailsForm({
           collectionPointLng && collectionPointLat
             ? { lng: collectionPointLng, lat: collectionPointLat }
             : undefined,
+        editedBy: user,
       });
 
       const currentQueryParams =
@@ -151,6 +146,11 @@ export function OrderDetailsForm({
             message: message,
           });
         }
+      } else {
+        toast({
+          description: 'Wystąpił nieoczekiwany błąd serwera, prosimy spróbować ponownie później',
+          variant: 'destructive',
+        });
       }
     }
   };
@@ -188,33 +188,7 @@ export function OrderDetailsForm({
     <div className='lg:max-w-2xl'>
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className='space-y-4' noValidate={true}>
-          <FormField
-            control={form.control}
-            name='status'
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Status</FormLabel>
-                <Select
-                  onValueChange={(e) => field.onChange(e as OrderStatus)}
-                  defaultValue={field.value}
-                >
-                  <FormControl>
-                    <SelectTrigger>
-                      <SelectValue />
-                    </SelectTrigger>
-                  </FormControl>
-                  <SelectContent>
-                    {Object.keys(OrderStatus).map((status) => (
-                      <SelectItem key={status} value={status}>
-                        {statusLabelPerStatus[status as OrderStatus]}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+          <StatusField isDispatcher={isDispatcher} currentStatus={defaultValues.status} />
           <FormField
             control={form.control}
             name='internalId'

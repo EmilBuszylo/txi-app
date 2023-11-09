@@ -63,12 +63,21 @@ export default function OrdersTable() {
   const { data: drivers } = useDrivers({ page: 1, limit: 10000 });
 
   const columns = useMemo(() => {
-    return getColumns({
-      params: { page, limit, noLimit, ...filterParameters },
+    const cols = getColumns({
+      params: { page, limit, noLimit, ...filterParameters, ...sortParameters },
       updateSort,
       sortParameters,
     });
-  }, [filterParameters, noLimit, limit, page, sortParameters, updateSort]);
+
+    if (isDispatcher) {
+      return cols.filter(
+        (el) => el.id && !['actualKm', 'kmForDriver', 'stopTime', 'highwaysCost'].includes(el.id)
+      );
+    }
+
+    return cols;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const clientsData = useMemo(() => {
     return clients?.results.map((res) => ({ label: res.name, value: res.name })) || [];

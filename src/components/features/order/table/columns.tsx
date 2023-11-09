@@ -59,16 +59,19 @@ export const getColumns = ({
       cell: ({ row }) => <span>{row.index + 1}</span>,
     },
     {
+      id: 'status',
       accessorKey: 'status',
       header: 'Status',
       cell: ({ row }) => <StatusCell row={row} />,
     },
     {
+      id: 'internalId',
       accessorKey: 'internalId',
       header: 'Nr TXI',
       cell: ({ row }) => <InternalIdCell row={row} params={params} />,
     },
     {
+      id: 'clientName',
       accessorKey: 'clientName',
       header: 'Nazwa klienta',
       cell: ({ row }) => (
@@ -81,10 +84,12 @@ export const getColumns = ({
       ),
     },
     {
+      id: 'externalId',
       accessorKey: 'externalId',
       header: 'Nr zlecenia klienta',
     },
     {
+      id: 'operatorName',
       accessorKey: 'operatorName',
       header: 'Operator',
       cell: ({ row }) => (
@@ -99,6 +104,7 @@ export const getColumns = ({
       ),
     },
     {
+      id: 'driver',
       accessorKey: 'driver',
       header: 'Kierowca',
       cell: ({ row }) => (
@@ -123,16 +129,19 @@ export const getColumns = ({
       ),
     },
     {
+      id: 'collectionPoint',
       accessorKey: 'collectionPoint',
       header: 'Pasażerowie',
       cell: ({ row }) => <PassengersListCell row={row} />,
     },
     {
+      id: 'locationFrom',
       accessorKey: 'locationFrom',
       header: 'Przebieg trasy',
       cell: ({ row }) => <LocationsCell row={row} />,
     },
     {
+      id: 'locationFrom.date',
       accessorKey: 'locationFrom.date',
       header: 'Data realizacji',
       cell: ({ row }) => {
@@ -151,6 +160,7 @@ export const getColumns = ({
       },
     },
     {
+      id: 'clientInvoice',
       accessorKey: 'clientInvoice',
       header: 'Nr faktury klienta',
       cell: ({ row }) => {
@@ -159,26 +169,35 @@ export const getColumns = ({
       },
     },
     {
+      id: 'driverInvoice',
       accessorKey: 'driverInvoice',
       header: 'Nr faktury kierowcy',
     },
     {
-      accessorKey: 'estimatedKm',
+      id: 'estimatedDistance',
+      accessorKey: 'estimatedDistance',
       header: 'Km szacowane',
     },
     {
+      id: 'kmForDriver',
       accessorKey: 'kmForDriver',
       header: 'Km dla kierowcy',
       cell: ({ row }) => (
-        <KmDriverCell id={row.original.id} kmForDriver={row.original.kmForDriver} />
+        <KmDriverCell
+          id={row.original.id}
+          kmForDriver={row.original.kmForDriver}
+          status={row.original.status}
+        />
       ),
     },
     {
+      id: 'actualKm',
       accessorKey: 'actualKm',
       header: 'Km rzeczywiste',
       cell: ({ row }) => <ActualKmCell id={row.original.id} actualKm={row.original.actualKm} />,
     },
     {
+      id: 'stopTime',
       accessorKey: 'stopTime',
       header: 'Czas oczekiwania',
       cell: ({ row }) => (
@@ -186,10 +205,12 @@ export const getColumns = ({
           id={row.original.id}
           stopTime={row.original.stopTime}
           disableValidation={true}
+          status={row.original.status}
         />
       ),
     },
     {
+      id: 'highwaysCost',
       accessorKey: 'highwaysCost',
       header: 'Koszt autostrad',
       cell: ({ row }) => (
@@ -197,10 +218,12 @@ export const getColumns = ({
           id={row.original.id}
           highwaysCost={row.original.highwaysCost}
           disableValidation={true}
+          status={row.original.status}
         />
       ),
     },
     {
+      id: 'comment',
       accessorKey: 'comment',
       header: 'Uwagi',
       cell: ({ row }) => (
@@ -215,6 +238,7 @@ export const getColumns = ({
       ),
     },
     {
+      id: 'createdAt',
       accessorKey: 'createdAt',
       header: () => (
         <DataTableColumnSortHeader

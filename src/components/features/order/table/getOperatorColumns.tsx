@@ -53,21 +53,33 @@ export const getOperatorColumns = ({
       accessorKey: 'kmForDriver',
       header: 'Przejechane km',
       cell: ({ row }) => (
-        <KmDriverCell id={row.original.id} kmForDriver={row.original.kmForDriver} />
+        <KmDriverCell
+          id={row.original.id}
+          kmForDriver={row.original.kmForDriver}
+          status={row.original.status}
+        />
       ),
     },
     {
       accessorKey: 'stopTime',
       header: 'Czas oczekiwania',
       cell: ({ row }) => (
-        <StopTimeInputCell id={row.original.id} stopTime={row.original.stopTime} />
+        <StopTimeInputCell
+          id={row.original.id}
+          stopTime={row.original.stopTime}
+          status={row.original.status}
+        />
       ),
     },
     {
       accessorKey: 'highwaysCost',
       header: 'Koszt autostrad',
       cell: ({ row }) => (
-        <HighwayCostInputCell id={row.original.id} highwaysCost={row.original.highwaysCost} />
+        <HighwayCostInputCell
+          id={row.original.id}
+          highwaysCost={row.original.highwaysCost}
+          status={row.original.status}
+        />
       ),
     },
     {
