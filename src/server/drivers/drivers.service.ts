@@ -246,7 +246,7 @@ export const getDriverOrders = async (input: GetDriverOrdersInput) => {
     prisma.order.findMany({
       where: {
         deletedAt: null,
-        driverId: id,
+        driverId,
         acceptedByDriver: true,
         ...filters,
       },
