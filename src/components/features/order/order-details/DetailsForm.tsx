@@ -84,10 +84,14 @@ export function OrderDetailsForm({
 
   const errorsCount = Object.keys(form.formState.errors).length;
   useEffect(() => {
-    if (errorsCount > 0) {
+    if (errorsCount > 0 && form.formState.submitCount > 0) {
       setLocationDateError();
+      toast({
+        description: 'Błąd walidacji, formularz został wypełniony nieprawidłowo.',
+        variant: 'destructive',
+      });
     }
-  }, [errorsCount, setLocationDateError]);
+  }, [errorsCount, form.formState.submitCount, setLocationDateError, toast]);
 
   const { data: drivers } = useDrivers({ page: 1, limit: 10000 });
   const { data: collectionPoints } = useCollectionPoints({ page: 1, limit: 1000 });

@@ -6,6 +6,7 @@ import React, { useEffect, useMemo } from 'react';
 import { FieldPath, useForm } from 'react-hook-form';
 
 import { FetchError } from '@/lib/helpers/fetch-json';
+import z from '@/lib/helpers/zod/zod';
 import { useClients } from '@/lib/hooks/data/useClients';
 import { useCollectionPoints } from '@/lib/hooks/data/useCollectionPoints';
 import { useCreateOrder } from '@/lib/hooks/data/useCreateOrder';
@@ -41,11 +42,21 @@ import { useToast } from '@/components/ui/use-toast';
 
 import { Routes } from '@/constant/routes';
 
+const updatedCreateOrderSchema = createOrderSchema.superRefine((val, ctx) => {
+  if (!val.collectionPointId && val.driverId) {
+    ctx.addIssue({
+      path: ['collectionPointId'],
+      code: z.ZodIssueCode.custom,
+      message: 'Po przypisaniu kierowcy do zlecenia Lokalizacja rozpoczęcia kursu jest obowiązkowa',
+    });
+  }
+});
+
 export function NewOrderForm() {
   const { clientId, isClient } = UseIsClientRole();
   const { toast } = useToast();
   const form = useForm<CreateOrderParams>({
-    resolver: zodResolver(isClient ? createOrderByClientSchema : createOrderSchema),
+    resolver: zodResolver(isClient ? createOrderByClientSchema : updatedCreateOrderSchema),
     defaultValues: {
       externalId: '',
       clientId: clientId || undefined,
@@ -76,10 +87,14 @@ export function NewOrderForm() {
   const { setLocationDateError } = useValidateLocationDate(form, isClient);
   const errorsCount = Object.keys(form.formState.errors).length;
   useEffect(() => {
-    if (errorsCount > 0) {
+    if (errorsCount > 0 && form.formState.submitCount > 0) {
       setLocationDateError();
+      toast({
+        description: 'Błąd walidacji, formularz został wypełniony nieprawidłowo.',
+        variant: 'destructive',
+      });
     }
-  }, [errorsCount, setLocationDateError]);
+  }, [errorsCount, form.formState.submitCount, setLocationDateError, toast]);
 
   const onSubmit = async (values: CreateOrderParams) => {
     const isLocationDateError = setLocationDateError();

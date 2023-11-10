@@ -168,31 +168,42 @@ export function createOrder(params: CreateOrderParams) {
   });
 }
 
-export const updateOrderSchema = z.object({
-  clientId: z.string().optional(),
-  locationFrom: locationFromSchema,
-  locationTo: locationToSchema,
-  locationVia: z.array(locationViaPointSchema.optional()),
-  externalId: z.string().optional(),
-  status: z.string().optional(),
-  comment: z.string().optional().nullable(),
-  clientInvoice: z.string().optional().nullable(),
-  driverInvoice: z.string().optional().nullable(),
-  isPayed: z.boolean().optional().nullable(),
-  kmForDriver: z.any().optional().nullable(),
-  actualKm: z.any().optional().nullable(),
-  driverId: z.string().optional(),
-  highwaysCost: z.string().optional(),
-  collectionPointId: z.string().optional(),
-  collectionPointsGeoCodes: z
-    .object({
-      lng: z.string(),
-      lat: z.string(),
-    })
-    .optional(),
-  stopTime: z.any().optional().nullable(),
-  isKmDifferenceAccepted: z.boolean().nullable().optional(),
-});
+export const updateOrderSchema = z
+  .object({
+    clientId: z.string().optional(),
+    locationFrom: locationFromSchema,
+    locationTo: locationToSchema,
+    locationVia: z.array(locationViaPointSchema.optional()),
+    externalId: z.string().optional(),
+    status: z.string().optional(),
+    comment: z.string().optional().nullable(),
+    clientInvoice: z.string().optional().nullable(),
+    driverInvoice: z.string().optional().nullable(),
+    isPayed: z.boolean().optional().nullable(),
+    kmForDriver: z.any().optional().nullable(),
+    actualKm: z.any().optional().nullable(),
+    driverId: z.string().optional(),
+    highwaysCost: z.string().optional(),
+    collectionPointId: z.string().optional(),
+    collectionPointsGeoCodes: z
+      .object({
+        lng: z.string(),
+        lat: z.string(),
+      })
+      .optional(),
+    stopTime: z.any().optional().nullable(),
+    isKmDifferenceAccepted: z.boolean().nullable().optional(),
+  })
+  .superRefine((val, ctx) => {
+    if (!val.collectionPointId && val.driverId) {
+      ctx.addIssue({
+        path: ['collectionPointId'],
+        code: z.ZodIssueCode.custom,
+        message:
+          'Po przypisaniu kierowcy do zlecenia Lokalizacja rozpoczęcia kursu jest obowiązkowa',
+      });
+    }
+  });
 
 export interface UpdateOrderParams extends Pick<CreateOrderParams, 'collectionPointsGeoCodes'> {
   driverId?: string;
