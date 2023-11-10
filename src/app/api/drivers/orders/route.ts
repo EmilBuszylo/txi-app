@@ -14,8 +14,8 @@ export async function GET(req: Request) {
     const orders = await getDriverOrders({
       page: Number(urlParams.searchParams.get('page')) || 1,
       limit: Number(urlParams.searchParams.get('limit')) || 1,
-      statuses: (urlParams.searchParams.get('statuses') as OrderStatus[]) || undefined,
-      driverId: urlParams.searchParams.get('driverId') || undefined,
+      statuses: (urlParams.searchParams.get('statuses') as unknown as OrderStatus[]) || undefined,
+      driverId: urlParams.searchParams.get('driverId') || '',
       createdAtTo: urlParams.searchParams.get('createdAtTo') || undefined,
       createdAtFrom: urlParams.searchParams.get('createdAtFrom') || undefined,
       column: urlParams.searchParams.get('column') || undefined,

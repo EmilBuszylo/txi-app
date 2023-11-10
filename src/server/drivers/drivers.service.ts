@@ -1,4 +1,5 @@
-import { parsePhoneNumber } from 'awesome-phonenumber';
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+const PhoneNumber = require('awesome-phonenumber');
 import { compare, hash } from 'bcrypt';
 import { customAlphabet } from 'nanoid';
 import slugify from 'slugify';
@@ -64,7 +65,7 @@ export const createDriver = async (input: CreateDriverParams): Promise<Driver> =
   try {
     const hashed_password = await hash(password, 12);
 
-    let phoneNumber = phone ? parsePhoneNumber(phone) : undefined;
+    let phoneNumber = phone ? PhoneNumber.parsePhoneNumber(phone) : undefined;
 
     if (typeof phone !== 'undefined' && !phoneNumber.valid) {
       logger.warn({
@@ -105,7 +106,7 @@ export const createDriver = async (input: CreateDriverParams): Promise<Driver> =
 
 export const updateDriver = async (id: string, input: UpdateDriverParams): Promise<Driver> => {
   const { operatorId, phone, password } = input;
-  let phoneNumber = phone ? parsePhoneNumber(phone) : undefined;
+  let phoneNumber = phone ? PhoneNumber.parsePhoneNumber(phone) : undefined;
 
   if (typeof phoneNumber !== 'undefined' && !phoneNumber.valid) {
     logger.warn({
