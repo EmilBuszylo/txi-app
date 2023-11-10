@@ -86,6 +86,9 @@ model Order {
   highwaysCost           String?
   stopTime               Int?     @default(0)
 
+  acceptedByDriver      Boolean?
+  routeMap              String?
+
   client     Client @relation(fields: [clientId, clientName], references: [id, name])
   clientId   String
   clientName String
