@@ -1,5 +1,4 @@
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const PhoneNumber = require('awesome-phonenumber');
+import { parsePhoneNumber } from 'awesome-phonenumber';
 import { compare, hash } from 'bcrypt';
 import { customAlphabet } from 'nanoid';
 import slugify from 'slugify';
@@ -14,6 +13,7 @@ import {
 } from '@/lib/server/api/endpoints';
 
 import { Driver } from '@/server/drivers/driver';
+import { OrderStatus } from '@/server/orders/order';
 
 interface LoginRequest {
   login: string;
@@ -64,7 +64,7 @@ export const createDriver = async (input: CreateDriverParams): Promise<Driver> =
   try {
     const hashed_password = await hash(password, 12);
 
-    let phoneNumber = phone ? PhoneNumber.parsePhoneNumber(phone) : undefined;
+    let phoneNumber = phone ? parsePhoneNumber(phone) : undefined;
 
     if (typeof phone !== 'undefined' && !phoneNumber.valid) {
       logger.warn({
@@ -105,7 +105,7 @@ export const createDriver = async (input: CreateDriverParams): Promise<Driver> =
 
 export const updateDriver = async (id: string, input: UpdateDriverParams): Promise<Driver> => {
   const { operatorId, phone, password } = input;
-  let phoneNumber = phone ? PhoneNumber.parsePhoneNumber(phone) : undefined;
+  let phoneNumber = phone ? parsePhoneNumber(phone) : undefined;
 
   if (typeof phoneNumber !== 'undefined' && !phoneNumber.valid) {
     logger.warn({
@@ -204,6 +204,90 @@ export const getDriver = async (id: string): Promise<Driver> => {
   return driver;
 };
 
+export interface GetDriverOrdersInput {
+  driverId: string;
+  page: number;
+  limit: number;
+  createdAtFrom?: string;
+  createdAtTo?: string;
+  column?: string;
+  sort?: 'asc' | 'desc';
+  statuses?: OrderStatus[];
+}
+
+export const getDriverOrders = async (input: GetDriverOrdersInput) => {
+  const {
+    driverId,
+    limit,
+    page: currentPage,
+    createdAtFrom,
+    statuses,
+    column,
+    sort,
+    createdAtTo,
+  } = input;
+
+  const page = currentPage - 1;
+  const take = limit || PAGINATION_LIMIT;
+  const skip = page * take;
+
+  const filters = _getDriverOrdersWhereFilterByParams({ createdAtFrom, createdAtTo, statuses });
+
+  const data = await prisma.$transaction([
+    prisma.order.count({
+      where: {
+        deletedAt: null,
+        driverId,
+        acceptedByDriver: true,
+        ...filters,
+      },
+    }),
+    prisma.order.findMany({
+      where: {
+        deletedAt: null,
+        driverId: id,
+        acceptedByDriver: true,
+        ...filters,
+      },
+      skip: skip,
+      take: take,
+      select: driverOrderFields,
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
+      orderBy: _getSortByParams({ column, sort }),
+    }),
+  ]);
+
+  return {
+    meta: getPaginationMeta({ currentPage, itemCount: data[0], take }),
+    results: data[1],
+  };
+};
+
+interface UpdateDriverOrderInput {
+  orderId: string;
+  driverId: string;
+  status?: OrderStatus;
+  acceptedByDriver?: boolean;
+  stopTime?: number;
+  actualKm?: number;
+}
+
+export const updateDriverOrder = async (input: UpdateDriverOrderInput) => {
+  const { driverId, orderId, ...rest } = input;
+
+  return prisma.order.update({
+    where: {
+      id: orderId,
+      driverId: driverId,
+    },
+    data: {
+      ...rest,
+    },
+    select: driverOrderDetailsFields,
+  });
+};
+
 //  soft delete
 export const removeDriver = async (id: string): Promise<Driver> => {
   try {
@@ -229,6 +313,37 @@ const _getSortByParams = ({ column, sort }: Pick<GetDriversParams, 'column' | 's
 
   return {
     [column]: sort,
+  };
+};
+
+type ParamsFilter = {
+  [key: string]: string | boolean | undefined | string[];
+};
+
+type WhereFilter = {
+  // @-ts-ignore
+  [key: string]: unknown;
+};
+
+const _getDriverOrdersWhereFilterByParams = ({
+  createdAtFrom,
+  createdAtTo,
+  statuses,
+}: ParamsFilter): WhereFilter => {
+  return {
+    ...(createdAtFrom || createdAtTo
+      ? {
+          createdAt: {
+            lte: createdAtTo ? new Date(createdAtTo as string).toISOString() : undefined, // "2022-01-30T00:00:00.000Z"
+            gte: createdAtFrom ? new Date(createdAtFrom as string).toISOString() : undefined, // "2022-01-15T00:00:00.000Z"
+          },
+        }
+      : undefined),
+    ...(statuses && {
+      status: {
+        in: statuses,
+      },
+    }),
   };
 };
 
@@ -261,4 +376,52 @@ const driverSelectedFields = {
       carRegistrationNumber: true,
     },
   },
+};
+
+const driverOrderFields = {
+  id: true,
+  internalId: true,
+  locationFrom: true,
+  locationTo: true,
+  estimatedDistance: true,
+  acceptedByDriver: true,
+  hasHighway: true,
+  status: true,
+  actualKm: true,
+  clientName: true,
+  comment: true,
+  operatorNote: true,
+  stopTime: true,
+  driver: {
+    select: {
+      id: true,
+    },
+  },
+  updatedAt: true,
+  createdAt: true,
+};
+
+const driverOrderDetailsFields = {
+  id: true,
+  internalId: true,
+  locationFrom: true,
+  locationVia: true,
+  locationTo: true,
+  estimatedDistance: true,
+  wayBackDistance: true,
+  acceptedByDriver: true,
+  hasHighway: true,
+  status: true,
+  actualKm: true,
+  clientName: true,
+  comment: true,
+  operatorNote: true,
+  stopTime: true,
+  driver: {
+    select: {
+      id: true,
+    },
+  },
+  updatedAt: true,
+  createdAt: true,
 };

@@ -472,7 +472,6 @@ export const getOrders = async (input: GetOrdersParams) => {
       where: {
         deletedAt: null,
         ...filters,
-        collectionPoint: {},
       },
     }),
     prisma.order.findMany({
