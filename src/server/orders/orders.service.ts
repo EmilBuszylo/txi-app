@@ -11,6 +11,7 @@ import {
   CancelOrderByClientParams,
   CreateOrderParams,
   GetOrdersParams,
+  ResendOrderEmailParams,
   UpdateManyOrdersParams,
   UpdateOrderParams,
 } from '@/lib/server/api/endpoints';
@@ -18,6 +19,7 @@ import {
 import { sendEmail } from '@/server/email/email.service';
 import { getCancelOrderTemplate } from '@/server/email/templates/cancel-order-template';
 import { getNewOrderTemplate } from '@/server/email/templates/new-order-template';
+import { getUpdatedOrderTemplate } from '@/server/email/templates/updated-order-template';
 import {
   checkIfStatusChangeIsForbidden,
   LocationFrom,
@@ -163,11 +165,6 @@ export const createOrder = async (input: CreateOrderParams) => {
     if (order && dispatchers) {
       await sendEmail({
         subject: `Nowe zlecenie ${order.internalId} ${order.clientName}`,
-        orderData: {
-          id: order.id,
-          internalId: order.internalId,
-          clientName: order.clientName,
-        },
         to: dispatchers.map((d) => d.email) as string[],
         template: getNewOrderTemplate(order as unknown as Order),
       });
@@ -297,11 +294,6 @@ export const cancelOrderByClient = async (input: CancelOrderByClientParams) => {
 
     await sendEmail({
       subject: `Zlecenie ${order.internalId} zostało anulowane przez ${order.clientName}`,
-      orderData: {
-        id: order.id,
-        internalId: order.internalId,
-        clientName: order.clientName,
-      },
       to: dispatchers.map((d) => d.email) as string[],
       template: getCancelOrderTemplate(order as unknown as Order),
     });
@@ -533,6 +525,46 @@ export const removeOrder = async (id: string) => {
   } catch (error) {
     logger.error({ error, stack: 'removeOrder' });
     throw error;
+  }
+};
+
+export const resendOrderEmail = async (input: ResendOrderEmailParams) => {
+  await _prepareOrderEmail({
+    subject: input.subject,
+    template: getUpdatedOrderTemplate(input.order),
+  });
+
+  return {
+    status: 'ok',
+  };
+};
+
+const _prepareOrderEmail = async ({ subject, template }: { subject: string; template: string }) => {
+  const dispatchers = await prisma.user.findMany({
+    where: {
+      role: 'DISPATCHER',
+      email: {
+        not: null,
+      },
+    },
+    select: {
+      email: true,
+    },
+  });
+
+  if (dispatchers) {
+    await sendEmail({
+      subject: subject,
+      to: dispatchers.map((d) => d.email) as string[],
+      template: template,
+    });
+  } else {
+    logger.warn({
+      dispatchers,
+      stack: 'createOrder',
+      event: 'email error',
+      provider: 'custom',
+    });
   }
 };
 

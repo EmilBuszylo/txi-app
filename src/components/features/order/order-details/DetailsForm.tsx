@@ -25,6 +25,7 @@ import { LocationFromSection } from '@/components/features/order/new-order/Locat
 import { LocationToSection } from '@/components/features/order/new-order/LocationToSection';
 import { LocationViaSection } from '@/components/features/order/new-order/LocationViaSection/LocationViaSection';
 import { ShowRouteButton } from '@/components/features/order/new-order/ShowRouteButton';
+import { SaveAndSendButton } from '@/components/features/order/order-details/SaveAndSendButton';
 import { StatusField } from '@/components/features/order/order-details/StatusField';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
@@ -97,7 +98,7 @@ export function OrderDetailsForm({
   const { data: collectionPoints } = useCollectionPoints({ page: 1, limit: 1000 });
   const { data: clients } = useClients({ page: 1, limit: 1000 });
 
-  const { mutateAsync: updateOrder, isLoading } = useUpdateOrder(orderId);
+  const { mutateAsync: updateOrder, isLoading, isSuccess } = useUpdateOrder(orderId);
 
   useEffect(() => {
     if (defaultValues && !isDefaultAdded) {
@@ -591,10 +592,17 @@ export function OrderDetailsForm({
             }}
           />
 
-          <div className='flex w-full items-center justify-end'>
-            <Button className='w-full md:w-auto' type='submit' isLoading={isLoading}>
+          <div className='flex w-full items-center justify-end gap-x-2'>
+            <Button className='w-full md:w-auto' type='submit' isLoading={isLoading || isSuccess}>
               Zapisz
             </Button>
+            <SaveAndSendButton
+              orderId={orderId}
+              user={user}
+              setLocationDateError={setLocationDateError}
+              collectionPoints={collectionPoints}
+              handleSubmit={form.handleSubmit}
+            />
           </div>
         </form>
       </Form>

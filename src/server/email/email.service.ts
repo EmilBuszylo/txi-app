@@ -3,14 +3,12 @@ import nodemailer from 'nodemailer';
 import { logger } from '@/lib/logger';
 import { SendEmailRequest } from '@/lib/server/api/endpoints';
 
-import { defaultTemplate } from '@/server/email/templates/default-template';
-
 interface SendEmailInput extends SendEmailRequest {
   to?: string[];
-  template?: string;
+  template: string;
 }
 
-export const sendEmail = async ({ subject, orderData, to, template }: SendEmailInput) => {
+export const sendEmail = async ({ subject, to, template }: SendEmailInput) => {
   if (!process.env.EMAILS_ENABLED || process.env.EMAILS_ENABLED == 'false') {
     return {
       success: true,
@@ -25,15 +23,6 @@ export const sendEmail = async ({ subject, orderData, to, template }: SendEmailI
     },
   });
 
-  const orderUrl = `https://www.txi-zlecenia.pl/dashboard/orders/${orderData.id}/`;
-
-  const emailTemplate = template
-    ? template
-    : defaultTemplate
-        .replace(/{{order_url}}/gm, orderUrl)
-        .replace(/{{txi_number}}/gm, orderData.internalId)
-        .replace(/{{client_name}}/, orderData.clientName);
-
   const receiver =
     to && to.length > 0
       ? `${process.env.EMAIL_RECEIVER},${to?.join(',')}`
@@ -43,7 +32,7 @@ export const sendEmail = async ({ subject, orderData, to, template }: SendEmailI
     from: process.env.EMAIL_FROM,
     to: receiver,
     subject: subject || 'TXI App',
-    html: emailTemplate,
+    html: template,
   };
 
   try {

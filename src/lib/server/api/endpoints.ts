@@ -270,6 +270,18 @@ export function cancelOrderByClient(params: CancelOrderByClientParams) {
   });
 }
 
+export interface ResendOrderEmailParams {
+  subject: string;
+  order: Order;
+}
+
+export function resendOrderEmail(params: ResendOrderEmailParams) {
+  return fetchJson<{ status: string }>(getNextApiPath(`${ApiRoutes.ORDERS}/email`), {
+    method: 'POST',
+    body: JSON.stringify(params),
+  });
+}
+
 export function getOrder(id: string) {
   return fetchJson<Order>(getNextApiPath(`${ApiRoutes.ORDERS}/${id}`), {
     method: 'GET',
@@ -616,11 +628,7 @@ export function removeOperator(id: string) {
 // emails
 export interface SendEmailRequest {
   subject?: string;
-  orderData: {
-    id: string;
-    internalId: string;
-    clientName: string;
-  };
+  template?: string;
 }
 
 export function sendNewOrderEmail(params: SendEmailRequest) {
