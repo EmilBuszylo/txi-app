@@ -274,6 +274,20 @@ interface UpdateDriverOrderInput {
   actualKm?: number;
 }
 
+export const getDriverOrderDetails = async (id: string) => {
+  const order = await prisma.order.findUnique({
+    where: { id },
+    select: driverOrderDetailsFields,
+  });
+
+  if (!order) {
+    logger.error({ error: 'not found', stack: 'getDriverOrder' });
+    throw new Error('not found');
+  }
+
+  return order;
+};
+
 export const updateDriverOrder = async (input: UpdateDriverOrderInput) => {
   const { driverId, orderId, ...rest } = input;
 
@@ -386,38 +400,21 @@ const driverOrderFields = {
   locationTo: true,
   estimatedDistance: true,
   acceptedByDriver: true,
-  hasHighway: true,
   status: true,
   actualKm: true,
   clientName: true,
-  comment: true,
-  operatorNote: true,
-  stopTime: true,
-  driver: {
-    select: {
-      id: true,
-    },
-  },
   updatedAt: true,
   createdAt: true,
 };
 
 const driverOrderDetailsFields = {
-  id: true,
-  internalId: true,
-  locationFrom: true,
-  locationVia: true,
-  locationTo: true,
-  estimatedDistance: true,
-  wayBackDistance: true,
-  acceptedByDriver: true,
+  ...driverOrderFields,
   hasHighway: true,
-  status: true,
-  actualKm: true,
-  clientName: true,
+  highwaysCost: true,
   comment: true,
   operatorNote: true,
   stopTime: true,
+  routeMap: true,
   driver: {
     select: {
       id: true,
