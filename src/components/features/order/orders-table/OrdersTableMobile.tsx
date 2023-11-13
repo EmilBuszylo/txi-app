@@ -111,7 +111,7 @@ const OrderMobileItem = ({ item, params }: { item: Order; params: GetOrdersParam
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align='center'>
-            <ActionCellOptions params={params} id={item.id} />
+            <ActionCellOptions params={params} id={item.id} order={item} />
           </DropdownMenuContent>
         </DropdownMenu>
       </div>
