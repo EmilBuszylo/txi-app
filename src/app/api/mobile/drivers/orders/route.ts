@@ -7,7 +7,7 @@ import { getDriverOrders } from '@/server/drivers/drivers.service';
 import { OrderStatus } from '@/server/orders/order';
 export async function GET(req: Request) {
   const urlParams = new URL(req.url);
-  const accessToken = req.headers.get('AccessToken');
+  const accessToken = req.headers.get('Authorization');
 
   try {
     await validateRequest(accessToken);

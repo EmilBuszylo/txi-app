@@ -9,7 +9,7 @@ import { getDriverOrderDetails, updateDriverOrder } from '@/server/drivers/drive
 
 export async function PATCH(req: Request, context: RouteContext) {
   const id = context.params?.id?.[0] || '';
-  const accessToken = req.headers.get('AccessToken');
+  const accessToken = req.headers.get('Authorization');
 
   try {
     await validateRequest(accessToken);
@@ -25,7 +25,7 @@ export async function PATCH(req: Request, context: RouteContext) {
 
 export async function GET(req: Request, context: RouteContext) {
   const id = context.params?.id?.[0] || '';
-  const accessToken = req.headers.get('AccessToken');
+  const accessToken = req.headers.get('Authorization');
 
   try {
     await validateRequest(accessToken);

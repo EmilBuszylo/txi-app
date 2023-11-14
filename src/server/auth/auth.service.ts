@@ -9,8 +9,19 @@ export const createToken = ({ login, id }: { login: string; id: string }) => {
   });
 };
 
-export const validateRequest = async (token?: string | null) => {
-  if (!token) {
+export const validateRequest = async (authHeader?: string | null) => {
+  if (!authHeader) {
+    const invalidCredentialsException = JSON.stringify({
+      code: 401,
+      message: 'token was not provided',
+      type: 'invalidCredentialsException',
+    });
+    throw new Error(invalidCredentialsException);
+  }
+
+  const token = authHeader.split(' ')[1];
+
+  if (authHeader.split(' ')[0] !== 'Bearer' || !token) {
     const invalidCredentialsException = JSON.stringify({
       code: 401,
       message: 'token was not provided',
