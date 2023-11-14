@@ -102,6 +102,7 @@ model Order {
   collectionPoint   CollectionPoint? @relation(fields: [collectionPointId], references: [id])
   collectionPointId String?
 
+  shipmentToDriverAt DateTime?
   deletedAt DateTime?
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
