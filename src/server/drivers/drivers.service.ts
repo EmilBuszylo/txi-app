@@ -227,8 +227,8 @@ export const getDriverOrders = async (input: GetDriverOrdersInput) => {
     page: currentPage,
     createdAtFrom,
     statuses,
-    column,
-    sort,
+    // column,
+    // sort,
     createdAtTo,
   } = input;
 
@@ -259,7 +259,9 @@ export const getDriverOrders = async (input: GetDriverOrdersInput) => {
       select: driverOrderFields,
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore
-      orderBy: _getSortByParams({ column, sort }),
+      orderBy: {
+        shipmentToDriverAt: 'desc',
+      },
     }),
   ]);
 

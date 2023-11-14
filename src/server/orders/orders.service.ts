@@ -116,6 +116,11 @@ export const createOrder = async (input: CreateOrderParams) => {
 
     const status = input.driverId ? OrderStatus.STARTED : OrderStatus.NEW;
 
+    let shipmentToDriverAt;
+    if (status === OrderStatus.STARTED) {
+      shipmentToDriverAt = new Date();
+    }
+
     const order = await prisma.order.create({
       data: {
         internalId: _createInternalId(count + 1),
@@ -127,6 +132,7 @@ export const createOrder = async (input: CreateOrderParams) => {
         hasHighway: estimatedDistance?.hasHighway,
         locationVia: locationVia as unknown as string,
         wayBackDistance: wayBackDistance?.distance,
+        shipmentToDriverAt,
         status,
         client: {
           connect: {
@@ -366,6 +372,11 @@ export const updateOrder = async (id: string, input: UpdateOrderParams) => {
       actualKm: input.actualKm,
     });
 
+    let shipmentToDriverAt;
+    if (status === OrderStatus.STARTED) {
+      shipmentToDriverAt = new Date();
+    }
+
     return prisma.order.update({
       where: {
         id,
@@ -378,6 +389,7 @@ export const updateOrder = async (id: string, input: UpdateOrderParams) => {
         hasHighway: estimatedDistance?.hasHighway,
         locationVia: locationVia as unknown as string,
         wayBackDistance: wayBackDistance?.distance,
+        shipmentToDriverAt,
         ...rest,
         status,
         driver: driverId

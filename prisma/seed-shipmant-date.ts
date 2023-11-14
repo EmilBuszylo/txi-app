@@ -1,18 +1,22 @@
 import { PrismaClient } from '@prisma/client';
 const prisma = new PrismaClient();
-
-const operatorsList = [
-  {
-    name: 'Uber/Bolt',
-  },
-];
+import { subDays } from 'date-fns';
 async function main() {
-  for await (const operator of operatorsList) {
-    await prisma.operator.create({
+  const orders = await prisma.order.findMany({ select: { id: true } });
+  let index = 1;
+  for await (const order of orders) {
+    const newdate = await subDays(new Date(), index);
+
+    await prisma.order.update({
+      where: {
+        id: order.id,
+      },
       data: {
-        name: operator.name,
+        shipmentToDriverAt: newdate,
       },
     });
+
+    index++;
   }
 }
 main()
