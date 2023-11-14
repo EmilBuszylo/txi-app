@@ -211,6 +211,7 @@ export const getDriver = async (id: string): Promise<Driver> => {
 
 export interface GetDriverOrdersInput {
   driverId: string;
+  acceptedByDriver?: boolean;
   page: number;
   limit: number;
   createdAtFrom?: string;
@@ -227,6 +228,7 @@ export const getDriverOrders = async (input: GetDriverOrdersInput) => {
     page: currentPage,
     createdAtFrom,
     statuses,
+    acceptedByDriver,
     // column,
     // sort,
     createdAtTo,
@@ -238,21 +240,37 @@ export const getDriverOrders = async (input: GetDriverOrdersInput) => {
 
   const filters = _getDriverOrdersWhereFilterByParams({ createdAtFrom, createdAtTo, statuses });
 
+  const acceptedByDriverFilter =
+    typeof acceptedByDriver === 'boolean'
+      ? {
+          acceptedByDriver,
+        }
+      : {
+          OR: [
+            {
+              acceptedByDriver: true,
+            },
+            {
+              acceptedByDriver: null,
+            },
+          ],
+        };
+
   const data = await prisma.$transaction([
     prisma.order.count({
       where: {
         deletedAt: null,
         driverId,
-        acceptedByDriver: true,
         ...filters,
+        ...acceptedByDriverFilter,
       },
     }),
     prisma.order.findMany({
       where: {
         deletedAt: null,
         driverId,
-        acceptedByDriver: true,
         ...filters,
+        ...acceptedByDriverFilter,
       },
       skip: skip,
       take: take,
@@ -404,8 +422,10 @@ const driverOrderFields = {
   internalId: true,
   locationFrom: true,
   locationTo: true,
+  locationVia: true,
   estimatedDistance: true,
   acceptedByDriver: true,
+  shipmentToDriverAt: true,
   status: true,
   actualKm: true,
   clientName: true,

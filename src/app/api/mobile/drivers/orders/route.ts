@@ -21,6 +21,9 @@ export async function GET(req: Request) {
       page: Number(urlParams.searchParams.get('page')) || 1,
       limit: Number(urlParams.searchParams.get('limit')) || 1,
       statuses: statuses ? (statuses.split(',') as unknown as OrderStatus[]) : undefined,
+      acceptedByDriver: urlParams.searchParams.get('acceptedByDriver')
+        ? urlParams.searchParams.get('acceptedByDriver') === 'true'
+        : undefined,
       driverId: urlParams.searchParams.get('driverId') || '',
       createdAtTo: urlParams.searchParams.get('createdAtTo') || undefined,
       createdAtFrom: urlParams.searchParams.get('createdAtFrom') || undefined,
