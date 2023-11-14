@@ -1,3 +1,4 @@
+import { createToken } from '@/server/auth/auth.service';
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const PhoneNumber = require('awesome-phonenumber');
 import { compare, hash } from 'bcrypt';
@@ -54,9 +55,12 @@ export const loginDriver = async (input: LoginRequest) => {
     throw new Error(invalidCredentialsException);
   }
 
+  const accessToken = createToken({ login: user.login, id: user.id });
+
   return {
     ...user,
     password: undefined,
+    accessToken,
   };
 };
 

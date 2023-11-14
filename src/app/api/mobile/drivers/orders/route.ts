@@ -2,14 +2,15 @@ import { NextResponse } from 'next/server';
 
 import { errorResponseHandler } from '@/lib/server/utils/error-response-handler';
 
+import { validateRequest } from '@/server/auth/auth.service';
 import { getDriverOrders } from '@/server/drivers/drivers.service';
 import { OrderStatus } from '@/server/orders/order';
 export async function GET(req: Request) {
   const urlParams = new URL(req.url);
+  const accessToken = req.headers.get('AccessToken');
 
   try {
-    // TODO replace with custom method for mobile app
-    // await authorizeRoute();
+    await validateRequest(accessToken);
 
     const statuses =
       typeof urlParams.searchParams.get('statuses') === 'string'
