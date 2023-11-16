@@ -11,6 +11,7 @@ import { useCollectionPoints } from '@/lib/hooks/data/useCollectionPoints';
 import { useDrivers } from '@/lib/hooks/data/useDrivers';
 import { useUpdateOrder } from '@/lib/hooks/data/useUpdateOrder';
 import { UseUser } from '@/lib/hooks/useUser';
+import { getCurrentQueryParams } from '@/lib/queryParams';
 import {
   CreateOrderParams,
   UpdateOrderParams,
@@ -136,11 +137,9 @@ export function OrderDetailsForm({
             : undefined,
         editedBy: user,
       });
+      const params = getCurrentQueryParams(searchParams, [], {});
 
-      const currentQueryParams =
-        '?' + new URLSearchParams(Array.from(searchParams.entries())).toString();
-
-      router.push(`${Routes.ORDERS}${currentQueryParams}`);
+      router.push(`${Routes.ORDERS}?${params}`);
     } catch (error) {
       const { isDbError, targets, message } = databaseErrorHandler(error as FetchError);
 

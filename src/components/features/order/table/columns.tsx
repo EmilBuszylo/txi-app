@@ -177,6 +177,11 @@ export const getColumns = ({
       id: 'estimatedDistance',
       accessorKey: 'estimatedDistance',
       header: 'Km szacowane',
+      cell: ({ row }) => {
+        const estimatedKm =
+          (row.original.estimatedDistance || 0) + (row.original.wayBackDistance || 0);
+        return <span>{estimatedKm == 0 ? undefined : estimatedKm}</span>;
+      },
     },
     {
       id: 'kmForDriver',

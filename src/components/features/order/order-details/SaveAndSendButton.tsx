@@ -7,6 +7,7 @@ import { UseFormHandleSubmit } from 'react-hook-form/dist/types/form';
 import { FetchError } from '@/lib/helpers/fetch-json';
 import { useResendOrderEmail } from '@/lib/hooks/data/useResendOrderEmail';
 import { useUpdateOrder } from '@/lib/hooks/data/useUpdateOrder';
+import { getCurrentQueryParams } from '@/lib/queryParams';
 import { CreateOrderParams, UpdateOrderParams } from '@/lib/server/api/endpoints';
 import { databaseErrorHandler } from '@/lib/server/utils/error';
 
@@ -67,10 +68,9 @@ export const SaveAndSendButton = ({
         editedBy: user,
       });
 
-      const currentQueryParams =
-        '?' + new URLSearchParams(Array.from(searchParams.entries())).toString();
+      const params = getCurrentQueryParams(searchParams, [], {});
 
-      router.push(`${Routes.ORDERS}${currentQueryParams}`);
+      router.push(`${Routes.ORDERS}?${params}`);
 
       await resendEmail({ subject: `Zlecenie ${order.internalId} ${order.clientName}`, order });
     } catch (error) {

@@ -1,5 +1,6 @@
 export const translateOrderItemKeys = {
   internalId: 'Nr TXI',
+  status: 'Status',
   externalId: 'Nr zlecenia',
   estimatedDistance: 'Szacowane km',
   kmForDriver: 'km dla kierowcy',

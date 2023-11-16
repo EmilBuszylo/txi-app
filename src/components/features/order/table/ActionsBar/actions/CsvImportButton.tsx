@@ -8,6 +8,7 @@ import { logger } from '@/lib/logger';
 
 import { ActionButton } from '@/components/features/order/table/ActionsBar/ActionsBar';
 import { translateOrderItemKeys } from '@/components/features/order/table/ActionsBar/translateOrderItemKey';
+import { statusLabelPerStatus } from '@/components/features/order/utils';
 import { ActionsBarProps } from '@/components/ui/data-table/data-table';
 import { useToast } from '@/components/ui/use-toast';
 
@@ -80,6 +81,9 @@ const parseOrdersData = (selectedItems: CsvImportButtonProps['selectedItems']) =
         } else if (itemKey === 'estimatedDistance') {
           newItems[translateOrderItemKeys[itemKey as keyof typeof translateOrderItemKeys]] =
             (item.estimatedDistance || 0) + (item.wayBackDistance || 0);
+        } else if (itemKey === 'status') {
+          newItems[translateOrderItemKeys[itemKey as keyof typeof translateOrderItemKeys]] =
+            statusLabelPerStatus[item.status];
         } else {
           newItems[translateOrderItemKeys[itemKey as keyof typeof translateOrderItemKeys]] =
             parseCsvValue(item[itemKey as keyof Order], itemKey);

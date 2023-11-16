@@ -7,9 +7,11 @@ type OptionsData = { label: string; value: string }[];
 export const createFiltersConfig = ({
   clientsData,
   driversData,
+  operatorsData,
 }: {
   clientsData: OptionsData;
   driversData: OptionsData;
+  operatorsData: OptionsData;
 }) => {
   return [
     {
@@ -42,6 +44,11 @@ export const createFiltersConfig = ({
       title: 'Klient',
       name: 'clientName',
       options: clientsData,
+    },
+    {
+      title: 'Operator',
+      name: 'operatorId',
+      options: operatorsData,
     },
     {
       title: 'Kierowca',

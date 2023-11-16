@@ -6,6 +6,7 @@ import { useMemo, useState } from 'react';
 
 import { useClients } from '@/lib/hooks/data/useClients';
 import { useDrivers } from '@/lib/hooks/data/useDrivers';
+import { useOperators } from '@/lib/hooks/data/useOperators';
 import { useOrders } from '@/lib/hooks/data/useOrders';
 import { UseIsDispatcherRole } from '@/lib/hooks/useIsDispatcherRole';
 import { getCurrentQueryParams } from '@/lib/queryParams';
@@ -61,6 +62,7 @@ export default function OrdersTable() {
 
   const { data: clients } = useClients({ page: 1, limit: 1000 });
   const { data: drivers } = useDrivers({ page: 1, limit: 10000 });
+  const { data: operators } = useOperators({ page: 1, limit: 10000 });
 
   const columns = useMemo(() => {
     const cols = getColumns({
@@ -76,8 +78,7 @@ export default function OrdersTable() {
     }
 
     return cols;
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [filterParameters, isDispatcher, limit, noLimit, page, sortParameters, updateSort]);
 
   const clientsData = useMemo(() => {
     return clients?.results.map((res) => ({ label: res.name, value: res.name })) || [];
@@ -91,6 +92,17 @@ export default function OrdersTable() {
       })) || []
     );
   }, [drivers?.results]);
+
+  const operatorsData = useMemo(() => {
+    return (
+      operators?.results
+        .filter((res) => res.operator)
+        .map((res) => ({
+          label: res.operator?.name || res.login,
+          value: res.operator?.id || '',
+        })) || []
+    );
+  }, [operators?.results]);
 
   const setPageHandler = (p?: number | null) => {
     if (p) {
@@ -165,7 +177,7 @@ export default function OrdersTable() {
                         name: 'clientInvoice',
                       },
                     ]}
-                    filters={createFiltersConfig({ clientsData, driversData })}
+                    filters={createFiltersConfig({ clientsData, driversData, operatorsData })}
                   />
                 }
               />
@@ -192,7 +204,7 @@ export default function OrdersTable() {
                         name: 'clientInvoice',
                       },
                     ]}
-                    filters={createFiltersConfig({ clientsData, driversData })}
+                    filters={createFiltersConfig({ clientsData, driversData, operatorsData })}
                   />
                   <Button
                     variant='ghost'
