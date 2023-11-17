@@ -25,8 +25,8 @@ export async function GET(req: Request) {
         ? urlParams.searchParams.get('acceptedByDriver') === 'true'
         : undefined,
       driverId: urlParams.searchParams.get('driverId') || '',
-      createdAtTo: urlParams.searchParams.get('createdAtTo') || undefined,
-      createdAtFrom: urlParams.searchParams.get('createdAtFrom') || undefined,
+      completedAtFrom: urlParams.searchParams.get('completedAtFrom') || undefined,
+      completedAtTo: urlParams.searchParams.get('completedAtTo') || undefined,
       column: urlParams.searchParams.get('column') || undefined,
       sort: (urlParams.searchParams.get('sort') as 'asc' | 'desc') || undefined,
     });

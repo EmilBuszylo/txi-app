@@ -99,21 +99,6 @@ export const createOrder = async (input: CreateOrderParams) => {
       },
     });
 
-    const logObj = {
-      currentDayDate,
-      currentDayAsDate: new Date(currentDayDate),
-      currentDayDateIso: new Date(currentDayDate).toISOString(),
-      nextDay,
-      nowDate: new Date().toISOString(),
-      count,
-      stack: 'createOrder',
-      event: 'order id info',
-    };
-
-    logger.warn({ ...logObj, provider: 'custom' });
-    // eslint-disable-next-line no-console
-    console.log({ ...logObj, provider: 'console' });
-
     const status = input.driverId ? OrderStatus.STARTED : OrderStatus.NEW;
 
     let shipmentToDriverAt;
@@ -191,25 +176,24 @@ export const createOrder = async (input: CreateOrderParams) => {
   }
 };
 
-const _changeRoleToSettled = async ({
-  kmForDriver,
-  actualKm,
-  id,
-  editedBy,
-  status,
-}: {
-  kmForDriver?: Order['kmForDriver'];
-  id: string;
-  editedBy?: UpdateOrderParams['editedBy'];
-  status: Order['status'];
-  actualKm?: Order['actualKm'];
-}) => {
+type OldOrder = Pick<Order, 'status' | 'kmForDriver' | 'actualKm'>;
+
+const _changeRoleToSettled = async (
+  oldOrder: OldOrder,
+  {
+    kmForDriver,
+    actualKm,
+    editedBy,
+    status,
+  }: {
+    kmForDriver?: Order['kmForDriver'];
+    editedBy?: UpdateOrderParams['editedBy'];
+    status: Order['status'];
+    actualKm?: Order['actualKm'];
+  }
+) => {
   if (!status && editedBy?.role && [UserRole.ADMIN].includes(editedBy.role)) {
     if (kmForDriver || actualKm) {
-      const oldOrder = await prisma.order.findUnique({
-        where: { id },
-        select: { status: true, kmForDriver: true, actualKm: true },
-      });
       if (
         oldOrder?.status &&
         ![OrderStatus.NEW, OrderStatus.CANCELLED, OrderStatus.SETTLED].includes(
@@ -230,18 +214,20 @@ const _changeRoleToSettled = async ({
 export const updateManyOrders = async (input: UpdateManyOrdersParams) => {
   const { driverId, editedBy, ids, ...rest } = input;
 
-  const status =
-    ids.length === 1
-      ? await _changeRoleToSettled({
-          id: ids[0],
-          kmForDriver: input.kmForDriver,
-          actualKm: input.actualKm,
-          editedBy: editedBy,
-          status: input.status as OrderStatus,
-        })
-      : undefined;
-
   try {
+    // get the last saved version of this order
+    const oldOrder = await _getOldOrder(ids[0]);
+
+    const status =
+      ids.length === 1
+        ? await _changeRoleToSettled(oldOrder, {
+            kmForDriver: input.kmForDriver,
+            actualKm: input.actualKm,
+            editedBy: editedBy,
+            status: input.status as OrderStatus,
+          })
+        : undefined;
+
     for (const id of ids) {
       await prisma.order.update({
         where: {
@@ -323,6 +309,9 @@ export const updateOrder = async (id: string, input: UpdateOrderParams) => {
   } = input;
 
   try {
+    // get the last saved version of this order
+    const oldOrder = await _getOldOrder(id);
+
     await locationFromSchema.optional().parseAsync(locationFrom);
     await locationToSchema.optional().parseAsync(locationTo);
     await z.array(locationViaPointSchema.optional()).optional().parseAsync(locationVia);
@@ -358,23 +347,27 @@ export const updateOrder = async (id: string, input: UpdateOrderParams) => {
     const status =
       input.driverId && input.status === OrderStatus.NEW
         ? OrderStatus.STARTED
-        : await _changeRoleToSettled({
-            id,
+        : await _changeRoleToSettled(oldOrder, {
             kmForDriver: input.kmForDriver,
             actualKm: input.actualKm,
             editedBy,
             status: input.status as OrderStatus,
           });
 
-    await _checkIfStatusChangeIsForbidden(id, {
+    await _checkIfStatusChangeIsForbidden(oldOrder, {
       status,
       kmForDriver: input.kmForDriver,
       actualKm: input.actualKm,
     });
 
     let shipmentToDriverAt;
-    if (status === OrderStatus.STARTED) {
+    if (status === OrderStatus.STARTED && oldOrder.status !== OrderStatus.STARTED) {
       shipmentToDriverAt = new Date();
+    }
+
+    let completedAt;
+    if (status === OrderStatus.COMPLETED && oldOrder.status !== OrderStatus.COMPLETED) {
+      completedAt = new Date();
     }
 
     return prisma.order.update({
@@ -390,6 +383,7 @@ export const updateOrder = async (id: string, input: UpdateOrderParams) => {
         locationVia: locationVia as unknown as string,
         wayBackDistance: wayBackDistance?.distance,
         shipmentToDriverAt,
+        completedAt,
         ...rest,
         status,
         driver: driverId
@@ -705,20 +699,42 @@ const _getWhereFilterByParams = ({
   };
 };
 
+const _getOldOrder = async (id: string): Promise<OldOrder> => {
+  const oldOrder = await prisma.order.findUnique({
+    where: { id },
+    select: {
+      status: true,
+      actualKm: true,
+      kmForDriver: true,
+    },
+  });
+
+  if (!oldOrder) {
+    throw new Error(
+      JSON.stringify({
+        code: 404,
+        message: 'Not found',
+        type: 'notFoundException',
+      })
+    );
+  }
+
+  return oldOrder as OldOrder;
+};
+
 const _checkIfStatusChangeIsForbidden = async (
-  id: string,
-  params: { status?: OrderStatus; kmForDriver?: Order['kmForDriver']; actualKm?: Order['actualKm'] }
+  oldOrder: OldOrder,
+  params: {
+    status?: OrderStatus;
+    kmForDriver?: Order['kmForDriver'];
+    actualKm?: Order['actualKm'];
+  }
 ) => {
   if (!params.status) {
     return;
   }
 
-  const order = await prisma.order.findUnique({
-    where: { id },
-    select: { status: true, actualKm: true, kmForDriver: true },
-  });
-
-  if (!order) {
+  if (!oldOrder) {
     const notFoundException = JSON.stringify({
       code: 404,
       message: 'Not found',
@@ -729,9 +745,9 @@ const _checkIfStatusChangeIsForbidden = async (
 
   const isStatusChangeForbidden = checkIfStatusChangeIsForbidden({
     providedStatus: params.status,
-    currentStatus: order.status as OrderStatus,
-    kmForDriver: order.kmForDriver || params?.kmForDriver,
-    actualKm: order.actualKm || params?.actualKm,
+    currentStatus: oldOrder.status as OrderStatus,
+    kmForDriver: oldOrder.kmForDriver || params?.kmForDriver,
+    actualKm: oldOrder.actualKm || params?.actualKm,
   });
 
   if (isStatusChangeForbidden) {

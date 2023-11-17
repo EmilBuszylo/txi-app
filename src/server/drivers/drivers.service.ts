@@ -1,6 +1,3 @@
-import { createToken } from '@/server/auth/auth.service';
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const PhoneNumber = require('awesome-phonenumber');
 import { compare, hash } from 'bcrypt';
 import { customAlphabet } from 'nanoid';
 import slugify from 'slugify';
@@ -14,8 +11,11 @@ import {
   UpdateDriverParams,
 } from '@/lib/server/api/endpoints';
 
+import { createToken } from '@/server/auth/auth.service';
 import { Driver } from '@/server/drivers/driver';
 import { OrderStatus } from '@/server/orders/order';
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+const PhoneNumber = require('awesome-phonenumber');
 
 interface LoginRequest {
   login: string;
@@ -214,8 +214,8 @@ export interface GetDriverOrdersInput {
   acceptedByDriver?: boolean;
   page: number;
   limit: number;
-  createdAtFrom?: string;
-  createdAtTo?: string;
+  completedAtFrom?: string;
+  completedAtTo?: string;
   column?: string;
   sort?: 'asc' | 'desc';
   statuses?: OrderStatus[];
@@ -226,19 +226,19 @@ export const getDriverOrders = async (input: GetDriverOrdersInput) => {
     driverId,
     limit,
     page: currentPage,
-    createdAtFrom,
+    completedAtFrom,
     statuses,
     acceptedByDriver,
     // column,
     // sort,
-    createdAtTo,
+    completedAtTo,
   } = input;
 
   const page = currentPage - 1;
   const take = limit || PAGINATION_LIMIT;
   const skip = page * take;
 
-  const filters = _getDriverOrdersWhereFilterByParams({ createdAtFrom, createdAtTo, statuses });
+  const filters = _getDriverOrdersWhereFilterByParams({ completedAtFrom, completedAtTo, statuses });
 
   const acceptedByDriverFilter =
     typeof acceptedByDriver === 'boolean'
@@ -315,6 +315,11 @@ export const getDriverOrderDetails = async (id: string) => {
 export const updateDriverOrder = async (input: UpdateDriverOrderInput) => {
   const { driverId, orderId, ...rest } = input;
 
+  let completedAt;
+  if (rest.status === OrderStatus.COMPLETED) {
+    completedAt = new Date();
+  }
+
   return prisma.order.update({
     where: {
       id: orderId,
@@ -322,6 +327,7 @@ export const updateDriverOrder = async (input: UpdateDriverOrderInput) => {
     },
     data: {
       ...rest,
+      completedAt,
     },
     select: driverOrderDetailsFields,
   });
@@ -365,16 +371,16 @@ type WhereFilter = {
 };
 
 const _getDriverOrdersWhereFilterByParams = ({
-  createdAtFrom,
-  createdAtTo,
+  completedAtFrom,
+  completedAtTo,
   statuses,
 }: ParamsFilter): WhereFilter => {
   return {
-    ...(createdAtFrom || createdAtTo
+    ...(completedAtFrom || completedAtTo
       ? {
-          createdAt: {
-            lte: createdAtTo ? new Date(createdAtTo as string).toISOString() : undefined, // "2022-01-30T00:00:00.000Z"
-            gte: createdAtFrom ? new Date(createdAtFrom as string).toISOString() : undefined, // "2022-01-15T00:00:00.000Z"
+          completedAt: {
+            lte: completedAtTo ? new Date(completedAtTo as string).toISOString() : undefined, // "2022-01-30T00:00:00.000Z"
+            gte: completedAtFrom ? new Date(completedAtFrom as string).toISOString() : undefined, // "2022-01-15T00:00:00.000Z"
           },
         }
       : undefined),
@@ -427,8 +433,10 @@ const driverOrderFields = {
   estimatedDistance: true,
   acceptedByDriver: true,
   shipmentToDriverAt: true,
+  completedAt: true,
   status: true,
-  actualKm: true,
+  stopTime: true,
+  kmForDriver: true,
   clientName: true,
   updatedAt: true,
   createdAt: true,
@@ -436,16 +444,12 @@ const driverOrderFields = {
 
 const driverOrderDetailsFields = {
   ...driverOrderFields,
-  hasHighway: true,
   highwaysCost: true,
   operatorNote: true,
-  stopTime: true,
   routeMap: true,
   driver: {
     select: {
       id: true,
     },
   },
-  updatedAt: true,
-  createdAt: true,
 };

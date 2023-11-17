@@ -213,12 +213,7 @@ export function OrderDetailsForm({
               <FormItem>
                 <FormLabel>Nr zlecenia</FormLabel>
                 <FormControl>
-                  <Input
-                    placeholder='Nr zlecenia'
-                    {...field}
-                    disabled={isDispatcher}
-                    readOnly={isDispatcher}
-                  />
+                  <Input placeholder='Nr zlecenia' {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
